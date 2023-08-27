@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = 3000;
-
 const bodyParser = require("body-parser");
+const cors = require("cors");
+const port = 3008;
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -19,7 +20,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(require("./routes/images"));
+app.use(require("./routes/barber-service"));
+app.use(require("./routes/appointment-service"));
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

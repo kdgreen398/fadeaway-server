@@ -5,7 +5,7 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
   res.send([
     {
       id: 1,
-      barberName: "Trey Johnson",
+      barberName: "Barber#" + Math.floor(Math.random() * 100),
       shopName: "Magic Fades Barber Shop",
       address: "Address 1",
       rating: 4.5,
@@ -19,7 +19,7 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
     },
     {
       id: 2,
-      barberName: "Trey Johnson",
+      barberName: "Barber#" + Math.floor(Math.random() * 100),
       shopName: "Magic Fades Barber Shop",
       address: "Address 1",
       rating: 4.5,

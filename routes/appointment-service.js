@@ -9,18 +9,18 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
       scheduledTime: "2021-01-01 10:00:00",
       barber: {
         id: 1,
-        barberName: "Trey Johnson",
+        barberName: "Trey Johnson #1",
         shopName: "Magic Fades Barber Shop",
         address: "2615 Memorial Drive, Nashville, TN 35834",
-        phoneNumber: "1234567890",
-        email: "test@gmail.com",
+        phoneNumber: "(123) 456-7890",
+        email: "testemail398@gmail.com",
       },
       services: [
         {
           id: 1,
           name: "Adult Haircut with Beard Trim",
           appointmentLength: "45 minutes",
-          description: "Description 1",
+          description: "Basic cut for adults",
           price: "$100",
         },
         {
@@ -43,18 +43,18 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
       scheduledTime: "2021-01-01 10:00:00",
       barber: {
         id: 1,
-        barberName: "Trey Johnson",
+        barberName: "Trey Johnson #2",
         shopName: "Magic Fades Barber Shop",
         address: "2615 Memorial Drive, Nashville, TN 35834",
-        phoneNumber: "1234567890",
-        email: "test@gmail.com",
+        phoneNumber: "(123) 456-7890",
+        email: "testemail398@gmail.com",
       },
       services: [
         {
           id: 1,
           name: "Adult Haircut with Beard Trim",
           appointmentLength: "45 minutes",
-          description: "Description 1",
+          description: "Basic cut for adults",
           price: "$100",
         },
         {
@@ -77,18 +77,18 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
       scheduledTime: "2021-01-01 10:00:00",
       barber: {
         id: 1,
-        barberName: "Trey Johnson",
+        barberName: "Trey Johnson #3",
         shopName: "Magic Fades Barber Shop",
         address: "2615 Memorial Drive, Nashville, TN 35834",
-        phoneNumber: "1234567890",
-        email: "test@gmail.com",
+        phoneNumber: "(123) 456-7890",
+        email: "testemail398@gmail.com",
       },
       services: [
         {
           id: 1,
           name: "Adult Haircut with Beard Trim",
           appointmentLength: "45 minutes",
-          description: "Description 1",
+          description: "Basic cut for adults",
           price: "$100",
         },
         {

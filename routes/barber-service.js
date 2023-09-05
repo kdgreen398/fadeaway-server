@@ -7,7 +7,6 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
       id: 1,
       barberName: "Barber#" + Math.floor(Math.random() * 100),
       shopName: "Magic Fades Barber Shop",
-      address: "Address 1",
       rating: "4.5",
       reviewCount: 100,
       topFourImages: [
@@ -21,7 +20,6 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
       id: 2,
       barberName: "Barber#" + Math.floor(Math.random() * 100),
       shopName: "Magic Fades Barber Shop",
-      address: "Address 1",
       rating: "4.5",
       reviewCount: 100,
       topFourImages: [
@@ -52,9 +50,9 @@ router.post("/barber-service/fetch-barber-details", async (req, res) => {
       "https://picsum.photos/200/300",
     ],
     paymentOptions: ["Cash", "Card", "Cash App"],
-    address: "Address 1",
-    phoneNumber: "1234567890",
-    email: "test@gmail.com",
+    address: "2615 Memorial Drive, Nashville, TN 35834",
+    phoneNumber: "(662) 555-0371",
+    email: "youremail@gmail.com",
     reviews: [
       {
         id: 1,

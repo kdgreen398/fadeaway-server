@@ -14,6 +14,7 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
         address: "2615 Memorial Drive, Nashville, TN 35834",
         phoneNumber: "(123) 456-7890",
         email: "testemail398@gmail.com",
+        paymentOptions: ["Cash", "Card", "Cash App"],
       },
       services: [
         {
@@ -48,6 +49,7 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
         address: "2615 Memorial Drive, Nashville, TN 35834",
         phoneNumber: "(123) 456-7890",
         email: "testemail398@gmail.com",
+        paymentOptions: ["Cash", "Card", "Cash App"],
       },
       services: [
         {
@@ -73,6 +75,41 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
     },
     {
       id: 3,
+      status: "CANCELED",
+      scheduledTime: "2021-01-01 10:00:00",
+      barber: {
+        id: 1,
+        barberName: "Trey Johnson #3",
+        shopName: "Magic Fades Barber Shop",
+        address: "2615 Memorial Drive, Nashville, TN 35834",
+        phoneNumber: "(123) 456-7890",
+        email: "testemail398@gmail.com",
+        paymentOptions: ["Cash", "Card", "Cash App"],
+      },
+      services: [
+        {
+          id: 1,
+          name: "Adult Haircut with Beard Trim",
+          appointmentLength: "45 minutes",
+          description: "Basic cut for adults",
+          price: "$100",
+        },
+        {
+          id: 2,
+          name: "Adult Haircut",
+          appointmentLength: "30 minutes",
+          price: "$40",
+        },
+        {
+          id: 3,
+          name: "Adult Haircut",
+          appointmentLength: "30 minutes",
+          price: "$40",
+        },
+      ],
+    },
+    {
+      id: 4,
       status: "DECLINED",
       scheduledTime: "2021-01-01 10:00:00",
       barber: {
@@ -82,6 +119,7 @@ router.post("/appointment-service/fetch-by-user", async (req, res) => {
         address: "2615 Memorial Drive, Nashville, TN 35834",
         phoneNumber: "(123) 456-7890",
         email: "testemail398@gmail.com",
+        paymentOptions: ["Cash", "Card", "Cash App"],
       },
       services: [
         {

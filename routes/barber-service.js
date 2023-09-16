@@ -9,11 +9,13 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
       shopName: "Magic Fades Barber Shop",
       rating: "4.5",
       reviewCount: 100,
-      topFourImages: [
+      images: [
         "https://picsum.photos/400/400",
         "https://picsum.photos/401/400",
         "https://picsum.photos/402/400",
         "https://picsum.photos/403/400",
+        "https://picsum.photos/405/400",
+        "https://picsum.photos/406/400",
       ],
     },
     {
@@ -22,7 +24,7 @@ router.post("/barber-service/fetch-by-location", async (req, res) => {
       shopName: "Magic Fades Barber Shop",
       rating: "4.5",
       reviewCount: 100,
-      topFourImages: [
+      images: [
         "https://picsum.photos/405/400",
         "https://picsum.photos/406/400",
         "https://picsum.photos/407/400",

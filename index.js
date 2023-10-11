@@ -20,8 +20,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(require("./routes/barber-service"));
-app.use(require("./routes/appointment-service"));
+app.use(require("./controllers/barber-controller"));
+app.use(require("./controllers/appointment-controller"));
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

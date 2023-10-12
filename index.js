@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   // main middleware function
 
-  console.log("-------LOG-------");
+  // console.log("-------LOG-------");
   console.log({
     timestamp: new Date().toISOString(),
     path: req.path,
@@ -20,6 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(require("./controllers/recommendation-controller"));
 app.use(require("./controllers/barber-controller"));
 app.use(require("./controllers/appointment-controller"));
 

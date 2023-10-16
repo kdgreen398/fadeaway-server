@@ -12,11 +12,11 @@ app.use((req, res, next) => {
   // main middleware function
 
   // console.log("-------LOG-------");
-  console.log({
-    timestamp: new Date().toISOString(),
-    path: req.path,
-    queryParams: req.query,
-  });
+  // console.log({
+  //   timestamp: new Date().toISOString(),
+  //   path: req.path,
+  //   queryParams: req.query,
+  // });
   next();
 });
 

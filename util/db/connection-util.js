@@ -1,4 +1,5 @@
 const mysql = require("mysql2/promise");
+const { snakeToCamelCaseObj } = require("../format");
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -10,20 +11,20 @@ const pool = mysql.createPool({
   connectionLimit: 10, // Set connection limit
 });
 
-async function executeQuery(query) {
+async function executeQuery(query, values) {
   let connection;
   try {
     connection = await pool.getConnection();
-    console.log("connected to pool");
-    const [rows] = await connection.query(query);
-    return rows;
+
+    const [rows] = await connection.query(query, values);
+
+    return rows.map((row) => snakeToCamelCaseObj(row));
   } catch (error) {
     console.error("Error executing query:", error);
     throw error;
   } finally {
     if (connection) {
-      connection.release(); // Release the connection back to the pool, whether the query succeeds or fails
-      console.log("connection released");
+      connection.release();
     }
   }
 }

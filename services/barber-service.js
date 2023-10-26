@@ -18,8 +18,8 @@ module.exports = {
         const reviewQuery = FETCH_REVIEWS_BY_BARBER_ID;
 
         const [images, reviews] = await Promise.all([
-          executeQuery(imageQuery, [barber.userId]),
-          executeQuery(reviewQuery, [barber.userId]),
+          executeQuery(imageQuery, [barber.barberId]),
+          executeQuery(reviewQuery, [barber.barberId]),
         ]);
 
         return {
@@ -29,7 +29,7 @@ module.exports = {
           images,
           reviews,
         };
-      })
+      }),
     );
 
     return results;

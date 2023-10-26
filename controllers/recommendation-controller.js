@@ -2,29 +2,41 @@ const express = require("express");
 const router = express.Router();
 const BarberService = require("../services/barber-service");
 const GeolocationService = require("../services/geolocation-service");
+const logger = require("../util/logger");
 
-router.post("/recommendation/getBarbersByLocation", async (req, res) => {
-  const { lat, lng } = req.body;
+router.get("/recommendation/getBarbersByLocation", async (req, res) => {
+  const lat = req.get("lat");
+  const lng = req.get("lng");
+  let city = req.get("city");
+  let state = req.get("state");
 
-  if (lat === undefined || lng === undefined) {
-    res.status(400).send("Missing lat/lng");
+  logger.info("Entering Recommendation Controller => getBarbersByLocation");
+
+  const hasCoords = lat !== undefined && lng !== undefined;
+  const hasCityState = city !== undefined && state !== undefined;
+
+  if (!hasCoords && !hasCityState) {
+    logger.error("Missing location parameters (lat/lng or city/state)");
+    res.status(400).send("Missing location parameters (lat/lng or city/state)");
     return;
   }
 
   try {
-    const address = await GeolocationService.getAddressFromCoords(lat, lng);
-    const city = address.split(",")[1].trim();
-    const state = address.split(",")[2].split(" ")[1];
+    if (!hasCityState) {
+      const address = await GeolocationService.getAddressFromCoords(lat, lng);
+      city = address.split(",")[1].trim();
+      state = address.split(",")[2].split(" ")[1];
+    }
 
     const barbers = await BarberService.getBarbersByCityState(city, state);
 
-    res.send({
-      city,
-      state,
-      barbers,
-    });
+    res.send(barbers);
+
+    logger.info(
+      "Exiting Recommendation Controller Successfully => getBarbersByLocation"
+    );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send("Error retrieving barbers from database");
   }
 });

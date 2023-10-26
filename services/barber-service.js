@@ -4,9 +4,11 @@ const {
   FETCH_IMAGES_BY_BARBER_ID,
   FETCH_REVIEWS_BY_BARBER_ID,
 } = require("../util/db/queries");
+const logger = require("../util/logger");
 
 module.exports = {
   getBarbersByCityState: async (city, state) => {
+    logger.info("Entering Barber Service => getBarbersByCityState");
     const barberQuery = FETCH_BARBERS_BY_CITY_STATE;
 
     // execute the query and return the results
@@ -29,9 +31,10 @@ module.exports = {
           images,
           reviews,
         };
-      }),
+      })
     );
 
+    logger.info("Exiting Barber Service Successfully => getBarbersByCityState");
     return results;
   },
 };

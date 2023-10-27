@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const GeolocationService = require("../services/geolocation-service");
+const LocationService = require("../services/location-service");
 const logger = require("../util/logger");
 
 router.get("/location/getLocationFromCoords", async (req, res) => {
@@ -31,6 +32,22 @@ router.get("/location/getLocationFromCoords", async (req, res) => {
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error getting location from coordinates");
+  }
+});
+
+router.get("/location/getBarberCityStates", async (req, res) => {
+  logger.info("Entering Location Controller => getBarberCityStates");
+  try {
+    const barberCityStates = await LocationService.getBarberCityStates();
+
+    res.send(barberCityStates);
+
+    logger.info(
+      "Exiting Location Controller Successfully => getBarberCityStates"
+    );
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("Error getting barber city states");
   }
 });
 

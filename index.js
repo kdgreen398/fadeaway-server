@@ -20,6 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(require("./controllers/authentication-controller"));
 app.use(require("./controllers/recommendation-controller"));
 app.use(require("./controllers/location-controller"));
 app.use(require("./controllers/barber-controller"));

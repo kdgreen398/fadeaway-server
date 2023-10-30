@@ -1,11 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const logger = require("../util/logger");
+const AuthenticationService = require("../services/authentication-service");
 
-router.get("/authentication/login", async (req, res) => {
+router.post("/authentication/login", async (req, res) => {
   logger.info("Entering Authentication Controller => login");
+
+  const { email, password } = req.body;
+
   try {
-    res.send();
+    const authResponse = await AuthenticationService.authenticateUser(
+      email,
+      password
+    );
+
+    if (authResponse.error) {
+      res.status(401).send(authResponse.error);
+    } else {
+      res.send(authResponse);
+    }
 
     logger.info("Exiting Authentication Controller Successfully => login");
   } catch (err) {

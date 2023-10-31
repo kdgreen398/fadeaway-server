@@ -8,7 +8,7 @@ router.get("/location/get-location-from-coords", async (req, res) => {
   const lat = req.get("lat");
   const lng = req.get("lng");
 
-  logger.info("Entering Location Controller => getLocationFromCoords");
+  logger.info("Entering Location Controller => get-location-from-coords");
 
   if (lat === undefined || lng === undefined) {
     logger.error("Missing lat/lng");
@@ -27,7 +27,7 @@ router.get("/location/get-location-from-coords", async (req, res) => {
     });
 
     logger.info(
-      "Exiting Location Controller Successfully => getLocationFromCoords"
+      "Exiting Location Controller Successfully => get-location-from-coords"
     );
   } catch (err) {
     logger.error(err);
@@ -36,14 +36,14 @@ router.get("/location/get-location-from-coords", async (req, res) => {
 });
 
 router.get("/location/get-barber-city-states", async (req, res) => {
-  logger.info("Entering Location Controller => getBarberCityStates");
+  logger.info("Entering Location Controller => get-barber-city-states");
   try {
     const barberCityStates = await LocationService.getBarberCityStates();
 
     res.send(barberCityStates);
 
     logger.info(
-      "Exiting Location Controller Successfully => getBarberCityStates"
+      "Exiting Location Controller Successfully => get-barber-city-states"
     );
   } catch (err) {
     logger.error(err);

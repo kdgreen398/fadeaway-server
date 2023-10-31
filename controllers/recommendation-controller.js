@@ -10,7 +10,7 @@ router.get("/recommendation/get-barbers-by-location", async (req, res) => {
   let city = req.get("city");
   let state = req.get("state");
 
-  logger.info("Entering Recommendation Controller => getBarbersByLocation");
+  logger.info("Entering Recommendation Controller => get-barbers-by-location");
 
   const hasCoords = lat !== undefined && lng !== undefined;
   const hasCityState = city !== undefined && state !== undefined;
@@ -33,7 +33,7 @@ router.get("/recommendation/get-barbers-by-location", async (req, res) => {
     res.send(barbers);
 
     logger.info(
-      "Exiting Recommendation Controller Successfully => getBarbersByLocation"
+      "Exiting Recommendation Controller Successfully => get-barbers-by-location"
     );
   } catch (err) {
     logger.error(err);

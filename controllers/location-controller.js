@@ -4,7 +4,7 @@ const GeolocationService = require("../services/geolocation-service");
 const LocationService = require("../services/location-service");
 const logger = require("../util/logger");
 
-router.get("/location/getLocationFromCoords", async (req, res) => {
+router.get("/location/get-location-from-coords", async (req, res) => {
   const lat = req.get("lat");
   const lng = req.get("lng");
 
@@ -35,7 +35,7 @@ router.get("/location/getLocationFromCoords", async (req, res) => {
   }
 });
 
-router.get("/location/getBarberCityStates", async (req, res) => {
+router.get("/location/get-barber-city-states", async (req, res) => {
   logger.info("Entering Location Controller => getBarberCityStates");
   try {
     const barberCityStates = await LocationService.getBarberCityStates();

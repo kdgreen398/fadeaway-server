@@ -4,7 +4,7 @@ const BarberService = require("../services/barber-service");
 const GeolocationService = require("../services/geolocation-service");
 const logger = require("../util/logger");
 
-router.get("/recommendation/getBarbersByLocation", async (req, res) => {
+router.get("/recommendation/get-barbers-by-location", async (req, res) => {
   const lat = req.get("lat");
   const lng = req.get("lng");
   let city = req.get("city");

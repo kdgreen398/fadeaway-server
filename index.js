@@ -3,17 +3,26 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { verifyToken } = require("./util/jwt");
 const port = 3008;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use(require("./controllers/authentication-controller"));
 app.use(require("./controllers/registration-controller"));
 
 app.use((req, res, next) => {
-  const token = req.get("auth-token");
+  // get auth token from cookies
+  const token = req.cookies["auth-token"];
+
   if (!token) {
     res.status(401).json({ error: "Unauthorized" });
     return;

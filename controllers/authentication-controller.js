@@ -17,7 +17,13 @@ router.post("/authentication/validate-user", async (req, res) => {
     if (authResponse.error) {
       res.status(401).send(authResponse.error);
     } else {
-      res.send(authResponse);
+      res.cookie("auth-token", authResponse.jwt, {
+        httpOnly: true, // Set HttpOnly flag for security
+        secure: false, // set to true for production
+        sameSite: "strict", // Recommended for CSRF prevention
+        maxAge: 3600000, // 1 hour
+      });
+      res.send("User authenticated successfully");
     }
 
     logger.info("Exiting Authentication Controller Successfully => login");

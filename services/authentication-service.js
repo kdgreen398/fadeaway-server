@@ -7,17 +7,6 @@ const logger = require("../util/logger");
 const { generateToken } = require("../util/jwt");
 
 const bcrypt = require("bcrypt");
-const saltRounds = 10; // You can adjust the number of salt rounds for security.
-
-// Hash a Password
-// bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
-//   if (err) {
-//     console.error("Error hashing password:", err);
-//   } else {
-//     // Store 'hashedPassword' in your database for user registration.
-//     console.log("Hashed Password:", hashedPassword);
-//   }
-// });
 
 module.exports = {
   authenticateUser: async (email, password) => {
@@ -26,7 +15,6 @@ module.exports = {
     let isAuthenticated = false;
     let error;
     let token;
-    const defaultError = "Invalid email or password";
 
     let [user] = await executeQuery(FETCH_CLIENT_BY_EMAIL, [email]);
 
@@ -36,13 +24,7 @@ module.exports = {
     }
 
     if (user) {
-      try {
-        // Verify a Password
-        isAuthenticated = await bcrypt.compare(password, user.password);
-      } catch (err) {
-        logger.error(err);
-        error = defaultError;
-      }
+      isAuthenticated = await bcrypt.compare(password, user.password);
     }
 
     if (isAuthenticated) {
@@ -52,7 +34,7 @@ module.exports = {
         email: user.email,
       });
     } else {
-      error = defaultError;
+      error = "Invalid email or password";
     }
 
     logger.info(

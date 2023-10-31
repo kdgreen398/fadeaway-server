@@ -12,6 +12,12 @@ module.exports = {
   authenticateUser: async (email, password) => {
     logger.info("Entering Authentication Service => authenticateUser");
 
+    if (!email || !password) {
+      return {
+        error: "Email and password are required",
+      };
+    }
+
     let isAuthenticated = false;
     let error;
     let token;

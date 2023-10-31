@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   connectionLimit: 10, // Set connection limit
 });
 
-async function executeQuery(query, values) {
+async function executeSelectQuery(query, values) {
   let connection;
   try {
     connection = await pool.getConnection();
@@ -20,7 +20,23 @@ async function executeQuery(query, values) {
 
     return rows.map((row) => snakeToCamelCaseObj(row));
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error("Error executing select query:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
+async function executeInsertQuery(query, values) {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+
+    await connection.query(query, values);
+  } catch (error) {
+    console.error("Error executing insert query:", error);
     throw error;
   } finally {
     if (connection) {
@@ -30,5 +46,6 @@ async function executeQuery(query, values) {
 }
 
 module.exports = {
-  executeQuery,
+  executeSelectQuery,
+  executeInsertQuery,
 };

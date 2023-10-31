@@ -1,4 +1,4 @@
-const { executeQuery } = require("../util/db/connection-util");
+const { executeSelectQuery } = require("../util/db/connection-util");
 const {
   FETCH_CLIENT_BY_EMAIL,
   FETCH_BARBER_BY_EMAIL,
@@ -22,11 +22,11 @@ module.exports = {
     let error;
     let token;
 
-    let [user] = await executeQuery(FETCH_CLIENT_BY_EMAIL, [email]);
+    let [user] = await executeSelectQuery(FETCH_CLIENT_BY_EMAIL, [email]);
 
     // if no user from first table, check second table
     if (!user) {
-      [user] = await executeQuery(FETCH_BARBER_BY_EMAIL, [email]);
+      [user] = await executeSelectQuery(FETCH_BARBER_BY_EMAIL, [email]);
     }
 
     if (user) {

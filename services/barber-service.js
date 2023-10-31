@@ -1,4 +1,4 @@
-const { executeQuery } = require("../util/db/connection-util");
+const { executeSelectQuery } = require("../util/db/connection-util");
 const {
   FETCH_BARBERS_BY_CITY_STATE,
   FETCH_IMAGES_BY_BARBER_ID,
@@ -12,7 +12,7 @@ module.exports = {
     const barberQuery = FETCH_BARBERS_BY_CITY_STATE;
 
     // execute the query and return the results
-    const barbers = await executeQuery(barberQuery, [city, state]);
+    const barbers = await executeSelectQuery(barberQuery, [city, state]);
 
     const results = await Promise.all(
       barbers.map(async (barber) => {
@@ -20,8 +20,8 @@ module.exports = {
         const reviewQuery = FETCH_REVIEWS_BY_BARBER_ID;
 
         const [images, reviews] = await Promise.all([
-          executeQuery(imageQuery, [barber.barberId]),
-          executeQuery(reviewQuery, [barber.barberId]),
+          executeSelectQuery(imageQuery, [barber.barberId]),
+          executeSelectQuery(reviewQuery, [barber.barberId]),
         ]);
 
         return {

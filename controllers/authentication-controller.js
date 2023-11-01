@@ -3,6 +3,9 @@ const router = express.Router();
 const logger = require("../util/logger");
 const AuthenticationService = require("../services/authentication-service");
 
+const authExpiration = 900000; // 15 minutes
+// const authExpiration = 3600000; // 1 hour
+
 router.post("/authentication/validate-user", async (req, res) => {
   logger.info("Entering Authentication Controller => login");
 
@@ -17,12 +20,24 @@ router.post("/authentication/validate-user", async (req, res) => {
     if (authResponse.error) {
       res.status(401).send(authResponse.error);
     } else {
-      res.cookie("auth-token", authResponse.jwt, {
+      // set cookie for server-side authentication on client (cannot be accessed by client side code)
+      res.cookie("auth-token-server", authResponse.jwt, {
         httpOnly: true, // Set HttpOnly flag for security
         secure: false, // set to true for production
         sameSite: "strict", // Recommended for CSRF prevention
-        maxAge: 3600000, // 1 hour
+        maxAge: authExpiration, // 1 hour
       });
+      // set cookie for client-side authentication on client (can be accessed by client side code)
+      res.cookie(
+        "auth-token-client",
+        { isAuthenticated: true },
+        {
+          httpOnly: false, // Set HttpOnly flag for security
+          secure: false, // set to true for production
+          sameSite: "strict", // Recommended for CSRF prevention
+          maxAge: authExpiration, // 1 hour
+        }
+      );
       res.send("User authenticated successfully");
     }
 

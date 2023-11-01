@@ -21,9 +21,11 @@ app.use(require("./controllers/registration-controller"));
 
 app.use((req, res, next) => {
   // get auth token from cookies
-  const token = req.cookies["auth-token"];
+  const token = req.cookies["auth-token-server"];
 
   if (!token) {
+    // remove client-side auth cookie
+    res.clearCookie("auth-token-client");
     res.status(401).json({ error: "Unauthorized" });
     return;
   }

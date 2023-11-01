@@ -50,7 +50,7 @@ router.post("/authentication/validate-user", async (req, res) => {
   }
 });
 
-router.get("/authentication/revoke-authentication", async (req, res) => {
+router.post("/authentication/revoke-authentication", async (req, res) => {
   logger.info("Entering Authentication Controller => revoke-authentication");
 
   res.clearCookie("auth-token-server");

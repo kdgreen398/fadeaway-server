@@ -7,7 +7,7 @@ const AuthenticationService = require("../services/authentication-service");
 const authExpiration = 3600000; // 1 hour
 
 router.post("/authentication/validate-user", async (req, res) => {
-  logger.info("Entering Authentication Controller => login");
+  logger.info("Entering Authentication Controller => validate-user");
 
   const { email, password } = req.body;
 
@@ -41,11 +41,25 @@ router.post("/authentication/validate-user", async (req, res) => {
       res.send("User authenticated successfully");
     }
 
-    logger.info("Exiting Authentication Controller Successfully => login");
+    logger.info(
+      "Exiting Authentication Controller Successfully => validate-user"
+    );
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error authenticating user");
   }
+});
+
+router.get("/authentication/revoke-authentication", async (req, res) => {
+  logger.info("Entering Authentication Controller => revoke-authentication");
+
+  res.clearCookie("auth-token-server");
+  res.clearCookie("auth-token-client");
+
+  res.send("Authentication revoked");
+  logger.info(
+    "Exiting Authentication Controller Successfully => revoke-authentication"
+  );
 });
 
 module.exports = router;

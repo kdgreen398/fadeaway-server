@@ -23,9 +23,7 @@ router.post("/registration/register-client", async (req, res) => {
 
     res.send(response.message);
 
-    logger.info(
-      "Exiting Registration Controller Successfully => register-client"
-    );
+    logger.info("Exiting Registration Controller => register-client");
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error creating client");

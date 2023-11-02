@@ -14,9 +14,7 @@ module.exports = {
     });
 
     const address = googleAPIResponse.data.results[0].formatted_address;
-    logger.info(
-      "Exiting Geolocation Service Successfully => getAddressFromCoords"
-    );
+    logger.info("Exiting Geolocation Service => getAddressFromCoords");
     return address;
   },
 };

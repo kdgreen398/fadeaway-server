@@ -48,9 +48,7 @@ module.exports = {
       hashedPassword,
     ]);
 
-    logger.info(
-      "Exiting Registration Service Successfully => createClientInDB"
-    );
+    logger.info("Exiting Registration Service => createClientInDB");
     return {
       message: "Client created successfully",
     };

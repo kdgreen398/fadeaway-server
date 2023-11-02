@@ -8,7 +8,7 @@ module.exports = {
 
     const results = await executeSelectQuery(FETCH_ALL_BARBER_CITY_STATES);
 
-    logger.info("Exiting Location Service Successfully => getBarberCityStates");
+    logger.info("Exiting Location Service => getBarberCityStates");
     return results;
   },
 };

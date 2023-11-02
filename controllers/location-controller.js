@@ -26,9 +26,7 @@ router.get("/location/get-location-from-coords", async (req, res) => {
       state,
     });
 
-    logger.info(
-      "Exiting Location Controller Successfully => get-location-from-coords"
-    );
+    logger.info("Exiting Location Controller => get-location-from-coords");
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error getting location from coordinates");
@@ -42,9 +40,7 @@ router.get("/location/get-barber-city-states", async (req, res) => {
 
     res.send(barberCityStates);
 
-    logger.info(
-      "Exiting Location Controller Successfully => get-barber-city-states"
-    );
+    logger.info("Exiting Location Controller => get-barber-city-states");
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error getting barber city states");

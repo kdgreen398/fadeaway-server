@@ -43,9 +43,7 @@ module.exports = {
       error = "Invalid email or password";
     }
 
-    logger.info(
-      "Exiting Authentication Service Successfully => authenticateUser"
-    );
+    logger.info("Exiting Authentication Service => authenticateUser");
     return {
       jwt: token,
       error,

@@ -32,9 +32,7 @@ router.get("/recommendation/get-barbers-by-location", async (req, res) => {
 
     res.send(barbers);
 
-    logger.info(
-      "Exiting Recommendation Controller Successfully => get-barbers-by-location"
-    );
+    logger.info("Exiting Recommendation Controller => get-barbers-by-location");
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error retrieving barbers from database");

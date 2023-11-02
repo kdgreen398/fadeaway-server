@@ -34,7 +34,7 @@ module.exports = {
       })
     );
 
-    logger.info("Exiting Barber Service Successfully => getBarbersByCityState");
+    logger.info("Exiting Barber Service => getBarbersByCityState");
     return results;
   },
 };

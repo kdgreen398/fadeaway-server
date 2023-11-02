@@ -41,9 +41,7 @@ router.post("/authentication/validate-user", async (req, res) => {
       res.send("User authenticated successfully");
     }
 
-    logger.info(
-      "Exiting Authentication Controller Successfully => validate-user"
-    );
+    logger.info("Exiting Authentication Controller => validate-user");
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error authenticating user");
@@ -57,9 +55,7 @@ router.post("/authentication/revoke-authentication", async (req, res) => {
   res.clearCookie("auth-token-client");
 
   res.send("Authentication revoked");
-  logger.info(
-    "Exiting Authentication Controller Successfully => revoke-authentication"
-  );
+  logger.info("Exiting Authentication Controller => revoke-authentication");
 });
 
 module.exports = router;

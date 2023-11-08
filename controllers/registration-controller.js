@@ -14,7 +14,7 @@ router.post("/registration/register-client", async (req, res) => {
       lastName,
       email,
       phone,
-      password
+      password,
     );
 
     if (response.error) {
@@ -29,5 +29,26 @@ router.post("/registration/register-client", async (req, res) => {
     res.status(500).send("Error creating client");
   }
 });
+
+// Will be used to generate public profile id's for barbers
+// const crypto = require("crypto");
+
+// function generateProfileId(email) {
+//   // Create a hash object using a secure algorithm like SHA-256
+//   const hash = crypto.createHash("sha256");
+
+//   // Update the hash with the email
+//   hash.update(email);
+
+//   // Get the hexadecimal representation of the hash
+//   const profileId = hash.digest("hex");
+
+//   return profileId;
+// }
+
+// // Example usage:
+// const email = "user@example.com";
+// const profileId = generateProfileId(email);
+// console.log(profileId);
 
 module.exports = router;

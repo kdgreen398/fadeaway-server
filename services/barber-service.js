@@ -12,6 +12,7 @@ module.exports = {
     const barberQuery = FETCH_BARBERS_BY_CITY_STATE;
 
     // execute the query and return the results
+    // convert to inner join query with images and reviews
     const barbers = await executeSelectQuery(barberQuery, [city, state]);
 
     const results = await Promise.all(

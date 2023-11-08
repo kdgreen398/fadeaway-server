@@ -5,12 +5,13 @@ const logger = require("../util/logger");
 module.exports = {
   getClientAppointments: async (client) => {
     logger.info("Entering Appointment Service => getClientAppointments");
-    console.log(client);
+
     const appointments = await executeSelectQuery(
       FETCH_APPOINTMENTS_BY_CLIENT_EMAIL,
-      [client.email]
+      [client.email],
     );
+
     logger.info("Exiting Appointment Service => getClientAppointments");
-    return user;
+    return appointments;
   },
 };

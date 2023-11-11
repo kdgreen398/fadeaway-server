@@ -3,6 +3,27 @@ const router = express.Router();
 const logger = require("../util/logger");
 const RegistrationService = require("../services/registration-service");
 
+// Will be used to generate public profile id's for barbers
+const crypto = require("crypto");
+
+function generateProfileId(email) {
+  // Create a hash object using a secure algorithm like SHA-256
+  const hash = crypto.createHash("MD5");
+
+  // Update the hash with the email
+  hash.update(email);
+
+  // Get the hexadecimal representation of the hash
+  const profileId = hash.digest("hex");
+
+  return profileId;
+}
+
+router.get("/test-pubilc-id", async (req, res) => {
+  const profileId = generateProfileId("kaleb.green@example.com");
+  res.send(profileId);
+});
+
 router.post("/registration/register-client", async (req, res) => {
   logger.info("Entering Registration Controller => register-client");
 
@@ -29,26 +50,5 @@ router.post("/registration/register-client", async (req, res) => {
     res.status(500).send("Error creating client");
   }
 });
-
-// Will be used to generate public profile id's for barbers
-// const crypto = require("crypto");
-
-// function generateProfileId(email) {
-//   // Create a hash object using a secure algorithm like SHA-256
-//   const hash = crypto.createHash("sha256");
-
-//   // Update the hash with the email
-//   hash.update(email);
-
-//   // Get the hexadecimal representation of the hash
-//   const profileId = hash.digest("hex");
-
-//   return profileId;
-// }
-
-// // Example usage:
-// const email = "user@example.com";
-// const profileId = generateProfileId(email);
-// console.log(profileId);
 
 module.exports = router;

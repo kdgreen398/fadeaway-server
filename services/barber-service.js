@@ -2,7 +2,7 @@ const { executeSelectQuery } = require("../util/db/connection-util");
 const {
   FETCH_BARBERS_BY_CITY_STATE,
   FETCH_IMAGES_BY_BARBER_ID,
-  FETCH_REVIEWS_BY_BARBER_ID,
+  FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 
@@ -18,7 +18,7 @@ module.exports = {
     const results = await Promise.all(
       barbers.map(async (barber) => {
         const imageQuery = FETCH_IMAGES_BY_BARBER_ID;
-        const reviewQuery = FETCH_REVIEWS_BY_BARBER_ID;
+        const reviewQuery = FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID;
 
         const [images, reviews] = await Promise.all([
           executeSelectQuery(imageQuery, [barber.barberId]),
@@ -26,13 +26,15 @@ module.exports = {
         ]);
 
         return {
-          barberName: `${barber.firstName} ${barber.lastName}`,
+          publicId: barber.publicId,
+          barberName: barber.name,
           alias: barber.alias,
           shopName: barber.shop,
+          averageRating: reviews[0].averageRating,
+          totalReviews: reviews[0].totalReviews,
           images,
-          reviews,
         };
-      })
+      }),
     );
 
     logger.info("Exiting Barber Service => getBarbersByCityState");

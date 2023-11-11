@@ -30,9 +30,9 @@ module.exports = {
 
         return {
           publicId: barber.publicId,
-          barberName: barber.name,
+          name: barber.name,
           alias: barber.alias,
-          shopName: barber.shop,
+          shop: barber.shop,
           averageRating: reviews[0].averageRating,
           totalReviews: reviews[0].totalReviews,
           images,

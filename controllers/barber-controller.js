@@ -1,84 +1,32 @@
 const express = require("express");
 const router = express.Router();
+const logger = require("../util/logger");
+const BarberService = require("../services/barber-service");
 
-router.post("/barber-service/fetch-by-location", async (req, res) => {
-  res.send([
-    {
-      id: 1,
-      barberName: "Barber#" + Math.floor(Math.random() * 100),
-      shopName: "Magic Fades Barber Shop",
-      rating: "4.5",
-      reviewCount: 100,
-      images: [
-        "https://picsum.photos/400/400",
-        "https://picsum.photos/401/400",
-        "https://picsum.photos/402/400",
-        "https://picsum.photos/403/400",
-        "https://picsum.photos/405/400",
-        "https://picsum.photos/406/400",
-      ],
-    },
-    {
-      id: 2,
-      barberName: "Barber#" + Math.floor(Math.random() * 100),
-      shopName: "Magic Fades Barber Shop",
-      rating: "4.5",
-      reviewCount: 100,
-      images: [
-        "https://picsum.photos/405/400",
-        "https://picsum.photos/406/400",
-        "https://picsum.photos/407/400",
-        "https://picsum.photos/408/400",
-      ],
-    },
-  ]);
-});
+router.get("/barber/fetch-barber-details", async (req, res) => {
+  logger.info("Entering Barber Controller => fetch-barber-details");
 
-router.post("/barber-service/fetch-barber-details", async (req, res) => {
-  res.send({
-    id: 1,
-    profilePhoto: "https://picsum.photos/100/100",
-    barberName: "Trey Johnson",
-    shopName: "Magic Fades Barber Shop",
-    rating: "3.0",
-    reviewCount: 145,
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dictum risus sit amet malesuada cursus.",
-    images: [
-      "https://picsum.photos/200/300",
-      "https://picsum.photos/201/200",
-      "https://picsum.photos/202/300",
-      "https://picsum.photos/203/100",
-      "https://picsum.photos/204/400",
-      "https://picsum.photos/205/300",
-    ],
-    paymentOptions: ["Cash", "Card", "Cash App"],
-    address: "2615 Memorial Drive, Nashville, TN 35834",
-    phoneNumber: "(662) 555-0371",
-    email: "youremail@gmail.com",
-    reviews: [
-      {
-        id: 1,
-        rating: 4,
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dictum risus sit amet malesuada cursus.",
-        date: "2022-01-01 10:00:00",
-        user: {
-          id: 1,
-          name: "User 1",
-        },
-      },
-    ],
-    services: [
-      {
-        id: 1,
-        name: "Service 1",
-        appointmentLength: "30 minutes",
-        description: "Description 1",
-        price: "$100",
-      },
-    ],
-    // available times will be fetched once navigating to the time selection screen
-  });
+  const { publicId } = req.query;
+
+  if (!publicId) {
+    res.status(400).send("Missing required query parameter: publicId");
+    return;
+  }
+
+  try {
+    const barberDetails = await BarberService.getBarberDetails(publicId);
+
+    if (!barberDetails) {
+      res.status(404).send("Barber not found");
+      return;
+    }
+
+    res.send(barberDetails);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("Error fetching barber details");
+  }
+  logger.info("Exiting Barber Controller => fetch-barber-details");
 });
 
 module.exports = router;

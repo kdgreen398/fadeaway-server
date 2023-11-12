@@ -1,5 +1,6 @@
 const mysql = require("mysql2/promise");
 const { snakeToCamelCaseObj } = require("../format");
+const logger = require("../logger");
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -20,8 +21,7 @@ async function executeSelectQuery(query, values) {
 
     return rows.map((row) => snakeToCamelCaseObj(row));
   } catch (error) {
-    console.error("Error executing select query:", error);
-    throw error;
+    logger.error("Error executing select query: " + error);
   } finally {
     if (connection) {
       connection.release();

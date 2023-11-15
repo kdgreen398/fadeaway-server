@@ -3,27 +3,6 @@ const router = express.Router();
 const logger = require("../util/logger");
 const RegistrationService = require("../services/registration-service");
 
-// Will be used to generate public profile id's for barbers
-const crypto = require("crypto");
-
-function generateProfileId(email) {
-  // Create a hash object using a secure algorithm like SHA-256
-  const hash = crypto.createHash("MD5");
-
-  // Update the hash with the email
-  hash.update(email);
-
-  // Get the hexadecimal representation of the hash
-  const profileId = hash.digest("hex");
-
-  return profileId;
-}
-
-router.get("/test-pubilc-id", async (req, res) => {
-  const profileId = generateProfileId("kaleb.green@example.com");
-  res.send(profileId);
-});
-
 router.post("/registration/register-client", async (req, res) => {
   logger.info("Entering Registration Controller => register-client");
 
@@ -47,6 +26,25 @@ router.post("/registration/register-client", async (req, res) => {
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error creating client");
+  }
+});
+
+router.post("/registration/register-barber", async (req, res) => {
+  logger.info("Entering Registration Controller => register-barber");
+
+  try {
+    const response = await RegistrationService.createBarberInDB(req.body);
+
+    if (response.error) {
+      res.status(400).send(response.error);
+    }
+
+    res.send(response.message);
+
+    logger.info("Exiting Registration Controller => register-barber");
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("Error creating barber");
   }
 });
 

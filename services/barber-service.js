@@ -28,6 +28,10 @@ module.exports = {
           executeSelectQuery(reviewQuery, [barber.barberId]),
         ]);
 
+        if (images.length === 0) {
+          return null;
+        }
+
         return {
           publicId: barber.publicId,
           name: barber.name,
@@ -41,7 +45,7 @@ module.exports = {
     );
 
     logger.info("Exiting Barber Service => getBarbersByCityState");
-    return results;
+    return results.filter((result) => result !== null);
   },
   getBarberDetails: async (publicId) => {
     logger.info("Entering Barber Service => getBarberDetails");

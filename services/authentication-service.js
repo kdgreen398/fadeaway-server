@@ -47,7 +47,7 @@ async function authenticateUser(email, password) {
   logger.info("Exiting Authentication Service => authenticateUser");
   return {
     jwt: token,
-    user: {
+    user: user && {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,

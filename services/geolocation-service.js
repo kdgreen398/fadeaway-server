@@ -3,18 +3,20 @@ const logger = require("../util/logger");
 
 const client = new Client({});
 
-module.exports = {
-  getAddressFromCoords: async (lat, lng) => {
-    logger.info("Entering Geolocation Service => getAddressFromCoords");
-    const googleAPIResponse = await client.reverseGeocode({
-      params: {
-        latlng: { lat, lng },
-        key: process.env.GOOGLE_MAPS_API_KEY,
-      },
-    });
+async function getAddressFromCoords(lat, lng) {
+  logger.info("Entering Geolocation Service => getAddressFromCoords");
+  const googleAPIResponse = await client.reverseGeocode({
+    params: {
+      latlng: { lat, lng },
+      key: process.env.GOOGLE_MAPS_API_KEY,
+    },
+  });
 
-    const address = googleAPIResponse.data.results[0].formatted_address;
-    logger.info("Exiting Geolocation Service => getAddressFromCoords");
-    return address;
-  },
+  const address = googleAPIResponse.data.results[0].formatted_address;
+  logger.info("Exiting Geolocation Service => getAddressFromCoords");
+  return address;
+}
+
+module.exports = {
+  getAddressFromCoords,
 };

@@ -14,7 +14,7 @@ router.post("/authentication/validate-user", async (req, res) => {
   try {
     const authResponse = await AuthenticationService.authenticateUser(
       email,
-      password
+      password,
     );
 
     if (authResponse.error) {
@@ -28,16 +28,12 @@ router.post("/authentication/validate-user", async (req, res) => {
         maxAge: authExpiration, // 1 hour
       });
       // set cookie for client-side authentication on client (can be accessed by client side code)
-      res.cookie(
-        "auth-token-client",
-        { isAuthenticated: true },
-        {
-          httpOnly: false, // Set HttpOnly flag for security
-          secure: false, // set to true for production
-          sameSite: "strict", // Recommended for CSRF prevention
-          maxAge: authExpiration, // 1 hour
-        }
-      );
+      res.cookie("auth-token-client", authResponse.user, {
+        httpOnly: false, // Set HttpOnly flag for security
+        secure: false, // set to true for production
+        sameSite: "strict", // Recommended for CSRF prevention
+        maxAge: authExpiration, // 1 hour
+      });
       res.send("User authenticated successfully");
     }
 

@@ -20,12 +20,14 @@ async function authenticateUser(email, password) {
   let isAuthenticated = false;
   let error;
   let token;
+  let accountType = "client";
 
   let [user] = await executeSelectQuery(FETCH_CLIENT_BY_EMAIL, [email]);
 
   // if no user from first table, check second table
   if (!user) {
     [user] = await executeSelectQuery(FETCH_BARBER_BY_EMAIL, [email]);
+    accountType = "barber";
   }
 
   if (user) {
@@ -45,6 +47,13 @@ async function authenticateUser(email, password) {
   logger.info("Exiting Authentication Service => authenticateUser");
   return {
     jwt: token,
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      publicId: user.publicId,
+      accountType,
+    },
     error,
   };
 }

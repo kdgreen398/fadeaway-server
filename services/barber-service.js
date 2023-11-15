@@ -68,6 +68,7 @@ async function getBarberDetails(publicId) {
   logger.info("Exiting Barber Service => getBarberDetails");
   return {
     ...barber,
+    formattedAddress: `${barber.addressLine1} ${barber.addressLine2}, ${barber.city}, ${barber.state} ${barber.zipCode}`,
     images,
     reviews,
   };

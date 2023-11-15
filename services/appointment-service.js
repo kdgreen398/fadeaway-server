@@ -11,7 +11,10 @@ async function getClientAppointments(client) {
   );
 
   logger.info("Exiting Appointment Service => getClientAppointments");
-  return appointments;
+  return appointments.map((appt) => ({
+    ...appt,
+    formattedAddress: `${appt.addressLine1} ${appt.addressLine2}, ${appt.city}, ${appt.state} ${appt.zipCode}`,
+  }));
 }
 
 module.exports = {

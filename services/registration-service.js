@@ -3,15 +3,11 @@ const { CREATE_CLIENT_IN_DB } = require("../util/db/queries");
 const logger = require("../util/logger");
 
 const bcrypt = require("bcrypt");
-const {
-  isValidEmail,
-  isValidPhoneNumber,
-  isStrongPassword,
-} = require("../util/string-validation");
+const { isValidEmail, isStrongPassword } = require("../util/string-validation");
 const saltRounds = 10; // You can adjust the number of salt rounds for security.
 
 module.exports = {
-  createClientInDB: async (firstName, lastName, email, phone, password) => {
+  createClientInDB: async (firstName, lastName, email, password) => {
     logger.info("Entering Registration Service => createClientInDB");
 
     if (!firstName || !lastName || !email || !password) {
@@ -23,12 +19,6 @@ module.exports = {
     if (!isValidEmail(email)) {
       return {
         error: "Invalid email address",
-      };
-    }
-
-    if (phone && !isValidPhoneNumber(phone)) {
-      return {
-        error: "Invalid phone number",
       };
     }
 
@@ -44,7 +34,6 @@ module.exports = {
       firstName,
       lastName,
       email,
-      phone,
       hashedPassword,
     ]);
 

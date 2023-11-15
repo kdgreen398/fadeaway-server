@@ -27,14 +27,13 @@ router.get("/test-pubilc-id", async (req, res) => {
 router.post("/registration/register-client", async (req, res) => {
   logger.info("Entering Registration Controller => register-client");
 
-  const { firstName, lastName, email, phone, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   try {
     const response = await RegistrationService.createClientInDB(
       firstName,
       lastName,
       email,
-      phone,
       password,
     );
 

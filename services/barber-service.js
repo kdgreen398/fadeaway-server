@@ -5,6 +5,7 @@ const {
   FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID,
   FETCH_BARBER_DETAILS_BY_PUBLIC_ID,
   FETCH_REVIEWS_BY_BARBER_ID,
+  FETCH_SERVICES_BY_BARBER_ID,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 
@@ -57,10 +58,12 @@ async function getBarberDetails(publicId) {
 
   const imageQuery = FETCH_IMAGES_BY_BARBER_ID;
   const reviewQuery = FETCH_REVIEWS_BY_BARBER_ID;
+  const serviceQuery = FETCH_SERVICES_BY_BARBER_ID;
 
-  const [images, reviews] = await Promise.all([
+  const [images, reviews, services] = await Promise.all([
     executeSelectQuery(imageQuery, [barber.barberId]),
     executeSelectQuery(reviewQuery, [barber.barberId]),
+    executeSelectQuery(serviceQuery, [barber.barberId]),
   ]);
 
   delete barber.barberId;
@@ -71,6 +74,7 @@ async function getBarberDetails(publicId) {
     formattedAddress: `${barber.addressLine1} ${barber.addressLine2}, ${barber.city}, ${barber.state} ${barber.zipCode}`,
     images,
     reviews,
+    services,
   };
 }
 

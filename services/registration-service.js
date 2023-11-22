@@ -1,7 +1,12 @@
-const { executeInsertQuery } = require("../util/db/connection-util");
+const {
+  executeInsertQuery,
+  executeSelectQuery,
+} = require("../util/db/connection-util");
 const {
   CREATE_CLIENT_IN_DB,
   CREATE_BARBER_IN_DB,
+  FETCH_CLIENT_BY_EMAIL,
+  FETCH_BARBER_BY_EMAIL,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 const bcrypt = require("bcrypt");
@@ -35,6 +40,16 @@ async function createClientInDB(firstName, lastName, email, password) {
   if (!isValidEmail(email)) {
     return {
       error: "Invalid email address",
+    };
+  }
+
+  // check if email exists in barber table
+  // if so, return error
+
+  let [user] = await executeSelectQuery(FETCH_BARBER_BY_EMAIL, [email]);
+  if (user) {
+    return {
+      error: "Email already exists",
     };
   }
 
@@ -95,6 +110,16 @@ async function createBarberInDB(barber) {
   if (!isValidEmail(email)) {
     return {
       error: "Invalid email address",
+    };
+  }
+
+  // check if email exists in barber table
+  // if so, return error
+
+  let [user] = await executeSelectQuery(FETCH_CLIENT_BY_EMAIL, [email]);
+  if (user) {
+    return {
+      error: "Email already exists",
     };
   }
 

@@ -5,7 +5,7 @@ const secretKey = process.env.JWT_SECRET_KEY; // Replace with your actual secret
 module.exports = {
   secretKey,
   generateToken: (tokenPayload) => {
-    return jwt.sign(tokenPayload, secretKey, { expiresIn: "1h" });
+    return jwt.sign(tokenPayload, secretKey, { expiresIn: "24h" });
   },
   verifyToken: (token) => {
     return jwt.verify(token, secretKey);

@@ -4,7 +4,7 @@ const logger = require("../util/logger");
 const AuthenticationService = require("../services/authentication-service");
 
 // const authExpiration = 900000; // 15 minutes
-const authExpiration = 3600000; // 1 hour
+const authExpiration = 3600000 * 24; // 24 hours
 
 router.post("/authentication/validate-user", async (req, res) => {
   logger.info("Entering Authentication Controller => validate-user");

@@ -5,13 +5,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { verifyToken } = require("./util/jwt");
+const logger = require("./util/logger");
 const port = 3008;
 
 app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
-  })
+  }),
 );
 app.use(bodyParser.json());
 app.use(cookieParser());

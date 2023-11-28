@@ -39,6 +39,8 @@ async function authenticateUser(email, password) {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      publicId: user.publicId,
+      accountType,
     });
   } else {
     error = "Invalid email or password";
@@ -47,13 +49,6 @@ async function authenticateUser(email, password) {
   logger.info("Exiting Authentication Service => authenticateUser");
   return {
     jwt: token,
-    user: user && {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      publicId: user.publicId,
-      accountType,
-    },
     error,
   };
 }

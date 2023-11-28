@@ -8,7 +8,7 @@ router.get("/appointments/get-apppointments", async (req, res) => {
   logger.info("Entering Appointment Controller => get-apppointments");
 
   try {
-    const token = req.cookies["auth-token-server"];
+    const token = req.cookies["auth-token"];
     const payload = verifyToken(token);
     const appointments = await AppointmentService.getClientAppointments(
       payload,

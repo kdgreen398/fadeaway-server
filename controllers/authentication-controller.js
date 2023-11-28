@@ -20,15 +20,8 @@ router.post("/authentication/validate-user", async (req, res) => {
     if (authResponse.error) {
       res.status(401).send(authResponse.error);
     } else {
-      // set cookie for server-side authentication on client (cannot be accessed by client side code)
-      res.cookie("auth-token-server", authResponse.jwt, {
-        httpOnly: true, // Set HttpOnly flag for security
-        secure: false, // set to true for production
-        sameSite: "strict", // Recommended for CSRF prevention
-        maxAge: authExpiration, // 1 hour
-      });
-      // set cookie for client-side authentication on client (can be accessed by client side code)
-      res.cookie("auth-token-client", authResponse.user, {
+      // set cookie for server-side authentication on client
+      res.cookie("auth-token", authResponse.jwt, {
         httpOnly: false, // Set HttpOnly flag for security
         secure: false, // set to true for production
         sameSite: "strict", // Recommended for CSRF prevention
@@ -47,8 +40,7 @@ router.post("/authentication/validate-user", async (req, res) => {
 router.post("/authentication/revoke-authentication", async (req, res) => {
   logger.info("Entering Authentication Controller => revoke-authentication");
 
-  res.clearCookie("auth-token-server");
-  res.clearCookie("auth-token-client");
+  res.clearCookie("auth-token");
 
   res.send("Authentication revoked");
   logger.info("Exiting Authentication Controller => revoke-authentication");

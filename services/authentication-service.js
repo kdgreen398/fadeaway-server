@@ -40,6 +40,7 @@ async function authenticateUser(email, password) {
       lastName: user.lastName,
       email: user.email,
       publicId: user.publicId,
+      id: user.clientId || user.barberId,
       accountType,
     });
   } else {

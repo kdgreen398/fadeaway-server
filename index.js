@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   }
 
   try {
-    verifyToken(token);
+    req.headers["user"] = verifyToken(token);
   } catch {
     res.status(401).json({ error: "Unauthorized" });
     return;
@@ -45,6 +45,7 @@ app.use(require("./controllers/recommendation-controller"));
 app.use(require("./controllers/location-controller"));
 app.use(require("./controllers/barber-controller"));
 app.use(require("./controllers/appointment-controller"));
+app.use(require("./controllers/service-management-controller"));
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

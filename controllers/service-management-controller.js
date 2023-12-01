@@ -9,10 +9,8 @@ router.post("/service-management/create-service", async (req, res) => {
   const { name, length, description, price } = req.body;
   const user = req.headers["user"];
 
-  if (!name || !length || !description || !price) {
-    res
-      .status(400)
-      .send("Missing required parameters: name, length, description, price");
+  if (!name || !length || !price) {
+    res.status(400).send("Missing required parameters: name, length, price");
     return;
   }
 
@@ -39,12 +37,10 @@ router.put("/service-management/update-service", async (req, res) => {
   const { name, length, description, price, serviceId } = req.body;
   const user = req.headers["user"];
 
-  if (!name || !length || !description || !price || !serviceId) {
+  if (!name || !length || !price || !serviceId) {
     res
       .status(400)
-      .send(
-        "Missing required parameters: name, length, description, price, serviceId",
-      );
+      .send("Missing required parameters: name, length, price, serviceId");
     return;
   }
 

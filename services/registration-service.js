@@ -1,5 +1,5 @@
 const {
-  executeInsertQuery,
+  executeNonSelectQuery,
   executeSelectQuery,
 } = require("../util/db/connection-util");
 const {
@@ -61,7 +61,7 @@ async function createClientInDB(firstName, lastName, email, password) {
   }
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  await executeInsertQuery(CREATE_CLIENT_IN_DB, [
+  await executeNonSelectQuery(CREATE_CLIENT_IN_DB, [
     firstName,
     lastName,
     email,
@@ -134,7 +134,7 @@ async function createBarberInDB(barber) {
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  await executeInsertQuery(CREATE_BARBER_IN_DB, [
+  await executeNonSelectQuery(CREATE_BARBER_IN_DB, [
     firstName,
     lastName,
     shop,

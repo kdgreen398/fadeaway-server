@@ -29,7 +29,7 @@ async function executeSelectQuery(query, values) {
   }
 }
 
-async function executeInsertQuery(query, values) {
+async function executeNonSelectQuery(query, values) {
   let connection;
   try {
     connection = await pool.getConnection();
@@ -47,5 +47,5 @@ async function executeInsertQuery(query, values) {
 
 module.exports = {
   executeSelectQuery,
-  executeInsertQuery,
+  executeNonSelectQuery,
 };

@@ -8,15 +8,27 @@ const {
   UPDATE_SERVICE,
   FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
   DELETE_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
+  FETCH_SERVICE_COUNT_BY_BARBER_ID,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 
-async function createService(name, length, description, price, id) {
+async function createService(name, hours, minutes, description, price, id) {
   logger.info("Entering Service Management Service => createService");
+
+  // if user has more than 6 services, throw error
+  const [{ serviceCount }] = await executeSelectQuery(
+    FETCH_SERVICE_COUNT_BY_BARBER_ID,
+    [id],
+  );
+
+  if (serviceCount >= 6) {
+    throw new Error("You have reached the maximum number of services");
+  }
 
   await executeNonSelectQuery(CREATE_SERVICE, [
     name,
-    length,
+    hours,
+    minutes,
     description,
     price,
     id,
@@ -28,7 +40,8 @@ async function createService(name, length, description, price, id) {
 
 async function updateService(
   name,
-  length,
+  hours,
+  minutes,
   description,
   price,
   serviceId,
@@ -47,7 +60,8 @@ async function updateService(
 
   await executeNonSelectQuery(UPDATE_SERVICE, [
     name,
-    length,
+    hours,
+    minutes,
     description,
     price,
     serviceId,

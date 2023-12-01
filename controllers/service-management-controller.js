@@ -66,4 +66,29 @@ router.put("/service-management/update-service", async (req, res) => {
   logger.info("Exiting Service Management Controller => update-service");
 });
 
+router.delete("/service-management/delete-service", async (req, res) => {
+  logger.info("Entering Service Management Controller => delete-service");
+
+  const { serviceId } = req.query;
+  const user = req.headers["user"];
+
+  if (!serviceId) {
+    res.status(400).send("Missing required parameters: serviceId");
+    return;
+  }
+
+  try {
+    const response = await ServiceManagementService.deleteService(
+      serviceId,
+      user.id,
+    );
+
+    res.send(response);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("Error deleting service");
+  }
+  logger.info("Exiting Service Management Controller => delete-service");
+});
+
 module.exports = router;

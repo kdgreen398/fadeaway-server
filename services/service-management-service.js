@@ -7,6 +7,7 @@ const {
   CREATE_SERVICE,
   UPDATE_SERVICE,
   FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
+  DELETE_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 
@@ -57,7 +58,29 @@ async function updateService(
   return "Service updated successfully";
 }
 
+async function deleteService(serviceId, barberId) {
+  logger.info("Entering Service Management Service => deleteService");
+
+  const [service] = await executeSelectQuery(
+    FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
+    [serviceId, barberId],
+  );
+
+  if (!service) {
+    throw new Error("Service does not exist");
+  }
+
+  await executeNonSelectQuery(DELETE_SERVICE_BY_SERVICE_ID_AND_BARBER_ID, [
+    serviceId,
+    barberId,
+  ]);
+
+  logger.info("Exiting Service Management Service => deleteService");
+  return "Service deleted successfully";
+}
+
 module.exports = {
   createService,
   updateService,
+  deleteService,
 };

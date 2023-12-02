@@ -3,7 +3,7 @@ const router = express.Router();
 const logger = require("../util/logger");
 const ServiceManagementService = require("../services/service-management-service");
 
-function validateParameters(name, hours, minutes, price) {
+function validateParameters(hours, minutes, price) {
   if (
     !Number.isInteger(minutes) ||
     !Number.isInteger(hours) ||
@@ -22,6 +22,14 @@ function validateParameters(name, hours, minutes, price) {
 
   if (hours === 0 && minutes === 0) {
     throw new Error("Invalid time: hours and minutes cannot both be 0");
+  }
+
+  if (price === 0) {
+    throw new Error("Invalid price: price cannot be 0");
+  }
+
+  if (price > 999) {
+    throw new Error("Invalid price: price cannot be greater than 999");
   }
 
   if (hours >= 24 || minutes >= 60) {
@@ -52,7 +60,7 @@ router.post("/service-management/create-service", async (req, res) => {
         "Missing required parameters: name, hours, minutes, price",
       );
     }
-    validateParameters(name, hours, minutes, price);
+    validateParameters(hours, minutes, price);
   } catch (err) {
     logger.error(err);
     res.status(400).send(err.message);
@@ -95,7 +103,7 @@ router.put("/service-management/update-service", async (req, res) => {
         "Missing required parameters: name, hours, minutes, price, serviceId",
       );
     }
-    validateParameters(name, hours, minutes, price);
+    validateParameters(hours, minutes, price);
   } catch (err) {
     logger.error(err);
     res.status(400).send(err.message);

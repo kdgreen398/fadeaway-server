@@ -1,6 +1,5 @@
 const {
   executeNonSelectQuery,
-  executeUpdateQuery,
   executeSelectQuery,
 } = require("../util/db/connection-util");
 const {
@@ -9,8 +8,20 @@ const {
   FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
   DELETE_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
   FETCH_SERVICE_COUNT_BY_BARBER_ID,
+  FETCH_SERVICES_BY_BARBER_ID,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
+
+async function getServices(barberId) {
+  logger.info("Entering Service Management Service => getServices");
+
+  const services = await executeSelectQuery(FETCH_SERVICES_BY_BARBER_ID, [
+    barberId,
+  ]);
+
+  logger.info("Exiting Service Management Service => getServices");
+  return services;
+}
 
 async function createService(name, hours, minutes, description, price, id) {
   logger.info("Entering Service Management Service => createService");
@@ -94,6 +105,7 @@ async function deleteService(serviceId, barberId) {
 }
 
 module.exports = {
+  getServices,
   createService,
   updateService,
   deleteService,

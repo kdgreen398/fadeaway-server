@@ -43,6 +43,27 @@ function validateParameters(hours, minutes, price) {
   }
 }
 
+router.get("/service-management/get-services", async (req, res) => {
+  logger.info("Entering Service Management Controller => get-services");
+
+  const { barberId } = req.query;
+
+  if (!barberId) {
+    res.status(400).send("Missing required parameters: barberId");
+    return;
+  }
+
+  try {
+    const response = await ServiceManagementService.getServices(barberId);
+
+    res.send(response);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("Error getting services");
+  }
+  logger.info("Exiting Service Management Controller => get-services");
+});
+
 router.post("/service-management/create-service", async (req, res) => {
   logger.info("Entering Service Management Controller => create-service");
 

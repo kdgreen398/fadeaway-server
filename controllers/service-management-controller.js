@@ -132,7 +132,7 @@ router.put("/service-management/update-service", async (req, res) => {
   }
 
   try {
-    const response = await ServiceManagementService.updateService(
+    const updatedService = await ServiceManagementService.updateService(
       name,
       hours,
       minutes,
@@ -142,7 +142,7 @@ router.put("/service-management/update-service", async (req, res) => {
       user.id,
     );
 
-    res.send(response);
+    res.send(updatedService);
   } catch (err) {
     logger.error(err);
     res.status(500).send("Error updating service");

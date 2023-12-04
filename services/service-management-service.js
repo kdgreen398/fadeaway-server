@@ -23,13 +23,20 @@ async function getServices(barberId) {
   return services;
 }
 
-async function createService(name, hours, minutes, description, price, id) {
+async function createService(
+  name,
+  hours,
+  minutes,
+  description,
+  price,
+  barberId,
+) {
   logger.info("Entering Service Management Service => createService");
 
   // if user has more than 6 services, throw error
   const [{ serviceCount }] = await executeSelectQuery(
     FETCH_SERVICE_COUNT_BY_BARBER_ID,
-    [id]
+    [barberId],
   );
 
   if (serviceCount >= 6) {
@@ -42,11 +49,13 @@ async function createService(name, hours, minutes, description, price, id) {
     minutes,
     description,
     price,
-    id,
+    barberId,
   ]);
 
+  const services = await getServices(barberId);
+
   logger.info("Exiting Service Management Service => createService");
-  return "Service created successfully";
+  return services[services.length - 1];
 }
 
 async function updateService(
@@ -56,13 +65,13 @@ async function updateService(
   description,
   price,
   serviceId,
-  barberId
+  barberId,
 ) {
   logger.info("Entering Service Management Service => updateService");
 
   const [service] = await executeSelectQuery(
     FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
-    [serviceId, barberId]
+    [serviceId, barberId],
   );
 
   if (!service) {
@@ -81,7 +90,7 @@ async function updateService(
 
   const [updatedService] = await executeSelectQuery(
     FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
-    [serviceId, barberId]
+    [serviceId, barberId],
   );
 
   logger.info("Exiting Service Management Service => updateService");
@@ -93,7 +102,7 @@ async function deleteService(serviceId, barberId) {
 
   const [service] = await executeSelectQuery(
     FETCH_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
-    [serviceId, barberId]
+    [serviceId, barberId],
   );
 
   if (!service) {

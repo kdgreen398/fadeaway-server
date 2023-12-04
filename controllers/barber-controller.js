@@ -77,7 +77,7 @@ router.put("/barber/update-barber-details", async (req, res) => {
       addressLine2,
       city,
       state,
-      zipCode
+      zipCode,
     );
 
     res.send(barberDetails);

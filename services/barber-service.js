@@ -53,7 +53,7 @@ async function getBarbersByCityState(city, state) {
         totalReviews: reviews[0].totalReviews,
         images,
       };
-    })
+    }),
   );
 
   logger.info("Exiting Barber Service => getBarbersByCityState");
@@ -99,7 +99,7 @@ async function updateBarberDetails(
   addressLine2,
   city,
   state,
-  zipCode
+  zipCode,
 ) {
   logger.info("Entering Barber Service => updateBarberDetails");
   const [barber] = await executeSelectQuery(FETCH_BARBER_DETAILS_BY_BARBER_ID, [
@@ -114,8 +114,8 @@ async function updateBarberDetails(
     firstName,
     lastName,
     alias || null,
-    bio || null,
     shop,
+    bio || null,
     addressLine1,
     addressLine2 || null,
     city,
@@ -126,7 +126,7 @@ async function updateBarberDetails(
 
   const [updatedBarberDetails] = await executeSelectQuery(
     FETCH_BARBER_DETAILS_BY_BARBER_ID,
-    [barberId]
+    [barberId],
   );
 
   logger.info("Exiting Barber Service => updateBarberDetails");

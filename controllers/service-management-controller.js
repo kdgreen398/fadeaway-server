@@ -112,6 +112,11 @@ router.put("/service-management/update-service", async (req, res) => {
   const { name, hours, minutes, description, price, serviceId } = req.body;
   const user = req.headers["user"];
 
+  if (user.accountType !== "barber") {
+    res.status(403).send("Unauthorized");
+    return;
+  }
+
   try {
     if (
       !name ||

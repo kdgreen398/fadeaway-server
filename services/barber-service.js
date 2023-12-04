@@ -1,13 +1,25 @@
-const { executeSelectQuery } = require("../util/db/connection-util");
+const {
+  executeSelectQuery,
+  executeNonSelectQuery,
+} = require("../util/db/connection-util");
 const {
   FETCH_BARBERS_BY_CITY_STATE,
   FETCH_IMAGES_BY_BARBER_ID,
   FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID,
   FETCH_BARBER_DETAILS_BY_PUBLIC_ID,
   FETCH_REVIEWS_BY_BARBER_ID,
+  FETCH_BARBER_DETAILS_BY_BARBER_ID,
+  UPDATE_BARBER_DETAILS,
 } = require("../util/db/queries");
 const logger = require("../util/logger");
 const ServiceManagementService = require("./service-management-service");
+
+const formatAddress = (barber) =>
+  `${barber.addressLine1}${
+    barber.addressLine2 ? " " + barber.addressLine2 : ""
+  }, ${barber.city}, ${barber.state} ${barber.zipCode}`;
+
+const getFullName = (barber) => `${barber.firstName} ${barber.lastName}`.trim();
 
 async function getBarbersByCityState(city, state) {
   logger.info("Entering Barber Service => getBarbersByCityState");
@@ -41,7 +53,7 @@ async function getBarbersByCityState(city, state) {
         totalReviews: reviews[0].totalReviews,
         images,
       };
-    }),
+    })
   );
 
   logger.info("Exiting Barber Service => getBarbersByCityState");
@@ -68,16 +80,65 @@ async function getBarberDetails(publicId) {
   logger.info("Exiting Barber Service => getBarberDetails");
   return {
     ...barber,
-    formattedAddress: `${barber.addressLine1}${
-      barber.addressLine2 ? " " + barber.addressLine2 : ""
-    }, ${barber.city}, ${barber.state} ${barber.zipCode}`,
+    formattedAddress: formatAddress(barber),
+    fullName: getFullName(barber),
     images,
     reviews,
     services,
   };
 }
 
+async function updateBarberDetails(
+  barberId,
+  firstName,
+  lastName,
+  alias,
+  bio,
+  shop,
+  addressLine1,
+  addressLine2,
+  city,
+  state,
+  zipCode
+) {
+  logger.info("Entering Barber Service => updateBarberDetails");
+  const [barber] = await executeSelectQuery(FETCH_BARBER_DETAILS_BY_BARBER_ID, [
+    barberId,
+  ]);
+
+  if (!barber) {
+    throw new Error("Barber does not exist");
+  }
+
+  await executeNonSelectQuery(UPDATE_BARBER_DETAILS, [
+    firstName,
+    lastName,
+    alias || null,
+    bio || null,
+    shop,
+    addressLine1,
+    addressLine2 || null,
+    city,
+    state,
+    zipCode,
+    barberId,
+  ]);
+
+  const [updatedBarberDetails] = await executeSelectQuery(
+    FETCH_BARBER_DETAILS_BY_BARBER_ID,
+    [barberId]
+  );
+
+  logger.info("Exiting Barber Service => updateBarberDetails");
+  return {
+    ...updatedBarberDetails,
+    formattedAddress: formatAddress(updatedBarberDetails),
+    fullName: getFullName(updatedBarberDetails),
+  };
+}
+
 module.exports = {
   getBarbersByCityState,
   getBarberDetails,
+  updateBarberDetails,
 };

@@ -1,16 +1,18 @@
 const {
-  executeSelectQuery,
-  executeNonSelectQuery,
-} = require("../util/db/connection-util");
-const {
   FETCH_BARBERS_BY_CITY_STATE,
-  FETCH_IMAGES_BY_BARBER_ID,
-  FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID,
   FETCH_BARBER_DETAILS_BY_PUBLIC_ID,
-  FETCH_REVIEWS_BY_BARBER_ID,
   FETCH_BARBER_DETAILS_BY_BARBER_ID,
   UPDATE_BARBER_DETAILS,
-} = require("../util/db/queries");
+} = require("../queries/barber-queries");
+const {
+  FETCH_REVIEWS_BY_BARBER_ID,
+  FETCH_AVERAGE_AND_TOTAL_REVIEWS_BY_BARBER_ID,
+} = require("../queries/review-queries");
+const { FETCH_IMAGES_BY_BARBER_ID } = require("../queries/image-queries");
+const {
+  executeSelectQuery,
+  executeNonSelectQuery,
+} = require("../util/connection-util");
 const logger = require("../util/logger");
 const ServiceManagementService = require("./service-management-service");
 

@@ -1,0 +1,10 @@
+// create queries
+const CREATE_CLIENT_IN_DB = `INSERT INTO CLIENTS (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD) VALUES (?, ?, ?, ?)`;
+
+// fetch queries
+const FETCH_CLIENT_BY_EMAIL = `SELECT * FROM CLIENTS WHERE EMAIL = ?`;
+
+module.exports = {
+  CREATE_CLIENT_IN_DB,
+  FETCH_CLIENT_BY_EMAIL,
+};

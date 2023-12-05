@@ -1,12 +1,11 @@
-const { executeSelectQuery } = require("../util/db/connection-util");
-const {
-  FETCH_CLIENT_BY_EMAIL,
-  FETCH_BARBER_BY_EMAIL,
-} = require("../util/db/queries");
+const { executeSelectQuery } = require("../util/connection-util");
+
 const logger = require("../util/logger");
 const { generateToken } = require("../util/jwt");
 
 const bcrypt = require("bcrypt");
+const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
+const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
 
 async function authenticateUser(email, password) {
   logger.info("Entering Authentication Service => authenticateUser");

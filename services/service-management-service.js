@@ -1,7 +1,7 @@
 const {
   executeNonSelectQuery,
   executeSelectQuery,
-} = require("../util/db/connection-util");
+} = require("../util/connection-util");
 const {
   CREATE_SERVICE,
   UPDATE_SERVICE,
@@ -9,7 +9,7 @@ const {
   DELETE_SERVICE_BY_SERVICE_ID_AND_BARBER_ID,
   FETCH_SERVICE_COUNT_BY_BARBER_ID,
   FETCH_SERVICES_BY_BARBER_ID,
-} = require("../util/db/queries");
+} = require("../queries/service-queries");
 const logger = require("../util/logger");
 
 async function getServices(barberId) {

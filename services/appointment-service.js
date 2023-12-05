@@ -1,5 +1,7 @@
-const { executeSelectQuery } = require("../util/db/connection-util");
-const { FETCH_APPOINTMENTS_BY_CLIENT_EMAIL } = require("../util/db/queries");
+const {
+  FETCH_APPOINTMENTS_BY_CLIENT_EMAIL,
+} = require("../queries/appointment-queries");
+const { executeSelectQuery } = require("../util/connection-util");
 const logger = require("../util/logger");
 
 async function getClientAppointments(client) {

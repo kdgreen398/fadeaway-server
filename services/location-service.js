@@ -1,5 +1,7 @@
-const { executeSelectQuery } = require("../util/db/connection-util");
-const { FETCH_ALL_BARBER_CITY_STATES } = require("../util/db/queries");
+const { executeSelectQuery } = require("../util/connection-util");
+const {
+  FETCH_ALL_BARBER_CITY_STATES,
+} = require("../queries/barber-city-state-queries");
 const logger = require("../util/logger");
 
 async function getBarberCityStates() {

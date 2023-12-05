@@ -1,17 +1,19 @@
 const {
   executeNonSelectQuery,
   executeSelectQuery,
-} = require("../util/db/connection-util");
-const {
-  CREATE_CLIENT_IN_DB,
-  CREATE_BARBER_IN_DB,
-  FETCH_CLIENT_BY_EMAIL,
-  FETCH_BARBER_BY_EMAIL,
-} = require("../util/db/queries");
+} = require("../util/connection-util");
 const logger = require("../util/logger");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { isValidEmail, isStrongPassword } = require("../util/string-validation");
+const {
+  CREATE_BARBER_IN_DB,
+  FETCH_BARBER_BY_EMAIL,
+} = require("../queries/barber-queries");
+const {
+  CREATE_CLIENT_IN_DB,
+  FETCH_CLIENT_BY_EMAIL,
+} = require("../queries/client-queries");
 const saltRounds = 10; // You can adjust the number of salt rounds for security.
 
 // Will be used to generate public profile id's for barbers

@@ -10,8 +10,9 @@ router.get("/appointments/get-apppointments", async (req, res) => {
   try {
     const token = req.cookies["auth-token"];
     const payload = verifyToken(token);
-    const appointments = await AppointmentService.getClientAppointments(
-      payload,
+    const appointments = await AppointmentService.getAppointments(
+      payload.email,
+      payload.accountType,
     );
     res.send(appointments);
   } catch (error) {

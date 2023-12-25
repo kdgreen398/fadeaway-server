@@ -1,3 +1,10 @@
+// create queries
+const CREATE_APPOINTMENT = `
+  INSERT 
+  INTO APPOINTMENTS (CLIENT_ID, BARBER_ID, START_TIME, END_TIME, SERVICES) 
+  VALUES (?, ?, ?, ?, ?)
+`;
+
 // fetch queries
 const FETCH_APPOINTMENTS_BY_EMAIL = `
   SELECT 
@@ -26,5 +33,6 @@ const FETCH_APPOINTMENTS_BY_EMAIL = `
 `;
 
 module.exports = {
+  CREATE_APPOINTMENT,
   FETCH_APPOINTMENTS_BY_EMAIL,
 };

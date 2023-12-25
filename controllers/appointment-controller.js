@@ -23,4 +23,34 @@ router.get("/appointments/get-apppointments", async (req, res) => {
   logger.info("Exiting Appointment Controller => get-apppointments");
 });
 
+router.post("/appointments/create-appointment", async (req, res) => {
+  logger.info("Entering Appointment Controller => create-appointment");
+
+  const { barberEmail, startTime, endTime, services } = req.body;
+
+  if (!barberEmail || !startTime || !services) {
+    return res.status(400).send("Missing required fields");
+  }
+
+  try {
+    const token = req.cookies["auth-token"];
+    const payload = verifyToken(token);
+    if (payload.accountType !== "client") {
+      throw new Error("Only clients can create appointments");
+    }
+    const appointment = await AppointmentService.createAppointment(
+      payload.email,
+      barberEmail,
+      startTime,
+      services,
+    );
+    res.send(appointment);
+  } catch (error) {
+    logger.error(error);
+    res.status(500).send(error.message);
+  }
+
+  logger.info("Exiting Appointment Controller => create-appointment");
+});
+
 module.exports = router;

@@ -1,3 +1,4 @@
+const e = require("express");
 const {
   FETCH_APPOINTMENTS_BY_EMAIL,
   CREATE_APPOINTMENT,
@@ -76,26 +77,44 @@ async function createAppointment(
   // else, create appointment
   // return appointment
 
-  const appointments = await executeSelectQuery(FETCH_APPOINTMENTS_BY_EMAIL, [
-    barberEmail,
-    barberEmail,
-  ]);
-
-  function doAppointmentsOverlap(appointmentA, appointmentB) {
+  const existingAppointments = await executeSelectQuery(
+    FETCH_APPOINTMENTS_BY_EMAIL,
+    [barberEmail, barberEmail],
+  );
+  // Function to check for overlapping appointments
+  function doesOverlap(existingAppointment, newAppointment) {
     return (
-      new Date(appointmentA.startTime) < new Date(appointmentB.endTime) &&
-      new Date(appointmentB.startTime) < new Date(appointmentA.endTime)
+      new Date(existingAppointment.startTime) <
+        new Date(newAppointment.endTime) &&
+      new Date(newAppointment.startTime) < new Date(existingAppointment.endTime)
     );
   }
 
-  const hasOverlap = appointments.every((appt) =>
-    doAppointmentsOverlap(appt, {
-      startTime,
-      endTime,
-    }),
-  );
+  // Function to validate new appointment against existing appointments
+  function canCreateAppointment(existingAppointments, newAppointment) {
+    for (const existing of existingAppointments) {
+      if (doesOverlap(existing, newAppointment)) {
+        console.log(
+          "new: ",
+          new Date(newAppointment.startTime),
+          "-",
+          newAppointment.endTime,
+        );
+        console.log("existing: ", existing.startTime, "-", existing.endTime);
+        return false; // Overlapping appointment found
+      }
+    }
+    return true; // No overlap found with existing appointments
+  }
 
-  console.log("hasOverlap", hasOverlap);
+  let message;
+
+  // Check if the new appointment can be created
+  if (canCreateAppointment(existingAppointments, { startTime, endTime })) {
+    message = "success.";
+  } else {
+    message = "Cannot create.";
+  }
 
   // await executeNonSelectQuery(CREATE_APPOINTMENT, [
   //   client.clientId,
@@ -106,7 +125,7 @@ async function createAppointment(
   // ]);
 
   logger.info("Exiting Appointment Service => createAppointment");
-  return hasOverlap;
+  return message;
 }
 
 module.exports = {

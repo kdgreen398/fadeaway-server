@@ -26,7 +26,7 @@ router.get("/appointments/get-apppointments", async (req, res) => {
 router.post("/appointments/create-appointment", async (req, res) => {
   logger.info("Entering Appointment Controller => create-appointment");
 
-  const { barberEmail, startTime, endTime, services } = req.body;
+  const { barberEmail, startTime, services } = req.body;
 
   if (!barberEmail || !startTime || !services) {
     return res.status(400).send("Missing required fields");

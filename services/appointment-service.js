@@ -2,6 +2,7 @@ const e = require("express");
 const {
   FETCH_APPOINTMENTS_BY_EMAIL,
   CREATE_APPOINTMENT,
+  FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
 } = require("../queries/appointment-queries");
 const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
 const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
@@ -10,6 +11,25 @@ const {
   executeNonSelectQuery,
 } = require("../util/connection-util");
 const logger = require("../util/logger");
+
+// Function to check for overlapping appointments
+function doesOverlap(existingAppointment, newAppointment) {
+  return (
+    new Date(existingAppointment.startTime) <
+      new Date(newAppointment.endTime) &&
+    new Date(newAppointment.startTime) < new Date(existingAppointment.endTime)
+  );
+}
+
+// Function to validate new appointment against existing appointments
+function canCreateAppointment(existingAppointments, newAppointment) {
+  for (const existing of existingAppointments) {
+    if (doesOverlap(existing, newAppointment)) {
+      return false; // Overlapping appointment found
+    }
+  }
+  return true; // No overlap found with existing appointments
+}
 
 async function getAppointments(email) {
   logger.info("Entering Appointment Service => getAppointments");
@@ -72,60 +92,44 @@ async function createAppointment(
   endTime.setHours(endTime.getHours() + totalHours);
   endTime.setMinutes(endTime.getMinutes() + totalMinutes);
 
-  // check if appointment time is available
-  // if not, throw error
-  // else, create appointment
-  // return appointment
+  if (new Date(startTime) < new Date()) {
+    throw new Error("Appointment time cannot be in the past");
+  }
 
-  const existingAppointments = await executeSelectQuery(
-    FETCH_APPOINTMENTS_BY_EMAIL,
-    [barberEmail, barberEmail],
+  // check client availability
+  const clientAppointments = await executeSelectQuery(
+    FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+    [clientEmail, clientEmail, "Pending"],
   );
-  // Function to check for overlapping appointments
-  function doesOverlap(existingAppointment, newAppointment) {
-    return (
-      new Date(existingAppointment.startTime) <
-        new Date(newAppointment.endTime) &&
-      new Date(newAppointment.startTime) < new Date(existingAppointment.endTime)
-    );
-  }
 
-  // Function to validate new appointment against existing appointments
-  function canCreateAppointment(existingAppointments, newAppointment) {
-    for (const existing of existingAppointments) {
-      if (doesOverlap(existing, newAppointment)) {
-        console.log(
-          "new: ",
-          new Date(newAppointment.startTime),
-          "-",
-          newAppointment.endTime,
-        );
-        console.log("existing: ", existing.startTime, "-", existing.endTime);
-        return false; // Overlapping appointment found
-      }
-    }
-    return true; // No overlap found with existing appointments
-  }
-
-  let message;
+  console.log(clientAppointments);
 
   // Check if the new appointment can be created
-  if (canCreateAppointment(existingAppointments, { startTime, endTime })) {
-    message = "success.";
-  } else {
-    message = "Cannot create.";
+  if (!canCreateAppointment(clientAppointments, { startTime, endTime })) {
+    throw new Error("You already have an appointment at that time");
   }
 
-  // await executeNonSelectQuery(CREATE_APPOINTMENT, [
-  //   client.clientId,
-  //   barber.barberId,
-  //   startTime,
-  //   endTime,
-  //   services,
-  // ]);
+  // check barber availability
+  const barberAppointments = await executeSelectQuery(
+    FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+    [barberEmail, barberEmail, "Pending"],
+  );
+
+  // Check if the new appointment can be created
+  if (!canCreateAppointment(barberAppointments, { startTime, endTime })) {
+    throw new Error("Appointment time is not available");
+  }
+
+  await executeNonSelectQuery(CREATE_APPOINTMENT, [
+    client.clientId,
+    barber.barberId,
+    new Date(startTime),
+    new Date(endTime),
+    JSON.stringify(services),
+  ]);
 
   logger.info("Exiting Appointment Service => createAppointment");
-  return message;
+  return "success";
 }
 
 module.exports = {

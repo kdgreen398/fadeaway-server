@@ -11,6 +11,7 @@ const {
   executeNonSelectQuery,
 } = require("../util/connection-util");
 const logger = require("../util/logger");
+const AppointmentStatuses = require("../enums/appointment-status-enum");
 
 // Function to check for overlapping appointments
 function doesOverlap(existingAppointment, newAppointment) {
@@ -99,10 +100,8 @@ async function createAppointment(
   // check client availability
   const clientAppointments = await executeSelectQuery(
     FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
-    [clientEmail, clientEmail, "Pending"],
+    [clientEmail, clientEmail, AppointmentStatuses.PENDING],
   );
-
-  console.log(clientAppointments);
 
   // Check if the new appointment can be created
   if (!canCreateAppointment(clientAppointments, { startTime, endTime })) {
@@ -112,7 +111,7 @@ async function createAppointment(
   // check barber availability
   const barberAppointments = await executeSelectQuery(
     FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
-    [barberEmail, barberEmail, "Pending"],
+    [barberEmail, barberEmail, AppointmentStatuses.PENDING],
   );
 
   // Check if the new appointment can be created
@@ -132,7 +131,36 @@ async function createAppointment(
   return "success";
 }
 
+async function cancelAppointment(user, appointmentId) {
+  logger.info("Entering Appointment Service => cancelAppointment");
+
+  console.log(user, appointmentId);
+
+  // check if user is client or barber
+  const isClient = user.accountType === "client";
+
+  // if client, update appointment status by appointment id and client id
+  if (isClient) {
+    await executeNonSelectQuery(UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID, [
+      AppointmentStatuses.CANCELLED,
+      appointmentId,
+      user.id,
+    ]);
+  } else {
+    // if barber, update appointment status by appointment id and barber id
+    await executeNonSelectQuery(UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID, [
+      AppointmentStatuses.CANCELLED,
+      appointmentId,
+      user.id,
+    ]);
+  }
+
+  logger.info("Exiting Appointment Service => cancelAppointment");
+  return "success";
+}
+
 module.exports = {
   createAppointment,
   getAppointments,
+  cancelAppointment,
 };

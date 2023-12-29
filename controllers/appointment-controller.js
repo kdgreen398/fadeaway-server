@@ -9,10 +9,10 @@ router.get("/appointments/get-apppointments", async (req, res) => {
 
   try {
     const token = req.cookies["auth-token"];
-    const payload = verifyToken(token);
+    const user = verifyToken(token);
     const appointments = await AppointmentService.getAppointments(
-      payload.email,
-      payload.accountType,
+      user.email,
+      user.accountType,
     );
     res.send(appointments);
   } catch (error) {
@@ -34,12 +34,12 @@ router.post("/appointments/create-appointment", async (req, res) => {
 
   try {
     const token = req.cookies["auth-token"];
-    const payload = verifyToken(token);
-    if (payload.accountType !== "client") {
+    const user = verifyToken(token);
+    if (user.accountType !== "client") {
       throw new Error("Only clients can create appointments");
     }
     const appointment = await AppointmentService.createAppointment(
-      payload.email,
+      user.email,
       barberEmail,
       startTime,
       services,
@@ -51,6 +51,31 @@ router.post("/appointments/create-appointment", async (req, res) => {
   }
 
   logger.info("Exiting Appointment Controller => create-appointment");
+});
+
+router.post("/appointments/cancel-appointment", async (req, res) => {
+  logger.info("Entering Appointment Controller => cancel-appointment");
+
+  const { apptId } = req.query;
+
+  if (!apptId) {
+    return res.status(400).send("Missing required fields");
+  }
+
+  try {
+    const token = req.cookies["auth-token"];
+    const user = verifyToken(token);
+    const appointment = await AppointmentService.cancelAppointment(
+      user,
+      apptId,
+    );
+    res.send(appointment);
+  } catch (error) {
+    logger.error(error);
+    res.status(500).send(error.message);
+  }
+
+  logger.info("Exiting Appointment Controller => cancel-appointment");
 });
 
 module.exports = router;

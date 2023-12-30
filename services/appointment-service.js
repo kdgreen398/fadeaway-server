@@ -3,6 +3,8 @@ const {
   FETCH_APPOINTMENTS_BY_EMAIL,
   CREATE_APPOINTMENT,
   FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+  UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID,
+  UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID,
 } = require("../queries/appointment-queries");
 const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
 const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
@@ -134,26 +136,20 @@ async function createAppointment(
 async function cancelAppointment(user, appointmentId) {
   logger.info("Entering Appointment Service => cancelAppointment");
 
-  console.log(user, appointmentId);
-
   // check if user is client or barber
   const isClient = user.accountType === "client";
 
   // if client, update appointment status by appointment id and client id
-  if (isClient) {
-    await executeNonSelectQuery(UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID, [
-      AppointmentStatuses.CANCELLED,
-      appointmentId,
-      user.id,
-    ]);
-  } else {
-    // if barber, update appointment status by appointment id and barber id
-    await executeNonSelectQuery(UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID, [
-      AppointmentStatuses.CANCELLED,
-      appointmentId,
-      user.id,
-    ]);
-  }
+  // if barber, update appointment status by appointment id and barber id
+  const query = isClient
+    ? UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID
+    : UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID;
+
+  await executeNonSelectQuery(query, [
+    AppointmentStatuses.CANCELED,
+    appointmentId,
+    user.id,
+  ]);
 
   logger.info("Exiting Appointment Service => cancelAppointment");
   return "success";

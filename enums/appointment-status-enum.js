@@ -1,9 +1,9 @@
 const AppointmentStatuses = Object.freeze({
-  PENDING: Symbol("pending"),
-  ACCEPTED: Symbol("accepted"),
-  DECLINED: Symbol("declined"),
-  CANCELED: Symbol("canceled"),
-  COMPLETED: Symbol("completed"),
+  PENDING: "pending",
+  ACCEPTED: "accepted",
+  DECLINED: "declined",
+  CANCELED: "canceled",
+  COMPLETED: "completed",
 });
 
 module.exports = AppointmentStatuses;

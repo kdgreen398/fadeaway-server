@@ -1,10 +1,40 @@
+const e = require("express");
 const {
   FETCH_APPOINTMENTS_BY_EMAIL,
+  CREATE_APPOINTMENT,
+  FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+  UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID,
+  UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID,
 } = require("../queries/appointment-queries");
-const { executeSelectQuery } = require("../util/connection-util");
+const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
+const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
+const {
+  executeSelectQuery,
+  executeNonSelectQuery,
+} = require("../util/connection-util");
 const logger = require("../util/logger");
+const AppointmentStatuses = require("../enums/appointment-status-enum");
 
-async function getAppointments(email, accountType) {
+// Function to check for overlapping appointments
+function doesOverlap(existingAppointment, newAppointment) {
+  return (
+    new Date(existingAppointment.startTime) <
+      new Date(newAppointment.endTime) &&
+    new Date(newAppointment.startTime) < new Date(existingAppointment.endTime)
+  );
+}
+
+// Function to validate new appointment against existing appointments
+function canCreateAppointment(existingAppointments, newAppointment) {
+  for (const existing of existingAppointments) {
+    if (doesOverlap(existing, newAppointment)) {
+      return false; // Overlapping appointment found
+    }
+  }
+  return true; // No overlap found with existing appointments
+}
+
+async function getAppointments(email) {
   logger.info("Entering Appointment Service => getAppointments");
 
   const appointments = await executeSelectQuery(FETCH_APPOINTMENTS_BY_EMAIL, [
@@ -42,6 +72,91 @@ async function getAppointments(email, accountType) {
   }));
 }
 
+async function createAppointment(
+  clientEmail,
+  barberEmail,
+  startTime,
+  services,
+) {
+  logger.info("Entering Appointment Service => createAppointment");
+
+  const [client] = await executeSelectQuery(FETCH_CLIENT_BY_EMAIL, [
+    clientEmail,
+  ]);
+  const [barber] = await executeSelectQuery(FETCH_BARBER_BY_EMAIL, [
+    barberEmail,
+  ]);
+
+  const totalHours = services.reduce((acc, curr) => acc + curr.hours, 0);
+  const totalMinutes = services.reduce((acc, curr) => acc + curr.minutes, 0);
+  // endtime calculated from start time and services
+  const endTime = new Date(startTime);
+
+  endTime.setHours(endTime.getHours() + totalHours);
+  endTime.setMinutes(endTime.getMinutes() + totalMinutes);
+
+  if (new Date(startTime) < new Date()) {
+    throw new Error("Appointment time cannot be in the past");
+  }
+
+  // check client availability
+  const clientAppointments = await executeSelectQuery(
+    FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+    [clientEmail, clientEmail, AppointmentStatuses.PENDING],
+  );
+
+  // Check if the new appointment can be created
+  if (!canCreateAppointment(clientAppointments, { startTime, endTime })) {
+    throw new Error("You already have an appointment at that time");
+  }
+
+  // check barber availability
+  const barberAppointments = await executeSelectQuery(
+    FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
+    [barberEmail, barberEmail, AppointmentStatuses.PENDING],
+  );
+
+  // Check if the new appointment can be created
+  if (!canCreateAppointment(barberAppointments, { startTime, endTime })) {
+    throw new Error("Appointment time is not available");
+  }
+
+  await executeNonSelectQuery(CREATE_APPOINTMENT, [
+    client.clientId,
+    barber.barberId,
+    new Date(startTime),
+    new Date(endTime),
+    JSON.stringify(services),
+  ]);
+
+  logger.info("Exiting Appointment Service => createAppointment");
+  return "success";
+}
+
+async function cancelAppointment(user, appointmentId) {
+  logger.info("Entering Appointment Service => cancelAppointment");
+
+  // check if user is client or barber
+  const isClient = user.accountType === "client";
+
+  // if client, update appointment status by appointment id and client id
+  // if barber, update appointment status by appointment id and barber id
+  const query = isClient
+    ? UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID
+    : UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID;
+
+  await executeNonSelectQuery(query, [
+    AppointmentStatuses.CANCELED,
+    appointmentId,
+    user.id,
+  ]);
+
+  logger.info("Exiting Appointment Service => cancelAppointment");
+  return "success";
+}
+
 module.exports = {
+  createAppointment,
   getAppointments,
+  cancelAppointment,
 };

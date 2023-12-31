@@ -1,9 +1,12 @@
+import { Request, Response } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
 const router = express.Router();
 const logger = require("../util/logger");
 const RegistrationService = require("../services/registration-service");
 
-router.post("/registration/register-client", async (req, res) => {
+router.post("/registration/register-client", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Registration Controller => register-client");
 
   const { firstName, lastName, email, password } = req.body;
@@ -29,7 +32,7 @@ router.post("/registration/register-client", async (req, res) => {
   }
 });
 
-router.post("/registration/register-barber", async (req, res) => {
+router.post("/registration/register-barber", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Registration Controller => register-barber");
 
   try {
@@ -48,4 +51,4 @@ router.post("/registration/register-barber", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,11 +1,11 @@
-function snakeToCamelString(str) {
+function snakeToCamelString(str: string) {
   return str.toLowerCase().replace(/_([a-z0-9])/g, function (match, letter) {
     return letter.toUpperCase();
   });
 }
 
-function snakeToCamelCaseObj(obj) {
-  const transformedObj = {};
+export function snakeToCamelCaseObj(obj: { [key: string]: any }) {
+  const transformedObj: { [key: string]: any } = {};
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const camelKey = snakeToCamelString(key);
@@ -15,6 +15,3 @@ function snakeToCamelCaseObj(obj) {
   return transformedObj;
 }
 
-module.exports = {
-  snakeToCamelCaseObj,
-};

@@ -1,5 +1,5 @@
-const logger = {
-  info: (message) => {
+module.exports = {
+  info: (message: string) => {
     console.log(
       `${new Date()
         .toISOString()
@@ -7,7 +7,7 @@ const logger = {
         .replace(/\..+/, "")} - INFO - ${message}`
     );
   },
-  error: (message) => {
+  error: (message: string) => {
     console.error(
       `${new Date()
         .toISOString()
@@ -15,7 +15,7 @@ const logger = {
         .replace(/\..+/, "")} - ERROR - ${message}`
     );
   },
-  warn: (message) => {
+  warn: (message: string) => {
     console.warn(
       `${new Date()
         .toISOString()
@@ -24,5 +24,3 @@ const logger = {
     );
   },
 };
-
-module.exports = logger;

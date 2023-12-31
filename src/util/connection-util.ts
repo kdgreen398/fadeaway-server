@@ -1,5 +1,5 @@
 const mysql = require("mysql2/promise");
-const { snakeToCamelCaseObj } = require("./format");
+import { snakeToCamelCaseObj } from "./format";
 const logger = require("./logger");
 
 const pool = mysql.createPool({
@@ -12,14 +12,14 @@ const pool = mysql.createPool({
   connectionLimit: 10, // Set connection limit
 });
 
-async function executeSelectQuery(query, values) {
+export async function executeSelectQuery(query: string, values: Array<any>) {
   let connection;
   try {
     connection = await pool.getConnection();
 
     const [rows] = await connection.query(query, values);
 
-    return rows.map((row) => snakeToCamelCaseObj(row));
+    return rows.map((row: Object) => snakeToCamelCaseObj(row));
   } catch (error) {
     logger.error("Error executing select query: " + error);
   } finally {
@@ -29,7 +29,7 @@ async function executeSelectQuery(query, values) {
   }
 }
 
-async function executeNonSelectQuery(query, values) {
+export async function executeNonSelectQuery(query: string, values: Array<any>) {
   let connection;
   try {
     connection = await pool.getConnection();

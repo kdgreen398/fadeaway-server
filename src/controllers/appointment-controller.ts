@@ -1,10 +1,13 @@
+import { Request, Response } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
 const router = express.Router();
-const AppointmentService = require("../services/appointment-service");
-const logger = require("../util/logger");
+const AppointmentService = require("../services/appointment-service.js");
+const logger  = require("../util/logger");
 const { verifyToken } = require("../util/jwt");
 
-router.get("/appointments/get-apppointments", async (req, res) => {
+router.get("/appointments/get-apppointments", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Appointment Controller => get-apppointments");
 
   try {
@@ -15,7 +18,7 @@ router.get("/appointments/get-apppointments", async (req, res) => {
       user.accountType,
     );
     res.send(appointments);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
     res.status(500).send(error.message);
   }
@@ -23,7 +26,7 @@ router.get("/appointments/get-apppointments", async (req, res) => {
   logger.info("Exiting Appointment Controller => get-apppointments");
 });
 
-router.post("/appointments/create-appointment", async (req, res) => {
+router.post("/appointments/create-appointment", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Appointment Controller => create-appointment");
 
   const { barberEmail, startTime, services } = req.body;
@@ -45,7 +48,7 @@ router.post("/appointments/create-appointment", async (req, res) => {
       services,
     );
     res.send(appointment);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
     res.status(500).send(error.message);
   }
@@ -53,7 +56,7 @@ router.post("/appointments/create-appointment", async (req, res) => {
   logger.info("Exiting Appointment Controller => create-appointment");
 });
 
-router.post("/appointments/cancel-appointment", async (req, res) => {
+router.post("/appointments/cancel-appointment", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Appointment Controller => cancel-appointment");
 
   const { apptId } = req.query;
@@ -70,7 +73,7 @@ router.post("/appointments/cancel-appointment", async (req, res) => {
       apptId,
     );
     res.send(appointment);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
     res.status(500).send(error.message);
   }
@@ -78,4 +81,4 @@ router.post("/appointments/cancel-appointment", async (req, res) => {
   logger.info("Exiting Appointment Controller => cancel-appointment");
 });
 
-module.exports = router;
+export default router;

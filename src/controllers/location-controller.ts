@@ -1,10 +1,14 @@
+import { Request, Response, Router } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
+
 const router = express.Router();
 const GeolocationService = require("../services/geolocation-service");
 const LocationService = require("../services/location-service");
 const logger = require("../util/logger");
 
-router.get("/location/get-location-from-coords", async (req, res) => {
+router.get("/location/get-location-from-coords", async (req: CustomRequest, res: Response) => {
   const lat = req.get("lat");
   const lng = req.get("lng");
 
@@ -33,7 +37,7 @@ router.get("/location/get-location-from-coords", async (req, res) => {
   }
 });
 
-router.get("/location/get-barber-city-states", async (req, res) => {
+router.get("/location/get-barber-city-states", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Location Controller => get-barber-city-states");
   try {
     const barberCityStates = await LocationService.getBarberCityStates();
@@ -47,4 +51,4 @@ router.get("/location/get-barber-city-states", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

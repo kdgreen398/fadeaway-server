@@ -3,7 +3,7 @@ const logger = require("../util/logger");
 
 const client = new Client({});
 
-async function getAddressFromCoords(lat, lng) {
+export async function getAddressFromCoords(lat, lng) {
   logger.info("Entering Geolocation Service => getAddressFromCoords");
   const googleAPIResponse = await client.reverseGeocode({
     params: {

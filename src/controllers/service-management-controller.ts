@@ -1,9 +1,11 @@
+import { Request, Response } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
 const express = require("express");
 const router = express.Router();
 const logger = require("../util/logger");
 const ServiceManagementService = require("../services/service-management-service");
 
-function validateParameters(hours, minutes, price) {
+function validateParameters(hours: number, minutes: number, price: number) {
   if (
     !Number.isInteger(minutes) ||
     !Number.isInteger(hours) ||
@@ -43,7 +45,7 @@ function validateParameters(hours, minutes, price) {
   }
 }
 
-router.get("/service-management/get-services", async (req, res) => {
+router.get("/service-management/get-services", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Service Management Controller => get-services");
 
   const { barberId } = req.query;
@@ -64,11 +66,11 @@ router.get("/service-management/get-services", async (req, res) => {
   logger.info("Exiting Service Management Controller => get-services");
 });
 
-router.post("/service-management/create-service", async (req, res) => {
+router.post("/service-management/create-service", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Service Management Controller => create-service");
 
   const { name, hours, minutes, description, price } = req.body;
-  const user = req.headers["user"];
+  const user = req.decodedToken;
 
   try {
     if (
@@ -82,7 +84,7 @@ router.post("/service-management/create-service", async (req, res) => {
       );
     }
     validateParameters(hours, minutes, price);
-  } catch (err) {
+  } catch (err: any) {
     logger.error(err);
     res.status(400).send(err.message);
     return;
@@ -106,11 +108,11 @@ router.post("/service-management/create-service", async (req, res) => {
   logger.info("Exiting Service Management Controller => create-service");
 });
 
-router.put("/service-management/update-service", async (req, res) => {
+router.put("/service-management/update-service", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Service Management Controller => update-service");
 
   const { name, hours, minutes, description, price, serviceId } = req.body;
-  const user = req.headers["user"];
+  const user = req.decodedToken;
 
   if (user.accountType !== "barber") {
     res.status(403).send("Unauthorized");
@@ -130,7 +132,7 @@ router.put("/service-management/update-service", async (req, res) => {
       );
     }
     validateParameters(hours, minutes, price);
-  } catch (err) {
+  } catch (err: any) {
     logger.error(err);
     res.status(400).send(err.message);
     return;
@@ -155,11 +157,11 @@ router.put("/service-management/update-service", async (req, res) => {
   logger.info("Exiting Service Management Controller => update-service");
 });
 
-router.delete("/service-management/delete-service", async (req, res) => {
+router.delete("/service-management/delete-service", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Service Management Controller => delete-service");
 
   const { serviceId } = req.query;
-  const user = req.headers["user"];
+  const user = req.decodedToken;
 
   if (!serviceId) {
     res.status(400).send("Missing required parameters: serviceId");
@@ -180,4 +182,4 @@ router.delete("/service-management/delete-service", async (req, res) => {
   logger.info("Exiting Service Management Controller => delete-service");
 });
 
-module.exports = router;
+export default router;

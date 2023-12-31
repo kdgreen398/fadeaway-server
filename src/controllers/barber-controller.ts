@@ -1,9 +1,12 @@
+import { Request, Response} from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
 const router = express.Router();
 const logger = require("../util/logger");
 const BarberService = require("../services/barber-service");
 
-router.get("/barber/fetch-barber-details", async (req, res) => {
+router.get("/barber/fetch-barber-details", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Barber Controller => fetch-barber-details");
 
   const { publicId } = req.query;
@@ -29,10 +32,10 @@ router.get("/barber/fetch-barber-details", async (req, res) => {
   logger.info("Exiting Barber Controller => fetch-barber-details");
 });
 
-router.put("/barber/update-barber-details", async (req, res) => {
+router.put("/barber/update-barber-details", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Barber Controller => update-barber-details");
 
-  const user = req.headers["user"];
+  const user = req.decodedToken;
 
   const {
     firstName,
@@ -60,7 +63,7 @@ router.put("/barber/update-barber-details", async (req, res) => {
     return;
   }
 
-  if (user.accountType !== "barber") {
+  if (user?.accountType !== "barber") {
     res.status(403).send("Unauthorized");
     return;
   }
@@ -88,4 +91,4 @@ router.put("/barber/update-barber-details", async (req, res) => {
   logger.info("Entering Barber Controller => update-barber-details");
 });
 
-module.exports = router;
+export default router;

@@ -1,16 +1,19 @@
+import { Request, Response } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
 const router = express.Router();
 const BarberService = require("../services/barber-service");
 const GeolocationService = require("../services/geolocation-service");
 const logger = require("../util/logger");
 
-router.get("/recommendation/get-barbers-by-location", async (req, res) => {
+router.get("/recommendation/get-barbers-by-location", async (req: CustomRequest, res: Response) => {
+  logger.info("Entering Recommendation Controller => get-barbers-by-location");
+
   const lat = req.get("lat");
   const lng = req.get("lng");
   let city = req.get("city");
   let state = req.get("state");
-
-  logger.info("Entering Recommendation Controller => get-barbers-by-location");
 
   const hasCoords = lat !== undefined && lng !== undefined;
   const hasCityState = city !== undefined && state !== undefined;
@@ -39,4 +42,4 @@ router.get("/recommendation/get-barbers-by-location", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

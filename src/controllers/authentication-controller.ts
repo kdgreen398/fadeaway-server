@@ -1,3 +1,6 @@
+import { Request, Response } from "express";
+import { CustomRequest } from "../interfaces/custom-request-interface";
+
 const express = require("express");
 const router = express.Router();
 const logger = require("../util/logger");
@@ -6,10 +9,15 @@ const AuthenticationService = require("../services/authentication-service");
 // const authExpiration = 900000; // 15 minutes
 const authExpiration = 3600000 * 24; // 24 hours
 
-router.post("/authentication/validate-user", async (req, res) => {
+interface UserCredentials {
+  email: string;
+  password: string;
+}
+
+router.post("/authentication/validate-user", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Authentication Controller => validate-user");
 
-  const { email, password } = req.body;
+  const { email, password } = req.body as UserCredentials;
 
   try {
     const authResponse = await AuthenticationService.authenticateUser(
@@ -37,7 +45,7 @@ router.post("/authentication/validate-user", async (req, res) => {
   }
 });
 
-router.post("/authentication/revoke-authentication", async (req, res) => {
+router.post("/authentication/revoke-authentication", async (req: CustomRequest, res: Response) => {
   logger.info("Entering Authentication Controller => revoke-authentication");
 
   res.clearCookie("auth-token");
@@ -46,4 +54,4 @@ router.post("/authentication/revoke-authentication", async (req, res) => {
   logger.info("Exiting Authentication Controller => revoke-authentication");
 });
 
-module.exports = router;
+export default router;

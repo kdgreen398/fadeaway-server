@@ -4,7 +4,7 @@ module.exports = {
       `${new Date()
         .toISOString()
         .replace(/T/, " ")
-        .replace(/\..+/, "")} - INFO - ${message}`
+        .replace(/\..+/, "")} - INFO - ${message}`,
     );
   },
   error: (message: string) => {
@@ -12,7 +12,7 @@ module.exports = {
       `${new Date()
         .toISOString()
         .replace(/T/, " ")
-        .replace(/\..+/, "")} - ERROR - ${message}`
+        .replace(/\..+/, "")} - ERROR - ${message}`,
     );
   },
   warn: (message: string) => {
@@ -20,7 +20,7 @@ module.exports = {
       `${new Date()
         .toISOString()
         .replace(/T/, " ")
-        .replace(/\..+/, "")} - WARN - ${message}`
+        .replace(/\..+/, "")} - WARN - ${message}`,
     );
   },
 };

@@ -14,4 +14,3 @@ export function snakeToCamelCaseObj(obj: { [key: string]: any }) {
   }
   return transformedObj;
 }
-

@@ -1,4 +1,3 @@
-const e = require("express");
 const {
   FETCH_APPOINTMENTS_BY_EMAIL,
   CREATE_APPOINTMENT,

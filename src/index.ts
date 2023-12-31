@@ -1,7 +1,7 @@
 import { NextFunction } from "connect";
 import { Response } from "express";
-import { verifyToken } from "./util/jwt";
 import { CustomRequest } from "./interfaces/custom-request-interface";
+import { verifyToken } from "./util/jwt";
 
 // import AppointmentController from "./controllers/appointment-controller";
 // import AuthenticationController from "./controllers/authentication-controller";
@@ -18,7 +18,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const logger = require("./util/logger");
-const port = '3008';
+const port = "3008";
 
 app.use(
   cors({

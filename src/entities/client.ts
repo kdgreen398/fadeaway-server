@@ -1,7 +1,7 @@
-import { Column, Entity } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Client {
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
@@ -11,5 +11,8 @@ export class Client {
   lastName!: string;
 
   @Column()
-  isActive!: boolean;
+  email!: string;
+
+  @Column()
+  password!: string;
 }

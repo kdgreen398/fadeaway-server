@@ -1,17 +1,20 @@
+import * as dotenv from "dotenv";
+import "reflect-metadata";
+dotenv.config(); // Loads environment variables from .env file into process.env
+
 import { NextFunction } from "connect";
 import { Response } from "express";
 import { CustomRequest } from "./interfaces/custom-request-interface";
 import { verifyToken } from "./util/jwt";
 
 // import AppointmentController from "./controllers/appointment-controller";
-// import AuthenticationController from "./controllers/authentication-controller";
+import AuthenticationController from "./controllers/authentication-controller";
 // import BarberController from "./controllers/barber-controller";
 // import LocationController from "./controllers/location-controller";
 // import RecommendationController from "./controllers/recommendation-controller";
 // import RegistrationController from "./controllers/registration-controller";
 // import ServiceManagementController from "./controllers/service-management-controller";
 
-require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -29,7 +32,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// app.use(AuthenticationController);
+app.use(AuthenticationController);
 // app.use(RegistrationController);
 
 app.use((req: CustomRequest, res: Response, next: NextFunction) => {

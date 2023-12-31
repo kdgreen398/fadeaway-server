@@ -1,13 +1,18 @@
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { Client } from "../entities/client";
+
 const { DataSource } = require("typeorm");
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: "app-data",
-  entities: ["entity/*.js"],
+  synchronize: true,
+  namingStrategy: new SnakeNamingStrategy(),
+  entities: [Client],
 });
 
 AppDataSource.initialize()

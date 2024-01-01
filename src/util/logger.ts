@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   info: (message: string) => {
     console.log(
       `${new Date()

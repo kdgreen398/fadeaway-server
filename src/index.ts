@@ -12,7 +12,7 @@ import AuthenticationController from "./controllers/authentication-controller";
 // import BarberController from "./controllers/barber-controller";
 // import LocationController from "./controllers/location-controller";
 // import RecommendationController from "./controllers/recommendation-controller";
-// import RegistrationController from "./controllers/registration-controller";
+import RegistrationController from "./controllers/registration-controller";
 // import ServiceManagementController from "./controllers/service-management-controller";
 
 const express = require("express");
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(AuthenticationController);
-// app.use(RegistrationController);
+app.use(RegistrationController);
 
 app.use((req: CustomRequest, res: Response, next: NextFunction) => {
   // get auth token from cookies

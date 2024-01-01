@@ -1,14 +1,12 @@
-import { Response } from "express";
-import { CustomRequest } from "../interfaces/custom-request-interface";
+import express, { Request, Response } from "express";
 
-const express = require("express");
+import logger from "../util/logger";
+import RegistrationService from "../services/registration-service";
 const router = express.Router();
-const logger = require("../util/logger");
-const RegistrationService = require("../services/registration-service");
 
 router.post(
   "/registration/register-client",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Registration Controller => register-client");
 
     const { firstName, lastName, email, password } = req.body;
@@ -28,7 +26,7 @@ router.post(
       res.send(response.message);
 
       logger.info("Exiting Registration Controller => register-client");
-    } catch (err) {
+    } catch (err: any) {
       logger.error(err);
       res.status(500).send("Error creating client");
     }
@@ -37,7 +35,7 @@ router.post(
 
 router.post(
   "/registration/register-barber",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Registration Controller => register-barber");
 
     try {
@@ -50,7 +48,7 @@ router.post(
       res.send(response.message);
 
       logger.info("Exiting Registration Controller => register-barber");
-    } catch (err) {
+    } catch (err: any) {
       logger.error(err);
       res.status(500).send("Error creating barber");
     }

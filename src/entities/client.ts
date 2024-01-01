@@ -1,6 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
+@Unique(["email"])
+export class Client {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -15,4 +17,18 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
   @Column()
   password!: string;
+
+  static create(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) {
+    const client = new Client();
+    client.firstName = firstName;
+    client.lastName = lastName;
+    client.email = email;
+    client.password = password;
+    return client;
+  }
 }

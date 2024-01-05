@@ -5,7 +5,7 @@ import {
   Unique,
   OneToMany,
 } from "typeorm";
-import { Image } from "./image";
+import { BarberImage } from "./barber-image";
 import { Review } from "./review";
 
 @Entity()
@@ -53,8 +53,8 @@ export class Barber {
   @Column({ nullable: true })
   profileImage!: string;
 
-  @OneToMany(() => Image, (image) => image.barber)
-  images!: Image[];
+  @OneToMany(() => BarberImage, (image) => image.barber)
+  images!: BarberImage[];
 
   @OneToMany(() => Review, (review) => review.barber)
   reviews!: Review[];

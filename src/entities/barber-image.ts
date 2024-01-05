@@ -8,7 +8,7 @@ import {
 import { Barber } from "./barber";
 
 @Entity()
-export class Image {
+export class BarberImage {
   @PrimaryGeneratedColumn()
   id!: number;
 

@@ -1,51 +1,58 @@
-import { Response } from "express";
-import { CustomRequest } from "../interfaces/custom-request-interface";
+import express, { Request, Response } from "express";
 
-const express = require("express");
+import logger from "../util/logger";
+import * as AuthenticationService from "../services/authentication-service";
+import { ResponseObject } from "../util/response-object";
 const router = express.Router();
-const logger = require("../util/logger");
-const AuthenticationService = require("../services/authentication-service");
 
 // const authExpiration = 900000; // 15 minutes
 const authExpiration = 3600000 * 24; // 24 hours
 
 router.post(
   "/authentication/validate-user",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Authentication Controller => validate-user");
 
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res
+        .status(400)
+        .send(ResponseObject.error("Email and password are required"));
+    }
+
     try {
-      const authResponse = await AuthenticationService.authenticateUser(
+      const authToken = await AuthenticationService.authenticateUser(
         email,
         password,
       );
 
-      if (authResponse.error) {
-        res.status(401).send(authResponse.error);
-      } else {
-        // set cookie for server-side authentication on client
-        res.cookie("auth-token", authResponse.jwt, {
-          httpOnly: false, // Set HttpOnly flag for security
-          secure: false, // set to true for production
-          sameSite: "strict", // Recommended for CSRF prevention
-          maxAge: authExpiration, // 1 hour
-        });
-        res.send("User authenticated successfully");
+      if (!authToken) {
+        return res
+          .status(401)
+          .send(ResponseObject.error("Invalid email or password"));
       }
 
+      // set cookie for server-side authentication on client
+      res.cookie("auth-token", authToken, {
+        httpOnly: false, // Set HttpOnly flag for security
+        secure: false, // set to true for production
+        sameSite: "strict", // Recommended for CSRF prevention
+        maxAge: authExpiration, // 1 hour
+      });
+      res.send(ResponseObject.success("User authenticated successfully"));
+
       logger.info("Exiting Authentication Controller => validate-user");
-    } catch (err) {
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error authenticating user");
+      res.status(500).send(ResponseObject.error(err.message));
     }
   },
 );
 
 router.post(
   "/authentication/revoke-authentication",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Authentication Controller => revoke-authentication");
 
     res.clearCookie("auth-token");

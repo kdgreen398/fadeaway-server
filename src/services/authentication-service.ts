@@ -1,65 +1,43 @@
+import { Barber } from "../entities/barber";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
+import bcrypt from "bcrypt";
 
-// const { executeSelectQuery } = require("../util/connection-util");
+import logger from "../util/logger";
+import { generateToken } from "../util/jwt";
 
-const logger = require("../util/logger");
-// const { generateToken } = require("../util/jwt");
-
-// const bcrypt = require("bcrypt");
-// const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
-// const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
-
-async function authenticateUser(email: string, password: string) {
+export async function authenticateUser(email: string, password: string) {
   logger.info("Entering Authentication Service => authenticateUser");
 
-  if (!email || !password) {
-    return {
-      error: "Email and password are required",
-    };
-  }
-
   let isAuthenticated = false;
-  let error;
   let token;
   let accountType = "client";
 
-  const c = await AppDataSource.manager.find(Client);
+  let user = await AppDataSource.manager.findOne(Client, {
+    where: { email },
+  });
 
-  console.log("clients", c);
+  if (!user) {
+    user = await AppDataSource.manager.findOne(Barber, {
+      where: { email },
+    });
+    accountType = "barber";
+  }
 
-  // let [user] = await executeSelectQuery(FETCH_CLIENT_BY_EMAIL, [email]);
+  if (user) {
+    isAuthenticated = await bcrypt.compare(password, user.password);
+  }
 
-  // // if no user from first table, check second table
-  // if (!user) {
-  //   [user] = await executeSelectQuery(FETCH_BARBER_BY_EMAIL, [email]);
-  //   accountType = "barber";
-  // }
-
-  // if (user) {
-  //   isAuthenticated = await bcrypt.compare(password, user.password);
-  // }
-
-  // if (isAuthenticated) {
-  //   token = generateToken({
-  //     firstName: user.firstName,
-  //     lastName: user.lastName,
-  //     email: user.email,
-  //     publicId: user.publicId,
-  //     id: user.clientId || user.barberId,
-  //     accountType,
-  //   });
-  // } else {
-  //   error = "Invalid email or password";
-  // }
+  if (isAuthenticated) {
+    token = generateToken({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      accountType,
+    });
+  }
 
   logger.info("Exiting Authentication Service => authenticateUser");
-  return {
-    jwt: token,
-    error,
-  };
+  return token;
 }
-
-module.exports = {
-  authenticateUser,
-};

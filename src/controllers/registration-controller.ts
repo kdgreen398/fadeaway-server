@@ -45,7 +45,7 @@ router.post(
         password,
       );
 
-      delete client.password;
+      delete (client as Partial<typeof client>).password;
 
       logger.info("Exiting Registration Controller => register-client");
       res.json(ResponseObject.success(client));
@@ -94,7 +94,7 @@ router.post(
     try {
       const barber = await RegistrationService.createBarberInDB(req.body);
 
-      delete barber.password;
+      delete (barber as Partial<typeof barber>).password;
 
       logger.info("Exiting Registration Controller => register-barber");
       res.json(ResponseObject.success(barber));

@@ -28,7 +28,7 @@ export async function authenticateUser(email: string, password: string) {
     isAuthenticated = await bcrypt.compare(password, user.password);
   }
 
-  if (isAuthenticated) {
+  if (user && isAuthenticated) {
     token = generateToken({
       id: user.id,
       firstName: user.firstName,

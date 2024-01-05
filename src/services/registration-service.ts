@@ -3,31 +3,33 @@ import bcrypt from "bcrypt";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
 import { Barber } from "../entities/barber";
+import { ResponseObject } from "../util/response-object";
 
 const { isValidEmail, isStrongPassword } = require("../util/string-validation");
 const saltRounds = 10;
 
-async function validateAndHashPassword(password: string) {
+async function validateAndHashPassword(
+  password: string,
+): Promise<ResponseObject> {
   if (!isStrongPassword(password)) {
-    return {
-      error:
-        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    };
+    return ResponseObject.error(
+      "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+    );
   }
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return hashedPassword;
+  return ResponseObject.success(hashedPassword);
 }
 
-async function checkEmailExists(
-  email: string,
-  entity: typeof Client | typeof Barber,
-) {
-  const user = await AppDataSource.manager.findOne(entity, {
+async function checkEmailExists(email: string) {
+  const client = await AppDataSource.manager.findOne(Client, {
+    where: { email },
+  });
+  const barber = await AppDataSource.manager.findOne(Barber, {
     where: { email },
   });
 
-  return Boolean(user);
+  return Boolean(client || barber);
 }
 
 async function createClientInDB(
@@ -39,35 +41,29 @@ async function createClientInDB(
   logger.info("Entering Registration Service => createClientInDB");
 
   if (!firstName || !lastName || !email || !password) {
-    return {
-      error: "First name, last name, email, and password are required",
-    };
+    return ResponseObject.error(
+      "First name, last name, email, and password are required",
+    );
   }
 
   if (!isValidEmail(email)) {
-    return {
-      error: "Invalid email address",
-    };
+    return ResponseObject.error("Invalid email address");
   }
 
   const hashedPassword = await validateAndHashPassword(password);
-  if (hashedPassword.error) return hashedPassword;
+  if (hashedPassword.error) return ResponseObject.error(hashedPassword.error);
 
-  const emailExists = await checkEmailExists(email, Barber);
+  const emailExists = await checkEmailExists(email);
   if (emailExists) {
-    return {
-      error: "Email already exists",
-    };
+    return ResponseObject.error("Email already exists");
   }
 
-  const client = Client.create(firstName, lastName, email, hashedPassword);
+  const client = Client.create(firstName, lastName, email, hashedPassword.data);
 
   await AppDataSource.manager.save(client);
 
   logger.info("Exiting Registration Service => createClientInDB");
-  return {
-    message: "Client created successfully",
-  };
+  return ResponseObject.success("Client created successfully");
 }
 
 async function createBarberInDB(barberObj: Barber) {
@@ -84,33 +80,28 @@ async function createBarberInDB(barberObj: Barber) {
     !barberObj.state ||
     !barberObj.zipCode
   ) {
-    return {
-      error:
-        "First name, last name, email, password, shop, address line 1, city, state, and zip code are required",
-    };
+    return ResponseObject.error(
+      "First name, last name, email, password, shop, address line 1, city, state, and zip code are required",
+    );
   }
 
   if (!isValidEmail(barberObj.email)) {
-    return {
-      error: "Invalid email address",
-    };
+    return ResponseObject.error("Invalid email address");
   }
 
   const hashedPassword = await validateAndHashPassword(barberObj.password);
-  if (hashedPassword.error) return hashedPassword;
+  if (hashedPassword.error) return ResponseObject.error(hashedPassword.error);
 
-  const emailExists = await checkEmailExists(barberObj.email, Client);
+  const emailExists = await checkEmailExists(barberObj.email);
   if (emailExists) {
-    return {
-      error: "Email already exists",
-    };
+    return ResponseObject.error("Email already exists");
   }
 
   const barber = Barber.create(
     barberObj.firstName,
     barberObj.lastName,
     barberObj.email,
-    hashedPassword,
+    hashedPassword.data,
     barberObj.shop,
     barberObj.addressLine1,
     barberObj.addressLine2,
@@ -122,9 +113,7 @@ async function createBarberInDB(barberObj: Barber) {
   await AppDataSource.manager.save(barber);
 
   logger.info("Exiting Registration Service => createBarberInDB");
-  return {
-    message: "Barber created successfully",
-  };
+  return ResponseObject.success("Barber created successfully");
 }
 
 export default {

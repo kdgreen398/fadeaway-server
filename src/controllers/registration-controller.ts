@@ -23,7 +23,7 @@ router.post(
         res.status(400).send(response.error);
       }
 
-      res.send(response.message);
+      res.send(response.data);
 
       logger.info("Exiting Registration Controller => register-client");
     } catch (err: any) {
@@ -45,7 +45,7 @@ router.post(
         res.status(400).send(response.error);
       }
 
-      res.send(response.message);
+      res.send(response.data);
 
       logger.info("Exiting Registration Controller => register-barber");
     } catch (err: any) {

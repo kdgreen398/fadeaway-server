@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
 import { Barber } from "../entities/barber";
+import { BarberCityState } from "../entities/barber-city-state";
 
 const saltRounds = 10;
 
@@ -50,20 +51,24 @@ export async function createBarberInDB(barberObj: Barber) {
 
   const hashedPassword = await bcrypt.hash(barberObj.password, saltRounds);
 
-  const barber = Barber.create(
-    barberObj.firstName,
-    barberObj.lastName,
-    barberObj.email,
-    hashedPassword,
-    barberObj.shop,
-    barberObj.addressLine1,
-    barberObj.addressLine2,
-    barberObj.city,
-    barberObj.state,
-    barberObj.zipCode,
+  const createdBarber = await AppDataSource.manager.save(
+    Barber.create(
+      barberObj.firstName,
+      barberObj.lastName,
+      barberObj.email,
+      hashedPassword,
+      barberObj.shop,
+      barberObj.addressLine1,
+      barberObj.addressLine2,
+      barberObj.city,
+      barberObj.state,
+      barberObj.zipCode,
+    ),
   );
 
-  const createdBarber = await AppDataSource.manager.save(barber);
+  await AppDataSource.manager.save(
+    BarberCityState.create(barberObj.city, barberObj.state),
+  );
 
   logger.info("Exiting Registration Service => createBarberInDB");
   return createdBarber;

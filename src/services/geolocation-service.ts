@@ -3,11 +3,11 @@ import logger from "../util/logger";
 
 const client = new Client({});
 
-export async function getAddressFromCoords(lat: string, lng: string) {
+export async function getAddressFromCoords(lat: number, lng: number) {
   logger.info("Entering Geolocation Service => getAddressFromCoords");
   const googleAPIResponse = await client.reverseGeocode({
     params: {
-      latlng: { lat: parseFloat(lat), lng: parseFloat(lng) },
+      latlng: { lat, lng },
       key: process.env.GOOGLE_MAPS_API_KEY || "",
     },
   });

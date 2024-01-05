@@ -11,7 +11,7 @@ import { verifyToken } from "./util/jwt";
 import AuthenticationController from "./controllers/authentication-controller";
 // import BarberController from "./controllers/barber-controller";
 import LocationController from "./controllers/location-controller";
-// import RecommendationController from "./controllers/recommendation-controller";
+import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
 // import ServiceManagementController from "./controllers/service-management-controller";
 
@@ -56,8 +56,8 @@ app.use((req: CustomRequest, res: Response, next: NextFunction) => {
   next();
 });
 
-// app.use(RecommendationController);
 app.use(LocationController);
+app.use(RecommendationController);
 // app.use(BarberController);
 // app.use(AppointmentController);
 // app.use(ServiceManagementController);

@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
+import { Review } from "./review";
 
 @Entity()
 @Unique(["email"])
@@ -17,6 +24,9 @@ export class Client {
 
   @Column()
   password!: string;
+
+  @OneToMany(() => Review, (review) => review.barber)
+  reviews!: Review[];
 
   static create(
     firstName: string,

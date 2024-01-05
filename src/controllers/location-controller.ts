@@ -22,7 +22,10 @@ router.get(
     }
 
     try {
-      const address = await GeolocationService.getAddressFromCoords(lat, lng);
+      const address = await GeolocationService.getAddressFromCoords(
+        parseFloat(lat),
+        parseFloat(lng),
+      );
       const city = address.split(",")[1].trim();
       const state = address.split(",")[2].split(" ")[1];
 

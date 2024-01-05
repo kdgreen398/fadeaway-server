@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  OneToMany,
+} from "typeorm";
+import { Image } from "./image";
+import { Review } from "./review";
 
 @Entity()
 @Unique(["email"])
@@ -44,6 +52,12 @@ export class Barber {
 
   @Column({ nullable: true })
   profileImage!: string;
+
+  @OneToMany(() => Image, (image) => image.barber)
+  images!: Image[];
+
+  @OneToMany(() => Review, (review) => review.barber)
+  reviews!: Review[];
 
   static create(
     firstName: string,

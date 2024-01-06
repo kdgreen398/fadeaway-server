@@ -1,35 +1,41 @@
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+import * as BarberService from "../services/barber-service";
 import { verifyToken } from "../util/jwt";
+import logger from "../util/logger";
+import { ResponseObject } from "../util/response-object";
 
-const express = require("express");
 const router = express.Router();
-const logger = require("../util/logger");
-const BarberService = require("../services/barber-service");
 
 router.get(
   "/barber/fetch-barber-details",
   async (req: Request, res: Response) => {
     logger.info("Entering Barber Controller => fetch-barber-details");
 
-    const { publicId } = req.query;
+    const { id } = req.query;
 
-    if (!publicId) {
-      res.status(400).send("Missing required query parameter: publicId");
+    if (!id) {
+      res
+        .status(400)
+        .json(
+          ResponseObject.error("Missing required query parameter: publicId"),
+        );
       return;
     }
 
     try {
-      const barberDetails = await BarberService.getBarberDetails(publicId);
+      const barberDetails = await BarberService.getBarberProfileData(
+        Number(id),
+      );
 
       if (!barberDetails) {
-        res.status(404).send("Barber not found");
+        res.status(404).json(ResponseObject.error("Barber not found"));
         return;
       }
 
-      res.send(barberDetails);
-    } catch (err) {
+      res.json(ResponseObject.success(barberDetails));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error fetching barber details");
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Barber Controller => fetch-barber-details");
   },
@@ -64,12 +70,14 @@ router.put(
       !state ||
       !zipCode
     ) {
-      res.status(400).send("Missing required body parameters");
+      res
+        .status(400)
+        .json(ResponseObject.error("Missing required body parameters"));
       return;
     }
 
     if (user?.accountType !== "barber") {
-      res.status(403).send("Unauthorized");
+      res.status(403).json(ResponseObject.error("Unauthorized"));
       return;
     }
 
@@ -88,12 +96,12 @@ router.put(
         zipCode,
       );
 
-      res.send(barberDetails);
-    } catch (err) {
+      res.json(ResponseObject.success(barberDetails));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error updating barber details");
+      res.status(500).json(ResponseObject.error(err.message));
     }
-    logger.info("Entering Barber Controller => update-barber-details");
+    logger.info("Exiting Barber Controller => update-barber-details");
   },
 );
 

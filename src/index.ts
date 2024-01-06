@@ -8,7 +8,7 @@ import { verifyToken } from "./util/jwt";
 
 import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
-// import BarberController from "./controllers/barber-controller";
+import BarberController from "./controllers/barber-controller";
 import LocationController from "./controllers/location-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
@@ -57,7 +57,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(LocationController);
 app.use(RecommendationController);
-// app.use(BarberController);
+app.use(BarberController);
 app.use(AppointmentController);
 app.use(ServiceManagementController);
 

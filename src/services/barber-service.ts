@@ -26,79 +26,70 @@ export async function getBarbersByCityState(city: string, state: string) {
   return barbers;
 }
 
-// async function getFullBarberDetailsById(barberId: number) {
-//   logger.info("Entering Barber Service => getBarberDetails");
-//   const barber = (
-//     await executeSelectQuery(FETCH_BARBER_DETAILS_BY_PUBLIC_ID, [publicId])
-//   )[0];
+export async function getBarberProfileData(barberId: number) {
+  logger.info("Entering Barber Service => getBarberDetails");
 
-//   if (!barber) return null;
+  const barber = await AppDataSource.manager.findOne(Barber, {
+    where: { id: barberId },
+    relations: {
+      images: true,
+      reviews: true,
+      services: true,
+    },
+  });
 
-//   const imageQuery = FETCH_IMAGES_BY_BARBER_ID;
-//   const reviewQuery = FETCH_REVIEWS_BY_BARBER_ID;
+  if (!barber) {
+    throw new Error("Barber does not exist");
+  }
 
-//   const [images, reviews, services] = await Promise.all([
-//     executeSelectQuery(imageQuery, [barber.barberId]),
-//     executeSelectQuery(reviewQuery, [barber.barberId]),
-//     ServiceManagementService.getServices(barber.barberId),
-//   ]);
+  logger.info("Exiting Barber Service => getBarberDetails");
+  return {
+    ...barber,
+    formattedAddress: formatAddress(barber),
+    fullName: getFullName(barber),
+  };
+}
 
-//   logger.info("Exiting Barber Service => getBarberDetails");
-//   return {
-//     ...barber,
-//     formattedAddress: formatAddress(barber),
-//     fullName: getFullName(barber),
-//     images,
-//     reviews,
-//     services,
-//   };
-// }
+export async function updateBarberDetails(
+  barberId: number,
+  firstName: string,
+  lastName: string,
+  alias: string,
+  bio: string,
+  shop: string,
+  addressLine1: string,
+  addressLine2: string,
+  city: string,
+  state: string,
+  zipCode: string,
+) {
+  logger.info("Entering Barber Service => updateBarberDetails");
 
-// async function updateBarberDetails(
-//   barberId,
-//   firstName,
-//   lastName,
-//   alias,
-//   bio,
-//   shop,
-//   addressLine1,
-//   addressLine2,
-//   city,
-//   state,
-//   zipCode,
-// ) {
-//   logger.info("Entering Barber Service => updateBarberDetails");
-//   const [barber] = await executeSelectQuery(FETCH_BARBER_DETAILS_BY_BARBER_ID, [
-//     barberId,
-//   ]);
+  const barber = await AppDataSource.manager.findOne(Barber, {
+    where: { id: barberId },
+  });
 
-//   if (!barber) {
-//     throw new Error("Barber does not exist");
-//   }
+  if (!barber) {
+    throw new Error("Barber does not exist");
+  }
 
-//   await executeNonSelectQuery(UPDATE_BARBER_DETAILS, [
-//     firstName,
-//     lastName,
-//     alias || null,
-//     shop,
-//     bio || null,
-//     addressLine1,
-//     addressLine2 || null,
-//     city,
-//     state,
-//     zipCode,
-//     barberId,
-//   ]);
+  barber.firstName = firstName;
+  barber.lastName = lastName;
+  barber.alias = alias;
+  barber.bio = bio;
+  barber.shop = shop;
+  barber.addressLine1 = addressLine1;
+  barber.addressLine2 = addressLine2;
+  barber.city = city;
+  barber.state = state;
+  barber.zipCode = zipCode;
 
-//   const [updatedBarberDetails] = await executeSelectQuery(
-//     FETCH_BARBER_DETAILS_BY_BARBER_ID,
-//     [barberId],
-//   );
+  const updatedBarber = await AppDataSource.manager.save(barber);
 
-//   logger.info("Exiting Barber Service => updateBarberDetails");
-//   return {
-//     ...updatedBarberDetails,
-//     formattedAddress: formatAddress(updatedBarberDetails),
-//     fullName: getFullName(updatedBarberDetails),
-//   };
-// }
+  logger.info("Exiting Barber Service => updateBarberDetails");
+  return {
+    ...updatedBarber,
+    formattedAddress: formatAddress(updatedBarber),
+    fullName: getFullName(updatedBarber),
+  };
+}

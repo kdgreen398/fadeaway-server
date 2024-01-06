@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-import express from "express";
-import logger from "../util/logger";
+import express, { Request, Response } from "express";
 import * as ServiceManagementService from "../services/service-management-service";
 import { verifyToken } from "../util/jwt";
+import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
 
 const router = express.Router();
@@ -69,7 +68,7 @@ router.get(
       res.json(ResponseObject.success(services));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error("Error getting services"));
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Service Management Controller => get-services");
   },
@@ -114,7 +113,7 @@ router.post(
       res.status(201).json(ResponseObject.success(service));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error("Error creating service"));
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Service Management Controller => create-service");
   },
@@ -168,7 +167,7 @@ router.put(
       res.json(ResponseObject.success(updatedService));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error("Error updating service"));
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Service Management Controller => update-service");
   },
@@ -197,7 +196,7 @@ router.delete(
       res.json(ResponseObject.success(response));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error("Error deleting service"));
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Service Management Controller => delete-service");
   },

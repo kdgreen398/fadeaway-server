@@ -1,18 +1,7 @@
-const {
-  FETCH_APPOINTMENTS_BY_EMAIL,
-  CREATE_APPOINTMENT,
-  FETCH_APPOINTMENTS_BY_EMAIL_AND_STATUS,
-  UPDATE_APPT_STATUS_BY_APPT_ID_AND_CLIENT_ID,
-  UPDATE_APPT_STATUS_BY_APPT_ID_AND_BARBER_ID,
-} = require("../queries/appointment-queries");
-const { FETCH_BARBER_BY_EMAIL } = require("../queries/barber-queries");
-const { FETCH_CLIENT_BY_EMAIL } = require("../queries/client-queries");
-const {
-  executeSelectQuery,
-  executeNonSelectQuery,
-} = require("../util/connection-util");
-const logger = require("../util/logger");
-const AppointmentStatuses = require("../enums/appointment-status-enum");
+import logger from "../util/logger";
+import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { AppDataSource } from "../util/data-source";
+import { Appointment } from "../entities/appointment";
 
 // Function to check for overlapping appointments
 function doesOverlap(existingAppointment, newAppointment) {
@@ -33,45 +22,34 @@ function canCreateAppointment(existingAppointments, newAppointment) {
   return true; // No overlap found with existing appointments
 }
 
-async function getAppointments(email) {
+export async function getAppointments(email: string, accountType: string) {
   logger.info("Entering Appointment Service => getAppointments");
 
-  const appointments = await executeSelectQuery(FETCH_APPOINTMENTS_BY_EMAIL, [
-    email,
-    email,
-  ]);
+  // If user is a client, return appointments where client id matches
+  let appointments = [];
+  if (accountType === "client") {
+    appointments = await AppDataSource.manager.find(Appointment, {
+      where: {
+        client: {
+          email: email,
+        },
+      },
+    });
+  } else {
+    appointments = await AppDataSource.manager.find(Appointment, {
+      where: {
+        barber: {
+          email: email,
+        },
+      },
+    });
+  }
 
   logger.info("Exiting Appointment Service => getAppointments");
-  return appointments.map((appt) => ({
-    appointmentId: appt.appointmentId,
-    startTime: appt.startTime,
-    endTime: appt.endTime,
-    services: appt.services,
-    status: appt.status,
-    barber: {
-      name: appt.barberName,
-      alias: appt.barberAlias,
-      email: appt.email,
-      publicId: appt.barberPublicId,
-      profileImage: appt.profileImage,
-    },
-    client: {
-      name: appt.clientName,
-      email: appt.clientEmail,
-    },
-    shop: {
-      name: appt.shop,
-      addressLine1: appt.addressLine1,
-      addressLine2: appt.addressLine2,
-      city: appt.city,
-      state: appt.state,
-      zipCode: appt.zipCode,
-      formattedAddress: `${appt.addressLine1} ${appt.addressLine2}, ${appt.city}, ${appt.state} ${appt.zipCode}`,
-    },
-  }));
+  return appointments;
 }
 
-async function createAppointment(
+export async function createAppointment(
   clientEmail,
   barberEmail,
   startTime,
@@ -132,7 +110,7 @@ async function createAppointment(
   return "success";
 }
 
-async function cancelAppointment(user, appointmentId) {
+export async function cancelAppointment(user, appointmentId) {
   logger.info("Entering Appointment Service => cancelAppointment");
 
   // check if user is client or barber
@@ -153,9 +131,3 @@ async function cancelAppointment(user, appointmentId) {
   logger.info("Exiting Appointment Service => cancelAppointment");
   return "success";
 }
-
-module.exports = {
-  createAppointment,
-  getAppointments,
-  cancelAppointment,
-};

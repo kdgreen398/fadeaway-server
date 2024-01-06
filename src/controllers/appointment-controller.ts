@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
+import express from "express";
+import * as AppointmentService from "../services/appointment-service";
+import logger from "../util/logger";
+import { verifyToken } from "../util/jwt";
 
-const express = require("express");
 const router = express.Router();
-const AppointmentService = require("../services/appointment-service.js");
-const logger = require("../util/logger");
-const { verifyToken } = require("../util/jwt");
 
 router.get(
   "/appointments/get-apppointments",

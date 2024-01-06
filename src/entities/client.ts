@@ -6,6 +6,7 @@ import {
   Unique,
 } from "typeorm";
 import { Review } from "./review";
+import { Appointment } from "./appointment";
 
 @Entity()
 @Unique(["email"])
@@ -27,6 +28,9 @@ export class Client {
 
   @OneToMany(() => Review, (review) => review.barber)
   reviews!: Review[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.client)
+  appointments!: Appointment[];
 
   static create(
     firstName: string,

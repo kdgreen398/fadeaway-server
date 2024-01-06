@@ -8,6 +8,7 @@ import {
 import { BarberImage } from "./barber-image";
 import { Review } from "./review";
 import { Service } from "./service";
+import { Appointment } from "./appointment";
 
 @Entity()
 @Unique(["email"])
@@ -62,6 +63,9 @@ export class Barber {
 
   @OneToMany(() => Service, (service) => service.barber)
   services!: Service[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.barber)
+  appointments!: Appointment[];
 
   static create(
     firstName: string,

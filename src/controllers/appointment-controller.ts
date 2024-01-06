@@ -1,5 +1,4 @@
-import { Response } from "express";
-import { CustomRequest } from "../interfaces/custom-request-interface";
+import { Request, Response } from "express";
 
 const express = require("express");
 const router = express.Router();
@@ -9,12 +8,11 @@ const { verifyToken } = require("../util/jwt");
 
 router.get(
   "/appointments/get-apppointments",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => get-apppointments");
 
     try {
-      const token = req.cookies["auth-token"];
-      const user = verifyToken(token);
+      const user = verifyToken(req.cookies["auth-token"]);
       const appointments = await AppointmentService.getAppointments(
         user.email,
         user.accountType,
@@ -31,7 +29,7 @@ router.get(
 
 router.post(
   "/appointments/create-appointment",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => create-appointment");
 
     const { barberEmail, startTime, services } = req.body;
@@ -41,8 +39,7 @@ router.post(
     }
 
     try {
-      const token = req.cookies["auth-token"];
-      const user = verifyToken(token);
+      const user = verifyToken(req.cookies["auth-token"]);
       if (user.accountType !== "client") {
         throw new Error("Only clients can create appointments");
       }
@@ -64,7 +61,7 @@ router.post(
 
 router.post(
   "/appointments/cancel-appointment",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => cancel-appointment");
 
     const { apptId } = req.query;
@@ -74,8 +71,7 @@ router.post(
     }
 
     try {
-      const token = req.cookies["auth-token"];
-      const user = verifyToken(token);
+      const user = verifyToken(req.cookies["auth-token"]);
       const appointment = await AppointmentService.cancelAppointment(
         user,
         apptId,

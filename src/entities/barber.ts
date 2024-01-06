@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { BarberImage } from "./barber-image";
 import { Review } from "./review";
+import { Service } from "./service";
 
 @Entity()
 @Unique(["email"])
@@ -58,6 +59,9 @@ export class Barber {
 
   @OneToMany(() => Review, (review) => review.barber)
   reviews!: Review[];
+
+  @OneToMany(() => Service, (service) => service.barber)
+  services!: Service[];
 
   static create(
     firstName: string,

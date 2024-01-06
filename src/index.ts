@@ -3,8 +3,7 @@ import "reflect-metadata";
 dotenv.config(); // Loads environment variables from .env file into process.env
 
 import { NextFunction } from "connect";
-import { Response } from "express";
-import { CustomRequest } from "./interfaces/custom-request-interface";
+import { Request, Response } from "express";
 import { verifyToken } from "./util/jwt";
 
 // import AppointmentController from "./controllers/appointment-controller";
@@ -13,7 +12,7 @@ import AuthenticationController from "./controllers/authentication-controller";
 import LocationController from "./controllers/location-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
-// import ServiceManagementController from "./controllers/service-management-controller";
+import ServiceManagementController from "./controllers/service-management-controller";
 
 const express = require("express");
 const app = express();
@@ -35,7 +34,7 @@ app.use(cookieParser());
 app.use(AuthenticationController);
 app.use(RegistrationController);
 
-app.use((req: CustomRequest, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   // get auth token from cookies
   const token = req.cookies["auth-token"];
 
@@ -47,7 +46,7 @@ app.use((req: CustomRequest, res: Response, next: NextFunction) => {
   }
 
   try {
-    req.decodedToken = verifyToken(token);
+    verifyToken(token);
   } catch {
     res.status(401).json({ error: "Unauthorized" });
     return;
@@ -60,7 +59,7 @@ app.use(LocationController);
 app.use(RecommendationController);
 // app.use(BarberController);
 // app.use(AppointmentController);
-// app.use(ServiceManagementController);
+app.use(ServiceManagementController);
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

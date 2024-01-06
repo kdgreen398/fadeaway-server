@@ -1,7 +1,14 @@
-import { DecodedToken } from "../interfaces/decoded-token-interface";
-
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET_KEY; // Replace with your actual secret key
+
+interface DecodedToken {
+  firstName: string;
+  lastName: string;
+  email: string;
+  publicId: string;
+  id: number;
+  accountType: string;
+}
 
 export function verifyToken(token: string): DecodedToken {
   return jwt.verify(token, secretKey);

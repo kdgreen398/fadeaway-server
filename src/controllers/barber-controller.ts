@@ -1,5 +1,5 @@
-import { Response } from "express";
-import { CustomRequest } from "../interfaces/custom-request-interface";
+import { Request, Response } from "express";
+import { verifyToken } from "../util/jwt";
 
 const express = require("express");
 const router = express.Router();
@@ -8,7 +8,7 @@ const BarberService = require("../services/barber-service");
 
 router.get(
   "/barber/fetch-barber-details",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Barber Controller => fetch-barber-details");
 
     const { publicId } = req.query;
@@ -37,10 +37,10 @@ router.get(
 
 router.put(
   "/barber/update-barber-details",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Barber Controller => update-barber-details");
 
-    const user = req.decodedToken;
+    const user = verifyToken(req.cookies["auth-token"]);
 
     const {
       firstName,

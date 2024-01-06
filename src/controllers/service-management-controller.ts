@@ -1,9 +1,11 @@
-import { Response } from "express";
-import { CustomRequest } from "../interfaces/custom-request-interface";
-const express = require("express");
+import { Request, Response } from "express";
+import express from "express";
+import logger from "../util/logger";
+import * as ServiceManagementService from "../services/service-management-service";
+import { verifyToken } from "../util/jwt";
+import { ResponseObject } from "../util/response-object";
+
 const router = express.Router();
-const logger = require("../util/logger");
-const ServiceManagementService = require("../services/service-management-service");
 
 function validateParameters(hours: number, minutes: number, price: number) {
   if (
@@ -47,23 +49,27 @@ function validateParameters(hours: number, minutes: number, price: number) {
 
 router.get(
   "/service-management/get-services",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => get-services");
 
     const { barberId } = req.query;
 
     if (!barberId) {
-      res.status(400).send("Missing required parameters: barberId");
+      res
+        .status(400)
+        .json(ResponseObject.error("Missing required parameters: barberId"));
       return;
     }
 
     try {
-      const response = await ServiceManagementService.getServices(barberId);
+      const services = await ServiceManagementService.getServices(
+        Number(barberId),
+      );
 
-      res.send(response);
-    } catch (err) {
+      res.json(ResponseObject.success(services));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error getting services");
+      res.status(500).json(ResponseObject.error("Error getting services"));
     }
     logger.info("Exiting Service Management Controller => get-services");
   },
@@ -71,11 +77,11 @@ router.get(
 
 router.post(
   "/service-management/create-service",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => create-service");
 
     const { name, hours, minutes, description, price } = req.body;
-    const user = req.decodedToken;
+    const user = verifyToken(req.cookies["auth-token"]);
 
     try {
       if (
@@ -91,12 +97,12 @@ router.post(
       validateParameters(hours, minutes, price);
     } catch (err: any) {
       logger.error(err);
-      res.status(400).send(err.message);
+      res.status(400).json(ResponseObject.error(err.message));
       return;
     }
 
     try {
-      const response = await ServiceManagementService.createService(
+      const service = await ServiceManagementService.createService(
         name,
         hours,
         minutes,
@@ -105,10 +111,10 @@ router.post(
         user.id,
       );
 
-      res.status(201).send(response);
-    } catch (err) {
+      res.status(201).json(ResponseObject.success(service));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error creating service");
+      res.status(500).json(ResponseObject.error("Error creating service"));
     }
     logger.info("Exiting Service Management Controller => create-service");
   },
@@ -116,15 +122,14 @@ router.post(
 
 router.put(
   "/service-management/update-service",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => update-service");
 
-    const { name, hours, minutes, description, price, serviceId } = req.body;
-    const user = req.decodedToken;
+    const { name, hours, minutes, description, price, id } = req.body;
+    const user = verifyToken(req.cookies["auth-token"]);
 
     if (user.accountType !== "barber") {
-      res.status(403).send("Unauthorized");
-      return;
+      return res.status(403).json(ResponseObject.error("Unauthorized"));
     }
 
     try {
@@ -133,17 +138,20 @@ router.put(
         (!hours && hours !== 0) ||
         (!minutes && minutes !== 0) ||
         (!price && price !== 0) ||
-        !serviceId
+        !id
       ) {
-        throw new Error(
-          "Missing required parameters: name, hours, minutes, price, serviceId",
-        );
+        return res
+          .status(400)
+          .json(
+            ResponseObject.error(
+              "Missing required parameters: name, hours, minutes, price, id",
+            ),
+          );
       }
       validateParameters(hours, minutes, price);
     } catch (err: any) {
       logger.error(err);
-      res.status(400).send(err.message);
-      return;
+      return res.status(400).json(err.message);
     }
 
     try {
@@ -153,14 +161,14 @@ router.put(
         minutes,
         description,
         price,
-        serviceId,
+        id,
         user.id,
       );
 
-      res.send(updatedService);
-    } catch (err) {
+      res.json(ResponseObject.success(updatedService));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error updating service");
+      res.status(500).json(ResponseObject.error("Error updating service"));
     }
     logger.info("Exiting Service Management Controller => update-service");
   },
@@ -168,27 +176,28 @@ router.put(
 
 router.delete(
   "/service-management/delete-service",
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => delete-service");
 
     const { serviceId } = req.query;
-    const user = req.decodedToken;
+    const user = verifyToken(req.cookies["auth-token"]);
 
     if (!serviceId) {
-      res.status(400).send("Missing required parameters: serviceId");
-      return;
+      return res
+        .status(400)
+        .json(ResponseObject.error("Missing required parameters: serviceId"));
     }
 
     try {
       const response = await ServiceManagementService.deleteService(
-        serviceId,
+        Number(serviceId),
         user.id,
       );
 
-      res.send(response);
-    } catch (err) {
+      res.json(ResponseObject.success(response));
+    } catch (err: any) {
       logger.error(err);
-      res.status(500).send("Error deleting service");
+      res.status(500).json(ResponseObject.error("Error deleting service"));
     }
     logger.info("Exiting Service Management Controller => delete-service");
   },

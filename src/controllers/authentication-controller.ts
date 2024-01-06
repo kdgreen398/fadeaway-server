@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
-import logger from "../util/logger";
 import * as AuthenticationService from "../services/authentication-service";
+import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
 const router = express.Router();
 
@@ -57,7 +57,7 @@ router.post(
 
     res.clearCookie("auth-token");
 
-    res.send("Authentication revoked");
+    res.send(ResponseObject.success("Authentication revoked"));
     logger.info("Exiting Authentication Controller => revoke-authentication");
   },
 );

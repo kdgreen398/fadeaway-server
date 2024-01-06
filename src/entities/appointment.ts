@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { Review } from "./review";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AppointmentStatuses } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { Barber } from "./barber";
@@ -28,8 +21,8 @@ export class Appointment {
   @Column()
   endTime!: Date;
 
-  @Column()
-  services!: JSON;
+  @Column("json")
+  services!: any;
 
   @Column({
     type: "enum",
@@ -44,5 +37,25 @@ export class Appointment {
   barber!: Barber;
 
   @ManyToOne(() => Client, (client) => client.appointments)
-  client!: Barber;
+  client!: Client;
+
+  static create(
+    startTime: Date,
+    endTime: Date,
+    services: any,
+    updatedBy: string,
+    updatedTime: Date,
+    barber: Barber,
+    client: Client,
+  ) {
+    const appointment = new Appointment();
+    appointment.startTime = startTime;
+    appointment.endTime = endTime;
+    appointment.services = services;
+    appointment.updatedBy = updatedBy;
+    appointment.updatedTime = updatedTime;
+    appointment.barber = barber;
+    appointment.client = client;
+    return appointment;
+  }
 }

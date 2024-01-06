@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import express from "express";
+import express, { Request, Response } from "express";
 import * as AppointmentService from "../services/appointment-service";
-import logger from "../util/logger";
 import { verifyToken } from "../util/jwt";
+import logger from "../util/logger";
+import { ResponseObject } from "../util/response-object";
 
 const router = express.Router();
 
@@ -17,10 +17,10 @@ router.get(
         user.email,
         user.accountType,
       );
-      res.send(appointments);
+      res.json(ResponseObject.success(appointments));
     } catch (error: any) {
       logger.error(error);
-      res.status(500).send(error.message);
+      res.status(500).json(ResponseObject.error(error.message));
     }
 
     logger.info("Exiting Appointment Controller => get-apppointments");
@@ -35,24 +35,34 @@ router.post(
     const { barberEmail, startTime, services } = req.body;
 
     if (!barberEmail || !startTime || !services) {
-      return res.status(400).send("Missing required fields");
+      return res
+        .status(400)
+        .json(ResponseObject.error("Missing required fields"));
+    }
+    if (new Date(startTime) < new Date()) {
+      return res
+        .status(400)
+        .json(ResponseObject.error("Appointment time cannot be in the past"));
+    }
+
+    const user = verifyToken(req.cookies["auth-token"]);
+    if (user.accountType !== "client") {
+      return res
+        .status(401)
+        .json(ResponseObject.error("Only clients can create appointments"));
     }
 
     try {
-      const user = verifyToken(req.cookies["auth-token"]);
-      if (user.accountType !== "client") {
-        throw new Error("Only clients can create appointments");
-      }
       const appointment = await AppointmentService.createAppointment(
         user.email,
         barberEmail,
         startTime,
         services,
       );
-      res.send(appointment);
+      res.json(ResponseObject.success(appointment));
     } catch (error: any) {
       logger.error(error);
-      res.status(500).send(error.message);
+      res.status(500).json(ResponseObject.error(error.message));
     }
 
     logger.info("Exiting Appointment Controller => create-appointment");
@@ -67,19 +77,21 @@ router.post(
     const { apptId } = req.query;
 
     if (!apptId) {
-      return res.status(400).send("Missing required fields");
+      return res
+        .status(400)
+        .json(ResponseObject.error("Missing required fields"));
     }
 
     try {
       const user = verifyToken(req.cookies["auth-token"]);
       const appointment = await AppointmentService.cancelAppointment(
         user,
-        apptId,
+        Number(apptId),
       );
-      res.send(appointment);
+      res.json(ResponseObject.success(appointment));
     } catch (error: any) {
       logger.error(error);
-      res.status(500).send(error.message);
+      res.status(500).json(ResponseObject.error(error.message));
     }
 
     logger.info("Exiting Appointment Controller => cancel-appointment");

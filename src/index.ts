@@ -6,7 +6,7 @@ import { NextFunction } from "connect";
 import { Request, Response } from "express";
 import { verifyToken } from "./util/jwt";
 
-// import AppointmentController from "./controllers/appointment-controller";
+import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
 // import BarberController from "./controllers/barber-controller";
 import LocationController from "./controllers/location-controller";
@@ -58,7 +58,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(LocationController);
 app.use(RecommendationController);
 // app.use(BarberController);
-// app.use(AppointmentController);
+app.use(AppointmentController);
 app.use(ServiceManagementController);
 
 app.listen(port, () => {

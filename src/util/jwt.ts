@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET_KEY; // Replace with your actual secret key
 
-interface DecodedToken {
+export interface DecodedToken {
   firstName: string;
   lastName: string;
   email: string;

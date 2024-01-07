@@ -69,7 +69,7 @@ router.post(
   },
 );
 
-router.post(
+router.put(
   "/appointments/cancel-appointment",
   async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => cancel-appointment");

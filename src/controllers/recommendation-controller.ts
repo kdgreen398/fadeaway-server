@@ -41,7 +41,6 @@ router.get(
         city = address.split(",")[1].trim();
         state = address.split(",")[2].split(" ")[1];
       }
-      console.log(city, state);
 
       const barbers = await BarberService.getBarbersByCityState(city, state);
 

@@ -37,7 +37,7 @@ const createTestData = async () => {
   const barber = Barber.create({
     firstName: "John",
     lastName: "Doe",
-    alias: "Johnny",
+    // alias: "Johnny",
     shop: "John's Barber Shop",
     bio: "I'm a barber",
     addressLine1: "123 Main St",

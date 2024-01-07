@@ -1,18 +1,19 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
+  BaseEntity,
   Column,
-  Unique,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
+import { Appointment } from "./appointment";
 import { BarberImage } from "./barber-image";
 import { Review } from "./review";
 import { Service } from "./service";
-import { Appointment } from "./appointment";
 
 @Entity()
 @Unique(["email"])
-export class Barber {
+export class Barber extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -66,30 +67,4 @@ export class Barber {
 
   @OneToMany(() => Appointment, (appointment) => appointment.barber)
   appointments!: Appointment[];
-
-  static create(
-    firstName: string,
-    lastName: string,
-    email: string,
-    hashedPassword: string,
-    shop: string,
-    addressLine1: string,
-    addressLine2: string,
-    city: string,
-    state: string,
-    zipCode: string,
-  ) {
-    const barber = new Barber();
-    barber.firstName = firstName;
-    barber.lastName = lastName;
-    barber.email = email;
-    barber.password = hashedPassword;
-    barber.shop = shop;
-    barber.addressLine1 = addressLine1;
-    barber.addressLine2 = addressLine2;
-    barber.city = city;
-    barber.state = state;
-    barber.zipCode = zipCode;
-    return barber;
-  }
 }

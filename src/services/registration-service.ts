@@ -1,9 +1,9 @@
-import logger from "../util/logger";
 import bcrypt from "bcrypt";
-import { Client } from "../entities/client";
-import { AppDataSource } from "../util/data-source";
 import { Barber } from "../entities/barber";
 import { BarberCityState } from "../entities/barber-city-state";
+import { Client } from "../entities/client";
+import { AppDataSource } from "../util/data-source";
+import logger from "../util/logger";
 
 const saltRounds = 10;
 
@@ -18,13 +18,9 @@ async function checkEmailExists(email: string) {
   return Boolean(client || barber);
 }
 
-export async function createClientInDB(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string,
-) {
+export async function createClientInDB(clientObj: Client) {
   logger.info("Entering Registration Service => createClientInDB");
+  const { firstName, lastName, email, password } = clientObj;
 
   const emailExists = await checkEmailExists(email);
   if (emailExists) {
@@ -33,7 +29,12 @@ export async function createClientInDB(
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  const client = Client.create(firstName, lastName, email, hashedPassword);
+  const client = Client.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+  });
 
   const createdClient = await AppDataSource.manager.save(client);
 
@@ -41,33 +42,21 @@ export async function createClientInDB(
   return createdClient;
 }
 
-export async function createBarberInDB(barberObj: Barber) {
+export async function createBarberInDB(barber: Barber) {
   logger.info("Entering Registration Service => createBarberInDB");
 
-  const emailExists = await checkEmailExists(barberObj.email);
+  const emailExists = await checkEmailExists(barber.email);
   if (emailExists) {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(barberObj.password, saltRounds);
+  const hashedPassword = await bcrypt.hash(barber.password, saltRounds);
 
-  const createdBarber = await AppDataSource.manager.save(
-    Barber.create(
-      barberObj.firstName,
-      barberObj.lastName,
-      barberObj.email,
-      hashedPassword,
-      barberObj.shop,
-      barberObj.addressLine1,
-      barberObj.addressLine2,
-      barberObj.city,
-      barberObj.state,
-      barberObj.zipCode,
-    ),
-  );
+  barber.password = hashedPassword;
+  const createdBarber = await AppDataSource.manager.save(barber);
 
   await AppDataSource.manager.save(
-    BarberCityState.create(barberObj.city, barberObj.state),
+    BarberCityState.create(barber.city, barber.state),
   );
 
   logger.info("Exiting Registration Service => createBarberInDB");

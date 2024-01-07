@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -8,7 +9,7 @@ import {
 import { Barber } from "./barber";
 
 @Entity()
-export class BarberImage {
+export class BarberImage extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

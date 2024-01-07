@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 
-import logger from "../util/logger";
 import * as RegistrationService from "../services/registration-service";
+import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
-import { isValidEmail, isStrongPassword } from "../util/string-validation";
+import { isStrongPassword, isValidEmail } from "../util/string-validation";
 
 const router = express.Router();
 
@@ -38,12 +38,7 @@ router.post(
     }
 
     try {
-      const client = await RegistrationService.createClientInDB(
-        firstName,
-        lastName,
-        email,
-        password,
-      );
+      const client = await RegistrationService.createClientInDB(req.body);
 
       delete (client as Partial<typeof client>).password;
 

@@ -178,18 +178,18 @@ router.delete(
   async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => delete-service");
 
-    const { serviceId } = req.query;
+    const { id } = req.query;
     const user = verifyToken(req.cookies["auth-token"]);
 
-    if (!serviceId) {
+    if (!id) {
       return res
         .status(400)
-        .json(ResponseObject.error("Missing required parameters: serviceId"));
+        .json(ResponseObject.error("Missing required parameters: id"));
     }
 
     try {
       const response = await ServiceManagementService.deleteService(
-        Number(serviceId),
+        Number(id),
         user.id,
       );
 

@@ -49,7 +49,7 @@ export async function createService(
   }
 
   const createdService = await AppDataSource.manager.save(
-    Service.create(name, description, hours, minutes, price, barber),
+    Service.create({ name, description, hours, minutes, price, barber }),
   );
 
   logger.info("Exiting Service Management Service => createService");

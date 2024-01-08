@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -9,7 +10,7 @@ import { Barber } from "./barber";
 import { Client } from "./client";
 
 @Entity()
-export class Review {
+export class Review extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -26,7 +27,7 @@ export class Review {
   @JoinColumn()
   barber!: Barber;
 
-  @ManyToOne(() => Client, (client) => client.reviews)
+  @ManyToOne(() => Client, (client) => client.reviews, { eager: true })
   @JoinColumn()
   client!: Client;
 }

@@ -1,8 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Barber } from "./barber";
 
 @Entity()
-export class Service {
+export class Service extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -23,23 +29,4 @@ export class Service {
 
   @ManyToOne(() => Barber, (barber) => barber.services)
   barber!: Barber;
-
-  static create(
-    name: string,
-    description: string,
-    hours: number,
-    minutes: number,
-    price: number,
-    barber: Barber,
-  ) {
-    const service = new Service();
-    service.name = name;
-    service.description = description;
-    service.hours = hours;
-    service.minutes = minutes;
-    service.price = price;
-    service.barber = barber;
-
-    return service;
-  }
 }

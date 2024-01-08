@@ -1,7 +1,6 @@
 import { Barber } from "../entities/barber";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
-// import ServiceManagementService from "./service-management-service";
 
 const formatAddress = (barber: Barber) =>
   `${barber.addressLine1}${

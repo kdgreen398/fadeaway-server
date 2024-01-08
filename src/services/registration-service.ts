@@ -53,10 +53,14 @@ export async function createBarberInDB(barber: Barber) {
   const hashedPassword = await bcrypt.hash(barber.password, saltRounds);
 
   barber.password = hashedPassword;
-  const createdBarber = await AppDataSource.manager.save(barber);
+  const createdBarber = await AppDataSource.manager.save(
+    Barber.create({
+      ...barber,
+    }),
+  );
 
   await AppDataSource.manager.save(
-    BarberCityState.create(barber.city, barber.state),
+    BarberCityState.create({ city: barber.city, state: barber.state }),
   );
 
   logger.info("Exiting Registration Service => createBarberInDB");

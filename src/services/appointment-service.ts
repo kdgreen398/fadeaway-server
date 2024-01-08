@@ -3,6 +3,7 @@ import { Barber } from "../entities/barber";
 import { Client } from "../entities/client";
 import { Service } from "../entities/service";
 import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { RoleEnum } from "../enums/role-enum";
 import { AppDataSource } from "../util/data-source";
 import { DecodedToken } from "../util/jwt";
 import logger from "../util/logger";
@@ -45,6 +46,7 @@ export async function getAppointments(email: string, accountType: string) {
           email: email,
         },
       },
+      relations: ["barber", "client"],
     });
   } else {
     appointments = await AppDataSource.manager.find(Appointment, {
@@ -53,6 +55,7 @@ export async function getAppointments(email: string, accountType: string) {
           email: email,
         },
       },
+      relations: ["barber", "client"],
     });
   }
 
@@ -119,15 +122,16 @@ export async function createAppointment(
   // Create new appointment
   await AppDataSource.manager.save(
     Appointment,
-    Appointment.create(
+    Appointment.create({
       startTime,
       endTime,
       services,
-      "client",
-      new Date(),
+      createdTime: new Date(),
+      updatedBy: RoleEnum.client,
+      updatedTime: new Date(),
       barber,
       client,
-    ),
+    }),
   );
 
   logger.info("Exiting Appointment Service => createAppointment");

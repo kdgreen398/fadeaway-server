@@ -47,7 +47,11 @@ router.get(
       logger.info(
         "Exiting Recommendation Controller => get-barbers-by-location",
       );
-      return res.json(ResponseObject.success(barbers));
+      return res.json(
+        ResponseObject.success(
+          barbers.filter((barber) => barber.images.length > 0),
+        ),
+      );
     } catch (err: any) {
       logger.error(err);
       return res

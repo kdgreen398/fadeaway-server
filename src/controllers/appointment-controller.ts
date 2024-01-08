@@ -39,6 +39,13 @@ router.post(
         .status(400)
         .json(ResponseObject.error("Missing required fields"));
     }
+
+    if (services.length === 0) {
+      return res
+        .status(400)
+        .json(ResponseObject.error("At least one service is required"));
+    }
+
     if (new Date(startTime) < new Date()) {
       return res
         .status(400)

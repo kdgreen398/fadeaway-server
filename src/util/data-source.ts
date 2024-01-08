@@ -22,13 +22,13 @@ export const AppDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
   entities: ["src/entities/*.ts"],
   // logging: true,
-  dropSchema: true,
+  // dropSchema: true,
 });
 
 AppDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
-    createTestData();
+    // createTestData();
   })
   .catch((err: any) => {
     console.error("Error during Data Source initialization", err);

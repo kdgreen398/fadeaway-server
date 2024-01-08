@@ -9,6 +9,7 @@ import { verifyToken } from "./util/jwt";
 import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
 import BarberController from "./controllers/barber-controller";
+import ImageController from "./controllers/image-controller";
 import LocationController from "./controllers/location-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
@@ -33,6 +34,8 @@ app.use(cookieParser());
 
 app.use(AuthenticationController);
 app.use(RegistrationController);
+
+app.use(ImageController);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   // get auth token from cookies

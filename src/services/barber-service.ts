@@ -1,4 +1,5 @@
 import { Barber } from "../entities/barber";
+import * as ImageService from "../services/image-service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
@@ -50,38 +51,35 @@ export async function getBarberProfileData(barberId: number) {
 }
 
 export async function updateBarberDetails(
-  barberId: number,
-  firstName: string,
-  lastName: string,
-  alias: string,
-  bio: string,
-  shop: string,
-  addressLine1: string,
-  addressLine2: string,
-  city: string,
-  state: string,
-  zipCode: string,
+  barberToSave: Barber,
+  imageFile: Express.Multer.File | undefined,
 ) {
   logger.info("Entering Barber Service => updateBarberDetails");
 
   const barber = await AppDataSource.manager.findOne(Barber, {
-    where: { id: barberId },
+    where: { id: barberToSave.id },
   });
 
   if (!barber) {
     throw new Error("Barber does not exist");
   }
 
-  barber.firstName = firstName;
-  barber.lastName = lastName;
-  barber.alias = alias;
-  barber.bio = bio;
-  barber.shop = shop;
-  barber.addressLine1 = addressLine1;
-  barber.addressLine2 = addressLine2;
-  barber.city = city;
-  barber.state = state;
-  barber.zipCode = zipCode;
+  if (imageFile) {
+    barber.profileImage = await ImageService.uploadBarberProfileImage(
+      imageFile,
+    );
+  }
+
+  barber.firstName = barberToSave.firstName;
+  barber.lastName = barberToSave.lastName;
+  barber.alias = barberToSave.alias;
+  barber.bio = barberToSave.bio;
+  barber.shop = barberToSave.shop;
+  barber.addressLine1 = barberToSave.addressLine1;
+  barber.addressLine2 = barberToSave.addressLine2;
+  barber.city = barberToSave.city;
+  barber.state = barberToSave.state;
+  barber.zipCode = barberToSave.zipCode;
 
   const updatedBarber = await AppDataSource.manager.save(barber);
 

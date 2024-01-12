@@ -9,7 +9,6 @@ import { verifyToken } from "./util/jwt";
 import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
 import BarberController from "./controllers/barber-controller";
-import ImageController from "./controllers/image-controller";
 import LocationController from "./controllers/location-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
@@ -23,6 +22,14 @@ const cookieParser = require("cookie-parser");
 const logger = require("./util/logger");
 const port = "3008";
 
+declare global {
+  namespace Express {
+    interface Request {
+      fileValidationError?: string;
+    }
+  }
+}
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -34,8 +41,6 @@ app.use(cookieParser());
 
 app.use(AuthenticationController);
 app.use(RegistrationController);
-
-app.use(ImageController);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   // get auth token from cookies

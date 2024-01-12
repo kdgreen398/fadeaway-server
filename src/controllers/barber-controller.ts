@@ -1,10 +1,23 @@
 import express, { Request, Response } from "express";
+import multer from "multer";
 import * as BarberService from "../services/barber-service";
 import { verifyToken } from "../util/jwt";
 import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
 
 const router = express.Router();
+
+const multerStorage = multer.memoryStorage();
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type. Please upload an image."));
+    }
+  },
+});
 
 router.get(
   "/barber/fetch-barber-details",
@@ -43,32 +56,20 @@ router.get(
 
 router.put(
   "/barber/update-barber-details",
+  upload.single("file"),
   async (req: Request, res: Response) => {
     logger.info("Entering Barber Controller => update-barber-details");
 
     const user = verifyToken(req.cookies["auth-token"]);
 
-    const {
-      firstName,
-      lastName,
-      alias,
-      bio,
-      shop,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-    } = req.body;
-
     if (
-      !firstName ||
-      !lastName ||
-      !shop ||
-      !addressLine1 ||
-      !city ||
-      !state ||
-      !zipCode
+      !req.body.firstName ||
+      !req.body.lastName ||
+      !req.body.shop ||
+      !req.body.addressLine1 ||
+      !req.body.city ||
+      !req.body.state ||
+      !req.body.zipCode
     ) {
       res
         .status(400)
@@ -83,17 +84,8 @@ router.put(
 
     try {
       const barberDetails = await BarberService.updateBarberDetails(
-        user.id,
-        firstName,
-        lastName,
-        alias,
-        bio,
-        shop,
-        addressLine1,
-        addressLine2,
-        city,
-        state,
-        zipCode,
+        req.body,
+        req.file,
       );
 
       res.json(ResponseObject.success(barberDetails));

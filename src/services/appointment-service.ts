@@ -120,7 +120,7 @@ export async function createAppointment(
   }
 
   // Create new appointment
-  await AppDataSource.manager.save(
+  const createdAppointment = await AppDataSource.manager.save(
     Appointment,
     Appointment.create({
       startTime,
@@ -135,7 +135,7 @@ export async function createAppointment(
   );
 
   logger.info("Exiting Appointment Service => createAppointment");
-  return "success";
+  return createdAppointment;
 }
 
 export async function cancelAppointment(

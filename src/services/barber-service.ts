@@ -90,3 +90,19 @@ export async function updateBarberDetails(
     fullName: getFullName(updatedBarber),
   };
 }
+
+export async function deleteBarberAccount(barberId: number) {
+  logger.info("Entering Barber Service => deleteBarberAccount");
+
+  const barber = await AppDataSource.manager.findOne(Barber, {
+    where: { id: barberId },
+  });
+
+  if (!barber) {
+    throw new Error("Barber does not exist");
+  }
+
+  await AppDataSource.manager.delete(Barber, barberId);
+
+  logger.info("Exiting Barber Service => deleteBarberAccount");
+}

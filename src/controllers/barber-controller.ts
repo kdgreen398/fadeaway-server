@@ -97,4 +97,33 @@ router.put(
   },
 );
 
+router.delete("/barber/delete-account", async (req: Request, res: Response) => {
+  logger.info("Entering Barber Controller => delete-account");
+
+  const user = verifyToken(req.cookies["auth-token"]);
+
+  if (!user) {
+    res.status(401).json(ResponseObject.error("Unauthorized"));
+    return;
+  }
+
+  if (user.accountType !== "barber") {
+    res.status(403).json(ResponseObject.error("Unauthorized"));
+    return;
+  }
+
+  try {
+    await BarberService.deleteBarberAccount(user.id);
+
+    res.clearCookie("auth-token");
+
+    res.json(ResponseObject.success(user));
+  } catch (err: any) {
+    logger.error(err);
+    res.status(500).json(ResponseObject.error(err.message));
+  }
+
+  logger.info("Exiting Barber Controller => delete-account");
+});
+
 export default router;

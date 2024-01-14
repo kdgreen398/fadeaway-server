@@ -70,6 +70,7 @@ export async function updateBarberDetails(
   if (imageFile) {
     barber.profileImage = await ImageService.uploadBarberProfileImage(
       imageFile,
+      barber.id,
     );
   }
 

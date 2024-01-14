@@ -65,6 +65,7 @@ const createTestData = async () => {
       BarberImage.create({
         barber,
         url: `https://picsum.photos/30${i}/30${i}`,
+        fileName: "",
       }),
     );
   }

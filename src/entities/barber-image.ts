@@ -16,6 +16,9 @@ export class BarberImage extends BaseEntity {
   @Column()
   url!: string;
 
+  @Column()
+  fileName!: string;
+
   @ManyToOne(() => Barber, (barber) => barber.images, {
     onDelete: "CASCADE",
   })

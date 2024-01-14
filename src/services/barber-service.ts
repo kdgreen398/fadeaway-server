@@ -1,4 +1,7 @@
+import { In } from "typeorm";
+import { Appointment } from "../entities/appointment";
 import { Barber } from "../entities/barber";
+import { AppointmentStatuses } from "../enums/appointment-status-enum";
 import * as ImageService from "../services/image-service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
@@ -100,6 +103,22 @@ export async function deleteBarberAccount(barberId: number) {
 
   if (!barber) {
     throw new Error("Barber does not exist");
+  }
+
+  // check if barber has any appointments in pending or accepted state
+  const appointments = await AppDataSource.manager.find(Appointment, {
+    where: {
+      barber: {
+        id: barberId,
+      },
+      status: In([AppointmentStatuses.ACCEPTED, AppointmentStatuses.PENDING]),
+    },
+  });
+
+  if (appointments.length > 0) {
+    throw new Error(
+      "Barber cannot delete account while having appointments in pending or accepted state",
+    );
   }
 
   await AppDataSource.manager.delete(Barber, barberId);

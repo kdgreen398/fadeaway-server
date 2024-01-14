@@ -23,11 +23,16 @@ export class Review extends BaseEntity {
   @Column()
   dateCreated!: Date;
 
-  @ManyToOne(() => Barber, (barber) => barber.reviews)
+  @ManyToOne(() => Barber, (barber) => barber.reviews, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   barber!: Barber;
 
-  @ManyToOne(() => Client, (client) => client.reviews, { eager: true })
+  @ManyToOne(() => Client, (client) => client.reviews, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn()
   client!: Client;
 }

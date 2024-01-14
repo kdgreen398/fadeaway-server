@@ -27,6 +27,8 @@ export class Service extends BaseEntity {
   @Column()
   price!: number;
 
-  @ManyToOne(() => Barber, (barber) => barber.services)
+  @ManyToOne(() => Barber, (barber) => barber.services, {
+    onDelete: "CASCADE",
+  })
   barber!: Barber;
 }

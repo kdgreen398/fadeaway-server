@@ -42,9 +42,13 @@ export class Appointment extends BaseEntity {
   @Column()
   updatedTime!: Date;
 
-  @ManyToOne(() => Barber, (barber) => barber.appointments)
+  @ManyToOne(() => Barber, (barber) => barber.appointments, {
+    onDelete: "CASCADE",
+  })
   barber!: Barber;
 
-  @ManyToOne(() => Client, (client) => client.appointments)
+  @ManyToOne(() => Client, (client) => client.appointments, {
+    onDelete: "CASCADE",
+  })
   client!: Client;
 }

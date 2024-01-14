@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Appointment } from "./appointment";
 import { BarberImage } from "./barber-image";
+import { BusinessHours } from "./business-hours";
 import { Review } from "./review";
 import { Service } from "./service";
 
@@ -67,4 +68,7 @@ export class Barber extends BaseEntity {
 
   @OneToMany(() => Appointment, (appointment) => appointment.barber)
   appointments!: Appointment[];
+
+  @OneToMany(() => BusinessHours, (operatingHours) => operatingHours.barber)
+  businessHours!: BusinessHours[];
 }

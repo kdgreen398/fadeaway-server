@@ -8,7 +8,7 @@ import { ResponseObject } from "../util/response-object";
 const router = express.Router();
 
 router.post("/business-hours/create", async (req: Request, res: Response) => {
-  logger.info("Entering BusinessHours Controller => POST /business-hours");
+  logger.info("Entering BusinessHours Controller => create");
 
   const user = verifyToken(req.cookies["auth-token"]);
   if (user.accountType !== RoleEnum.barber) {
@@ -27,7 +27,7 @@ router.post("/business-hours/create", async (req: Request, res: Response) => {
     res.status(500).json(ResponseObject.error(error.message));
   }
 
-  logger.info("Exiting BusinessHours Controller => POST /business-hours");
+  logger.info("Exiting BusinessHours Controller => create");
 });
 
 export default router;

@@ -1,9 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { DayOfTheWeekEnum } from "../enums/day-of-the-week-enum";
 import { Barber } from "./barber";
 
 @Entity()
-export class BusinessHours {
+export class BusinessHours extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

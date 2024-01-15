@@ -4,7 +4,7 @@ import { AppDataSource } from "../util/data-source";
 
 export async function createBusinessHours(
   barberId: number,
-  dataToCreate: BusinessHours,
+  dataToCreate: BusinessHours[],
 ) {
   const barber = await AppDataSource.manager.findOne(Barber, {
     where: { id: barberId },
@@ -17,28 +17,28 @@ export async function createBusinessHours(
     throw new Error("Barber not found");
   }
 
-  const { day, startTime, endTime, isClosed } = dataToCreate;
+  const createdBusinessHours = dataToCreate.map((data) => {
+    const { day, startTime, endTime, isClosed } = data;
 
-  // check if operating hours already exist for this day
-  const operatingHours = barber.businessHours.find(
-    (hours) => hours.day === dataToCreate.day,
-  );
+    // check if business hours already exist for this day
+    const dataInDB = barber.businessHours.find((hours) => hours.day === day);
 
-  // if operating hours already exist for this day, update them
-  if (operatingHours) {
-    operatingHours.startTime = isClosed ? null : startTime;
-    operatingHours.endTime = isClosed ? null : endTime;
-    operatingHours.isClosed = isClosed;
-    return await AppDataSource.manager.save(operatingHours);
-  } else {
-    const newBusinessHours = AppDataSource.manager.create(BusinessHours, {
-      day,
-      startTime: isClosed ? null : startTime,
-      endTime: isClosed ? null : endTime,
-      isClosed,
-      barber,
-    });
+    // if business hours already exist for this day, update them
+    if (dataInDB) {
+      dataInDB.startTime = isClosed ? null : startTime;
+      dataInDB.endTime = isClosed ? null : endTime;
+      dataInDB.isClosed = isClosed;
+      return dataInDB;
+    } else {
+      return BusinessHours.create({
+        day,
+        startTime: isClosed ? null : startTime,
+        endTime: isClosed ? null : endTime,
+        isClosed,
+        barber,
+      });
+    }
+  });
 
-    return await AppDataSource.manager.save(newBusinessHours);
-  }
+  return await AppDataSource.manager.save(createdBusinessHours);
 }

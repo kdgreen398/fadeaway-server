@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { RoleEnum } from "../enums/role-enum";
 import * as ServiceManagementService from "../services/service-management-service";
 import { verifyToken } from "../util/jwt";
 import logger from "../util/logger";
@@ -127,7 +128,7 @@ router.put(
     const { name, hours, minutes, description, price, id } = req.body;
     const user = verifyToken(req.cookies["auth-token"]);
 
-    if (user.accountType !== "barber") {
+    if (user.accountType !== RoleEnum.barber) {
       return res.status(403).json(ResponseObject.error("Unauthorized"));
     }
 

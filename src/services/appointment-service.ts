@@ -39,7 +39,7 @@ export async function getAppointments(email: string, accountType: string) {
 
   // If user is a client, return appointments where client id matches
   let appointments = [];
-  if (accountType === "client") {
+  if (accountType === RoleEnum.client) {
     appointments = await AppDataSource.manager.find(Appointment, {
       where: {
         client: {
@@ -145,7 +145,7 @@ export async function cancelAppointment(
   logger.info("Entering Appointment Service => cancelAppointment");
 
   // check if user is client or barber
-  const isClient = user.accountType === "client";
+  const isClient = user.accountType === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
   // if barber, update appointment status by appointment id and barber id
@@ -164,7 +164,7 @@ export async function cancelAppointment(
   }
 
   appointment.status = AppointmentStatuses.CANCELED;
-  appointment.updatedBy = isClient ? "client" : "barber";
+  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.barber;
   appointment.updatedTime = new Date();
 
   const updatedAppointment = await AppDataSource.manager.save(

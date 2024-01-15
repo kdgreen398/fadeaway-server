@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
+import { RoleEnum } from "../enums/role-enum";
 import * as BarberService from "../services/barber-service";
 import { verifyToken } from "../util/jwt";
 import logger from "../util/logger";
@@ -77,7 +78,7 @@ router.put(
       return;
     }
 
-    if (user?.accountType !== "barber") {
+    if (user.accountType !== RoleEnum.barber) {
       res.status(403).json(ResponseObject.error("Unauthorized"));
       return;
     }
@@ -102,12 +103,7 @@ router.delete("/barber/delete-account", async (req: Request, res: Response) => {
 
   const user = verifyToken(req.cookies["auth-token"]);
 
-  if (!user) {
-    res.status(401).json(ResponseObject.error("Unauthorized"));
-    return;
-  }
-
-  if (user.accountType !== "barber") {
+  if (user.accountType !== RoleEnum.barber) {
     res.status(403).json(ResponseObject.error("Unauthorized"));
     return;
   }

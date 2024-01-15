@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { RoleEnum } from "../enums/role-enum";
 import * as AppointmentService from "../services/appointment-service";
 import { verifyToken } from "../util/jwt";
 import logger from "../util/logger";
@@ -53,7 +54,7 @@ router.post(
     }
 
     const user = verifyToken(req.cookies["auth-token"]);
-    if (user.accountType !== "client") {
+    if (user.accountType !== RoleEnum.client) {
       return res
         .status(401)
         .json(ResponseObject.error("Only clients can create appointments"));

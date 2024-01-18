@@ -143,6 +143,7 @@ export async function updateAppointmentStatus(
   status: AppointmentStatusEnum,
   updatedBy: DecodedToken,
 ) {
+  logger.info("Entering Appointment Service => updateAppointmentStatus");
   // check if user is client or barber
   const isClient = updatedBy.accountType === RoleEnum.client;
 
@@ -171,8 +172,11 @@ export async function updateAppointmentStatus(
   }
 
   appointment.status = status;
+  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.barber;
+  appointment.updatedTime = new Date();
 
-  return await appointmentRepository.save(appointment);
+  logger.info("Exiting Appointment Service => updateAppointmentStatus");
+  return await AppDataSource.manager.save(Appointment, appointment);
 }
 
 export async function cancelAppointment(

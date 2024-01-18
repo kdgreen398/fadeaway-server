@@ -44,11 +44,13 @@ export class Appointment extends BaseEntity {
 
   @ManyToOne(() => Barber, (barber) => barber.appointments, {
     onDelete: "CASCADE",
+    eager: true,
   })
   barber!: Barber;
 
   @ManyToOne(() => Client, (client) => client.appointments, {
     onDelete: "CASCADE",
+    eager: true,
   })
   client!: Client;
 }

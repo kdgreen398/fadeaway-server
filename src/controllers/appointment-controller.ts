@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
 import * as AppointmentService from "../services/appointment-service";
 import { verifyToken } from "../util/jwt";
@@ -103,6 +104,53 @@ router.put(
     }
 
     logger.info("Exiting Appointment Controller => cancel-appointment");
+  },
+);
+
+router.put(
+  "/appointments/barber/update-appointment-status",
+  async (req: Request, res: Response) => {
+    logger.info("Entering Appointment Controller => update-appointment-status");
+
+    if (!req.query.apptId || !req.query.status) {
+      return res
+        .status(400)
+        .json(ResponseObject.error("Missing required fields"));
+    }
+
+    const user = verifyToken(req.cookies["auth-token"]);
+
+    if (user.accountType !== RoleEnum.barber) {
+      return res.status(401).json(ResponseObject.error("Unauthorized"));
+    }
+
+    const { apptId } = req.query;
+    const status = String(req.query.status).toLowerCase();
+
+    // check if status is part of enum
+    if (
+      !Object.values(AppointmentStatusEnum).includes(
+        status as AppointmentStatusEnum,
+      )
+    ) {
+      return res
+        .status(400)
+        .json(ResponseObject.error("Invalid status value provided"));
+    }
+
+    try {
+      const appointment = await AppointmentService.updateAppointmentStatus(
+        Number(apptId),
+        status as AppointmentStatusEnum,
+        user,
+      );
+      res.json(ResponseObject.success(appointment));
+    } catch (error: any) {
+      logger.error(error);
+      res.status(500).json(ResponseObject.error(error.message));
+    }
+
+    logger.info("Exiting Appointment Controller => update-appointment-status");
   },
 );
 

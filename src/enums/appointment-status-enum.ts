@@ -1,4 +1,4 @@
-export enum AppointmentStatuses {
+export enum AppointmentStatusEnum {
   PENDING = "pending",
   ACCEPTED = "accepted",
   DECLINED = "declined",

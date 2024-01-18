@@ -1,7 +1,7 @@
 import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
 import { Client } from "../entities/client";
-import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
@@ -22,7 +22,10 @@ export async function deleteAccount(clientId: number) {
       client: {
         id: clientId,
       },
-      status: In([AppointmentStatuses.ACCEPTED, AppointmentStatuses.PENDING]),
+      status: In([
+        AppointmentStatusEnum.ACCEPTED,
+        AppointmentStatusEnum.PENDING,
+      ]),
     },
   });
 

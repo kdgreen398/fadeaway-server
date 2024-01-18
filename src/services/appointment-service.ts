@@ -2,7 +2,7 @@ import { Appointment } from "../entities/appointment";
 import { Barber } from "../entities/barber";
 import { Client } from "../entities/client";
 import { Service } from "../entities/service";
-import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { AppDataSource } from "../util/data-source";
 import { DecodedToken } from "../util/jwt";
@@ -84,7 +84,7 @@ export async function createAppointment(
       client: {
         email: clientEmail,
       },
-      status: AppointmentStatuses.PENDING || AppointmentStatuses.ACCEPTED,
+      status: AppointmentStatusEnum.PENDING || AppointmentStatusEnum.ACCEPTED,
     },
   });
 
@@ -98,7 +98,7 @@ export async function createAppointment(
       barber: {
         email: barberEmail,
       },
-      status: AppointmentStatuses.PENDING || AppointmentStatuses.ACCEPTED,
+      status: AppointmentStatusEnum.PENDING || AppointmentStatusEnum.ACCEPTED,
     },
   });
 
@@ -138,6 +138,43 @@ export async function createAppointment(
   return createdAppointment;
 }
 
+export async function updateAppointmentStatus(
+  appointmentId: number,
+  status: AppointmentStatusEnum,
+  updatedBy: DecodedToken,
+) {
+  // check if user is client or barber
+  const isClient = updatedBy.accountType === RoleEnum.client;
+
+  // if client, update appointment status by appointment id and client id
+  // if barber, update appointment status by appointment id and barber id
+
+  const appointment = await AppDataSource.manager.findOne(Appointment, {
+    where: {
+      id: appointmentId,
+      [isClient ? RoleEnum.client : RoleEnum.barber]: {
+        id: updatedBy.id,
+      },
+    },
+  });
+
+  if (!appointment) {
+    throw new Error("Appointment not found");
+  }
+
+  if (isClient && appointment.client.id !== updatedBy.id) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!isClient && appointment.barber.id !== updatedBy.id) {
+    throw new Error("Unauthorized");
+  }
+
+  appointment.status = status;
+
+  return await appointmentRepository.save(appointment);
+}
+
 export async function cancelAppointment(
   user: DecodedToken,
   appointmentId: number,
@@ -163,7 +200,7 @@ export async function cancelAppointment(
     throw new Error("Appointment not found");
   }
 
-  appointment.status = AppointmentStatuses.CANCELED;
+  appointment.status = AppointmentStatusEnum.CANCELED;
   appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.barber;
   appointment.updatedTime = new Date();
 

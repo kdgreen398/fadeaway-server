@@ -1,7 +1,7 @@
 import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
 import { Barber } from "../entities/barber";
-import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import * as ImageService from "../services/image-service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
@@ -112,7 +112,10 @@ export async function deleteBarberAccount(barberId: number) {
       barber: {
         id: barberId,
       },
-      status: In([AppointmentStatuses.ACCEPTED, AppointmentStatuses.PENDING]),
+      status: In([
+        AppointmentStatusEnum.ACCEPTED,
+        AppointmentStatusEnum.PENDING,
+      ]),
     },
   });
 

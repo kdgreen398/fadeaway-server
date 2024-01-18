@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { AppointmentStatuses } from "../enums/appointment-status-enum";
+import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { Barber } from "./barber";
 import { Client } from "./client";
@@ -17,7 +17,7 @@ export class Appointment extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: AppointmentStatuses,
+    enum: AppointmentStatusEnum,
   })
   status!: string;
 

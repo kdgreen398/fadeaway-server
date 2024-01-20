@@ -4,6 +4,7 @@ import { Client } from "../entities/client";
 import { Service } from "../entities/service";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
+import { allowedStatusChanges } from "../util/appointment-status-validation";
 import { AppDataSource } from "../util/data-source";
 import { DecodedToken } from "../util/jwt";
 import logger from "../util/logger";
@@ -169,6 +170,10 @@ export async function updateAppointmentStatus(
 
   if (!isClient && appointment.barber.id !== updatedBy.id) {
     throw new Error("Unauthorized");
+  }
+
+  if (!allowedStatusChanges[appointment.status].includes(status)) {
+    throw new Error("Invalid status from validation");
   }
 
   appointment.status = status;

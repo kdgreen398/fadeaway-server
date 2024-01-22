@@ -78,7 +78,7 @@ router.put(
       return;
     }
 
-    if (user.accountType !== RoleEnum.barber) {
+    if (user.accountType !== RoleEnum.provider) {
       res.status(403).json(ResponseObject.error("Unauthorized"));
       return;
     }
@@ -103,7 +103,7 @@ router.delete("/barber/delete-account", async (req: Request, res: Response) => {
 
   const user = verifyToken(req.cookies["auth-token"]);
 
-  if (user.accountType !== RoleEnum.barber) {
+  if (user.accountType !== RoleEnum.provider) {
     res.status(403).json(ResponseObject.error("Unauthorized"));
     return;
   }

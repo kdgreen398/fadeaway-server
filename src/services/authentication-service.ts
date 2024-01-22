@@ -22,7 +22,7 @@ export async function authenticateUser(email: string, password: string) {
     user = await AppDataSource.manager.findOne(Barber, {
       where: { email },
     });
-    accountType = RoleEnum.barber;
+    accountType = RoleEnum.provider;
   }
 
   if (user) {

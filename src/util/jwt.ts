@@ -1,3 +1,5 @@
+import { RoleEnum } from "../enums/role-enum";
+
 const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET_KEY; // Replace with your actual secret key
 
@@ -6,7 +8,7 @@ export interface DecodedToken {
   lastName: string;
   email: string;
   id: number;
-  accountType: string;
+  accountType: RoleEnum;
 }
 
 export function verifyToken(token: string): DecodedToken {

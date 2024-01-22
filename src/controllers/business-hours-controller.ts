@@ -11,7 +11,7 @@ router.post("/business-hours/create", async (req: Request, res: Response) => {
   logger.info("Entering BusinessHours Controller => create");
 
   const user = verifyToken(req.cookies["auth-token"]);
-  if (user.accountType !== RoleEnum.barber) {
+  if (user.accountType !== RoleEnum.provider) {
     res.status(401).json(ResponseObject.error("User is not a barber"));
     return;
   }

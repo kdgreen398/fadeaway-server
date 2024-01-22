@@ -154,7 +154,7 @@ export async function updateAppointmentStatus(
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
       id: appointmentId,
-      [isClient ? RoleEnum.client : RoleEnum.barber]: {
+      [isClient ? RoleEnum.client : RoleEnum.provider]: {
         id: updatedBy.id,
       },
     },
@@ -177,7 +177,7 @@ export async function updateAppointmentStatus(
   }
 
   appointment.status = status;
-  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.barber;
+  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.provider;
   appointment.updatedTime = new Date();
 
   logger.info("Exiting Appointment Service => updateAppointmentStatus");
@@ -210,7 +210,7 @@ export async function cancelAppointment(
   }
 
   appointment.status = AppointmentStatusEnum.CANCELED;
-  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.barber;
+  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.provider;
   appointment.updatedTime = new Date();
 
   const updatedAppointment = await AppDataSource.manager.save(

@@ -40,7 +40,7 @@ router.post(
 
     console.log(user);
 
-    if (user.accountType !== RoleEnum.barber) {
+    if (user.accountType !== RoleEnum.provider) {
       res.status(400).json(ResponseObject.error("User is not a barber"));
       return;
     }
@@ -71,7 +71,7 @@ router.delete("/barber-image/delete", async (req: Request, res: Response) => {
 
   const user = verifyToken(req.cookies["auth-token"]);
 
-  if (user.accountType !== RoleEnum.barber) {
+  if (user.accountType !== RoleEnum.provider) {
     res.status(400).json(ResponseObject.error("User is not a barber"));
     return;
   }

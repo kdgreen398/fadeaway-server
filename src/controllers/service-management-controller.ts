@@ -128,7 +128,7 @@ router.put(
     const { name, hours, minutes, description, price, id } = req.body;
     const user = verifyToken(req.cookies["auth-token"]);
 
-    if (user.accountType !== RoleEnum.barber) {
+    if (user.accountType !== RoleEnum.provider) {
       return res.status(403).json(ResponseObject.error("Unauthorized"));
     }
 

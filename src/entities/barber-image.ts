@@ -9,7 +9,7 @@ import {
 import { Provider } from "./barber";
 
 @Entity()
-export class BarberImage extends BaseEntity {
+export class ProviderImage extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

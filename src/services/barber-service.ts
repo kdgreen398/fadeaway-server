@@ -14,8 +14,8 @@ const formatAddress = (barber: Provider) =>
 const getFullName = (barber: Provider) =>
   `${barber.firstName} ${barber.lastName}`.trim();
 
-export async function getBarbersByCityState(city: string, state: string) {
-  logger.info("Entering Barber Service => getBarbersByCityState");
+export async function getProvidersByCityState(city: string, state: string) {
+  logger.info("Entering Provider Service => getProvidersByCityState");
 
   const barbers = await AppDataSource.manager.find(Provider, {
     where: { city, state },
@@ -25,12 +25,12 @@ export async function getBarbersByCityState(city: string, state: string) {
     },
   });
 
-  logger.info("Exiting Barber Service => getBarbersByCityState");
+  logger.info("Exiting Provider Service => getProvidersByCityState");
   return barbers;
 }
 
-export async function getBarberProfileData(barberId: number) {
-  logger.info("Entering Barber Service => getBarberDetails");
+export async function getProviderProfileData(barberId: number) {
+  logger.info("Entering Provider Service => getProviderDetails");
 
   const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberId },
@@ -42,10 +42,10 @@ export async function getBarberProfileData(barberId: number) {
   });
 
   if (!barber) {
-    throw new Error("Barber does not exist");
+    throw new Error("Provider does not exist");
   }
 
-  logger.info("Exiting Barber Service => getBarberDetails");
+  logger.info("Exiting Provider Service => getProviderDetails");
   return {
     ...barber,
     formattedAddress: formatAddress(barber),
@@ -53,22 +53,22 @@ export async function getBarberProfileData(barberId: number) {
   };
 }
 
-export async function updateBarberDetails(
+export async function updateProviderDetails(
   barberToSave: Provider,
   imageFile: Express.Multer.File | undefined,
 ) {
-  logger.info("Entering Barber Service => updateBarberDetails");
+  logger.info("Entering Provider Service => updateProviderDetails");
 
   const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberToSave.id },
   });
 
   if (!barber) {
-    throw new Error("Barber does not exist");
+    throw new Error("Provider does not exist");
   }
 
   if (imageFile) {
-    barber.profileImage = await ImageService.uploadBarberProfileImage(
+    barber.profileImage = await ImageService.uploadProviderProfileImage(
       imageFile,
       barber.id,
     );
@@ -85,25 +85,25 @@ export async function updateBarberDetails(
   barber.state = barberToSave.state;
   barber.zipCode = barberToSave.zipCode;
 
-  const updatedBarber = await AppDataSource.manager.save(barber);
+  const updatedProvider = await AppDataSource.manager.save(barber);
 
-  logger.info("Exiting Barber Service => updateBarberDetails");
+  logger.info("Exiting Provider Service => updateProviderDetails");
   return {
-    ...updatedBarber,
-    formattedAddress: formatAddress(updatedBarber),
-    fullName: getFullName(updatedBarber),
+    ...updatedProvider,
+    formattedAddress: formatAddress(updatedProvider),
+    fullName: getFullName(updatedProvider),
   };
 }
 
-export async function deleteBarberAccount(barberId: number) {
-  logger.info("Entering Barber Service => deleteBarberAccount");
+export async function deleteProviderAccount(barberId: number) {
+  logger.info("Entering Provider Service => deleteProviderAccount");
 
   const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberId },
   });
 
   if (!barber) {
-    throw new Error("Barber does not exist");
+    throw new Error("Provider does not exist");
   }
 
   // check if barber has any appointments in pending or accepted state
@@ -121,11 +121,11 @@ export async function deleteBarberAccount(barberId: number) {
 
   if (appointments.length > 0) {
     throw new Error(
-      "Barber cannot delete account while having appointments in pending or accepted state",
+      "Provider cannot delete account while having appointments in pending or accepted state",
     );
   }
 
   await AppDataSource.manager.delete(Provider, barberId);
 
-  logger.info("Exiting Barber Service => deleteBarberAccount");
+  logger.info("Exiting Provider Service => deleteProviderAccount");
 }

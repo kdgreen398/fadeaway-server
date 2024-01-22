@@ -45,7 +45,7 @@ router.get(
   async (req: Request, res: Response) => {
     logger.info("Entering Location Controller => get-barber-city-states");
     try {
-      const barberCityStates = await LocationService.getBarberCityStates();
+      const barberCityStates = await LocationService.getProviderCityStates();
       res.json(ResponseObject.success(barberCityStates));
       logger.info("Exiting Location Controller => get-barber-city-states");
     } catch (err: any) {

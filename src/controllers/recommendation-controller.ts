@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import * as BarberService from "../services/barber-service";
+import * as ProviderService from "../services/barber-service";
 import * as GeolocationService from "../services/geolocation-service";
 import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
@@ -42,7 +42,10 @@ router.get(
         state = address.split(",")[2].split(" ")[1];
       }
 
-      const barbers = await BarberService.getBarbersByCityState(city, state);
+      const barbers = await ProviderService.getProvidersByCityState(
+        city,
+        state,
+      );
 
       logger.info(
         "Exiting Recommendation Controller => get-barbers-by-location",

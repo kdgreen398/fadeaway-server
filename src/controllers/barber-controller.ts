@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import { RoleEnum } from "../enums/role-enum";
-import * as BarberService from "../services/barber-service";
+import * as ProviderService from "../services/barber-service";
 import { verifyToken } from "../util/jwt";
 import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
@@ -23,7 +23,7 @@ const upload = multer({
 router.get(
   "/barber/fetch-barber-details",
   async (req: Request, res: Response) => {
-    logger.info("Entering Barber Controller => fetch-barber-details");
+    logger.info("Entering Provider Controller => fetch-barber-details");
 
     const { id } = req.query;
 
@@ -37,12 +37,12 @@ router.get(
     }
 
     try {
-      const barberDetails = await BarberService.getBarberProfileData(
+      const barberDetails = await ProviderService.getProviderProfileData(
         Number(id),
       );
 
       if (!barberDetails) {
-        res.status(404).json(ResponseObject.error("Barber not found"));
+        res.status(404).json(ResponseObject.error("Provider not found"));
         return;
       }
 
@@ -51,7 +51,7 @@ router.get(
       logger.error(err);
       res.status(500).json(ResponseObject.error(err.message));
     }
-    logger.info("Exiting Barber Controller => fetch-barber-details");
+    logger.info("Exiting Provider Controller => fetch-barber-details");
   },
 );
 
@@ -59,7 +59,7 @@ router.put(
   "/barber/update-barber-details",
   upload.single("file"),
   async (req: Request, res: Response) => {
-    logger.info("Entering Barber Controller => update-barber-details");
+    logger.info("Entering Provider Controller => update-barber-details");
 
     const user = verifyToken(req.cookies["auth-token"]);
 
@@ -84,7 +84,7 @@ router.put(
     }
 
     try {
-      const barberDetails = await BarberService.updateBarberDetails(
+      const barberDetails = await ProviderService.updateProviderDetails(
         req.body,
         req.file,
       );
@@ -94,12 +94,12 @@ router.put(
       logger.error(err);
       res.status(500).json(ResponseObject.error(err.message));
     }
-    logger.info("Exiting Barber Controller => update-barber-details");
+    logger.info("Exiting Provider Controller => update-barber-details");
   },
 );
 
 router.delete("/barber/delete-account", async (req: Request, res: Response) => {
-  logger.info("Entering Barber Controller => delete-account");
+  logger.info("Entering Provider Controller => delete-account");
 
   const user = verifyToken(req.cookies["auth-token"]);
 
@@ -109,7 +109,7 @@ router.delete("/barber/delete-account", async (req: Request, res: Response) => {
   }
 
   try {
-    await BarberService.deleteBarberAccount(user.id);
+    await ProviderService.deleteProviderAccount(user.id);
 
     res.clearCookie("auth-token");
 
@@ -119,7 +119,7 @@ router.delete("/barber/delete-account", async (req: Request, res: Response) => {
     res.status(500).json(ResponseObject.error(err.message));
   }
 
-  logger.info("Exiting Barber Controller => delete-account");
+  logger.info("Exiting Provider Controller => delete-account");
 });
 
 export default router;

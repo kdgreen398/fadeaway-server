@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { Provider } from "../entities/barber";
-import { BarberCityState } from "../entities/barber-city-state";
+import { ProviderCityState } from "../entities/barber-city-state";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
@@ -42,8 +42,8 @@ export async function createClientInDB(clientObj: Client) {
   return createdClient;
 }
 
-export async function createBarberInDB(barber: Provider) {
-  logger.info("Entering Registration Service => createBarberInDB");
+export async function createProviderInDB(barber: Provider) {
+  logger.info("Entering Registration Service => createProviderInDB");
 
   const emailExists = await checkEmailExists(barber.email);
   if (emailExists) {
@@ -53,16 +53,16 @@ export async function createBarberInDB(barber: Provider) {
   const hashedPassword = await bcrypt.hash(barber.password, saltRounds);
 
   barber.password = hashedPassword;
-  const createdBarber = await AppDataSource.manager.save(
+  const createdProvider = await AppDataSource.manager.save(
     Provider.create({
       ...barber,
     }),
   );
 
   await AppDataSource.manager.save(
-    BarberCityState.create({ city: barber.city, state: barber.state }),
+    ProviderCityState.create({ city: barber.city, state: barber.state }),
   );
 
-  logger.info("Exiting Registration Service => createBarberInDB");
-  return createdBarber;
+  logger.info("Exiting Registration Service => createProviderInDB");
+  return createdProvider;
 }

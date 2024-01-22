@@ -1,6 +1,6 @@
 import { Storage } from "@google-cloud/storage";
 import sharp from "sharp";
-import { BarberImage } from "../entities/barber-image";
+import { ProviderImage } from "../entities/barber-image";
 import { AppDataSource } from "../util/data-source";
 
 const storage = new Storage();
@@ -12,7 +12,7 @@ async function processImage(imageBuffer: Buffer) {
     .toBuffer();
 }
 
-export async function uploadBarberProfileImage(
+export async function uploadProviderProfileImage(
   uploadedFile: Express.Multer.File,
   barberId: number,
 ) {
@@ -41,7 +41,7 @@ export async function uploadBarberProfileImage(
   return `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 }
 
-export async function uploadBarberImage(
+export async function uploadProviderImage(
   uploadedFile: Express.Multer.File,
   barberId: number,
 ) {
@@ -67,7 +67,7 @@ export async function uploadBarberImage(
     });
   });
 
-  const image = BarberImage.create({
+  const image = ProviderImage.create({
     fileName,
     url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
     barber: { id: barberId },
@@ -78,11 +78,11 @@ export async function uploadBarberImage(
   return image.url;
 }
 
-export async function deleteBarberImage(
+export async function deleteProviderImage(
   barberId: number,
-  imageToDelete: BarberImage,
+  imageToDelete: ProviderImage,
 ) {
-  const image = await AppDataSource.manager.findOne(BarberImage, {
+  const image = await AppDataSource.manager.findOne(ProviderImage, {
     where: {
       fileName: imageToDelete.fileName,
       barber: {
@@ -97,7 +97,7 @@ export async function deleteBarberImage(
 
   await bucket.file(image.fileName).delete();
 
-  await AppDataSource.manager.delete(BarberImage, image);
+  await AppDataSource.manager.delete(ProviderImage, image);
 
   return "image deleted successfully";
 }

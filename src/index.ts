@@ -8,8 +8,8 @@ import { verifyToken } from "./util/jwt";
 
 import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
-import BarberController from "./controllers/barber-controller";
-import BarberImageController from "./controllers/barber-image-controller";
+import ProviderController from "./controllers/barber-controller";
+import ProviderImageController from "./controllers/barber-image-controller";
 import BusinessHoursController from "./controllers/business-hours-controller";
 import ClientController from "./controllers/client-controller";
 import LocationController from "./controllers/location-controller";
@@ -66,12 +66,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use(BarberImageController);
+app.use(ProviderImageController);
 app.use(BusinessHoursController);
 app.use(LocationController);
 app.use(RecommendationController);
 app.use(ClientController);
-app.use(BarberController);
+app.use(ProviderController);
 app.use(AppointmentController);
 app.use(ServiceManagementController);
 

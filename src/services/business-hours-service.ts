@@ -14,7 +14,7 @@ export async function createBusinessHours(
   });
 
   if (!barber) {
-    throw new Error("Barber not found");
+    throw new Error("Provider not found");
   }
 
   const createdBusinessHours = dataToCreate.map((data) => {

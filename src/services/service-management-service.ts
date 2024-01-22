@@ -45,7 +45,7 @@ export async function createService(
   });
 
   if (!barber) {
-    throw new Error("Barber does not exist");
+    throw new Error("Provider does not exist");
   }
 
   const createdService = await AppDataSource.manager.save(

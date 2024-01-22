@@ -1,14 +1,14 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { Provider } from "../entities/barber";
-import { BarberImage } from "../entities/barber-image";
+import { ProviderImage } from "../entities/barber-image";
 import { Client } from "../entities/client";
 import { Review } from "../entities/review";
 import { Service } from "../entities/service";
 import { createAppointment } from "../services/appointment-service";
 import {
-  createBarberInDB,
   createClientInDB,
+  createProviderInDB,
 } from "../services/registration-service";
 
 export const AppDataSource = new DataSource({
@@ -38,12 +38,12 @@ AppDataSource.initialize()
 const createTestData = async () => {
   // create some test data
 
-  const barber = await createBarberInDB(
+  const barber = await createProviderInDB(
     Provider.create({
       firstName: "John",
       lastName: "Doe",
       // alias: "Johnny",
-      shop: "John's Barber Shop",
+      shop: "John's Provider Shop",
       bio: "I'm a barber",
       addressLine1: "123 Main St",
       addressLine2: "Suite 100",
@@ -62,7 +62,7 @@ const createTestData = async () => {
 
   for (let i = 1; i < 10; i++) {
     images.push(
-      BarberImage.create({
+      ProviderImage.create({
         barber,
         url: `https://picsum.photos/30${i}/30${i}`,
         fileName: "",

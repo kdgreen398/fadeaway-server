@@ -87,7 +87,7 @@ router.post(
     }
 
     try {
-      const barber = await RegistrationService.createBarberInDB(req.body);
+      const barber = await RegistrationService.createProviderInDB(req.body);
 
       delete (barber as Partial<typeof barber>).password;
 

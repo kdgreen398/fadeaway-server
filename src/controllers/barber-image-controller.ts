@@ -5,7 +5,7 @@ import { ResponseObject } from "../util/response-object";
 import * as ImageService from "../services/image-service";
 
 import multer from "multer";
-import { BarberImage } from "../entities/barber-image";
+import { ProviderImage } from "../entities/barber-image";
 import { RoleEnum } from "../enums/role-enum";
 import { verifyToken } from "../util/jwt";
 
@@ -46,7 +46,7 @@ router.post(
     }
 
     try {
-      const imageUrl = await ImageService.uploadBarberImage(
+      const imageUrl = await ImageService.uploadProviderImage(
         uploadedFile,
         user.id,
       );
@@ -62,7 +62,7 @@ router.post(
 router.delete("/barber-image/delete", async (req: Request, res: Response) => {
   logger.info("Entering Image Controller => delete");
 
-  const image: BarberImage = req.body;
+  const image: ProviderImage = req.body;
 
   if (!image.fileName) {
     res.status(400).json(ResponseObject.error("Missing file name"));
@@ -77,7 +77,7 @@ router.delete("/barber-image/delete", async (req: Request, res: Response) => {
   }
 
   try {
-    await ImageService.deleteBarberImage(user.id, image);
+    await ImageService.deleteProviderImage(user.id, image);
     res.json(ResponseObject.success("Image deleted successfully"));
   } catch (err: any) {
     logger.error(err);

@@ -6,14 +6,14 @@ import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
 export async function deleteAccount(clientId: number) {
-  logger.info("Entering Barber Service => deleteAccount");
+  logger.info("Entering Provider Service => deleteAccount");
 
   const client = await AppDataSource.manager.findOne(Client, {
     where: { id: clientId },
   });
 
   if (!client) {
-    throw new Error("Barber does not exist");
+    throw new Error("Provider does not exist");
   }
 
   // check if client has any appointments in pending or accepted state

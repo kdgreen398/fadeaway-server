@@ -7,7 +7,7 @@ import {
   Unique,
 } from "typeorm";
 import { Appointment } from "./appointment";
-import { BarberImage } from "./barber-image";
+import { ProviderImage } from "./barber-image";
 import { BusinessHours } from "./business-hours";
 import { Review } from "./review";
 import { Service } from "./service";
@@ -57,8 +57,8 @@ export class Provider extends BaseEntity {
   @Column({ nullable: true })
   profileImage!: string;
 
-  @OneToMany(() => BarberImage, (image) => image.barber)
-  images!: BarberImage[];
+  @OneToMany(() => ProviderImage, (image) => image.barber)
+  images!: ProviderImage[];
 
   @OneToMany(() => Review, (review) => review.barber)
   reviews!: Review[];

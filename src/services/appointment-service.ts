@@ -117,7 +117,7 @@ export async function createAppointment(
   });
 
   if (!barber || !client) {
-    throw new Error("Barber or client not found");
+    throw new Error("Provider or client not found");
   }
 
   // Create new appointment

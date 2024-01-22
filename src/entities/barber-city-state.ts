@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
-export class BarberCityState extends BaseEntity {
+export class ProviderCityState extends BaseEntity {
   @PrimaryColumn()
   city!: string;
 

@@ -38,6 +38,7 @@ export async function getProviderProfileData(providerId: number) {
       images: true,
       reviews: true,
       services: true,
+      businessHours: true,
     },
   });
 
@@ -124,6 +125,8 @@ export async function deleteProviderAccount(providerId: number) {
       "Provider cannot delete account while having appointments in pending or accepted state",
     );
   }
+
+  // delete provider profile and other images from storage
 
   await AppDataSource.manager.delete(Provider, providerId);
 

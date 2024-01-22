@@ -81,7 +81,7 @@ router.delete("/provider-image/delete", async (req: Request, res: Response) => {
     res.json(ResponseObject.success("Image deleted successfully"));
   } catch (err: any) {
     logger.error(err);
-    res.status(500).json(ResponseObject.error("Error deleting image"));
+    res.status(500).json(ResponseObject.error(err.message));
   }
   logger.info("Exiting Image Controller => delete");
 });

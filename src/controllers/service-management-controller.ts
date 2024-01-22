@@ -151,7 +151,7 @@ router.put(
       validateParameters(hours, minutes, price);
     } catch (err: any) {
       logger.error(err);
-      return res.status(400).json(err.message);
+      return res.status(400).json(ResponseObject.error(err.message));
     }
 
     try {

@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
 import { Client } from "../entities/client";
 import { Provider } from "../entities/provider";
@@ -86,13 +87,10 @@ export async function createAppointment(
         [entity]: {
           email,
         },
-        status: AppointmentStatusEnum.PENDING,
-      },
-      {
-        [entity]: {
-          email,
-        },
-        status: AppointmentStatusEnum.ACCEPTED,
+        status: In([
+          AppointmentStatusEnum.ACCEPTED,
+          AppointmentStatusEnum.PENDING,
+        ]),
       },
     ],
   });

@@ -15,11 +15,25 @@ export async function authenticateUser(email: string, password: string) {
   let accountType = RoleEnum.client;
 
   let user = await AppDataSource.manager.findOne(Client, {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      password: true,
+    },
     where: { email },
   });
 
   if (!user) {
     user = await AppDataSource.manager.findOne(Provider, {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
       where: { email },
     });
     accountType = RoleEnum.provider;

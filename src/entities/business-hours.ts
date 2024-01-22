@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { DayOfTheWeekEnum } from "../enums/day-of-the-week-enum";
-import { Barber } from "./barber";
+import { Provider } from "./barber";
 
 @Entity()
 export class BusinessHours extends BaseEntity {
@@ -28,8 +28,8 @@ export class BusinessHours extends BaseEntity {
   @Column()
   isClosed!: boolean;
 
-  @ManyToOne(() => Barber, (barber) => barber.businessHours, {
+  @ManyToOne(() => Provider, (barber) => barber.businessHours, {
     onDelete: "CASCADE",
   })
-  barber!: Barber;
+  barber!: Provider;
 }

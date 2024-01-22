@@ -1,4 +1,4 @@
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { Service } from "../entities/service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
@@ -38,7 +38,7 @@ export async function createService(
   //   throw new Error("You have reached the maximum number of services");
   // }
 
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: {
       id: barberId,
     },

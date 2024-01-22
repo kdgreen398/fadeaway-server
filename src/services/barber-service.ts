@@ -1,23 +1,23 @@
 import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import * as ImageService from "../services/image-service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
-const formatAddress = (barber: Barber) =>
+const formatAddress = (barber: Provider) =>
   `${barber.addressLine1}${
     barber.addressLine2 ? " " + barber.addressLine2 : ""
   }, ${barber.city}, ${barber.state} ${barber.zipCode}`;
 
-const getFullName = (barber: Barber) =>
+const getFullName = (barber: Provider) =>
   `${barber.firstName} ${barber.lastName}`.trim();
 
 export async function getBarbersByCityState(city: string, state: string) {
   logger.info("Entering Barber Service => getBarbersByCityState");
 
-  const barbers = await AppDataSource.manager.find(Barber, {
+  const barbers = await AppDataSource.manager.find(Provider, {
     where: { city, state },
     relations: {
       images: true,
@@ -32,7 +32,7 @@ export async function getBarbersByCityState(city: string, state: string) {
 export async function getBarberProfileData(barberId: number) {
   logger.info("Entering Barber Service => getBarberDetails");
 
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberId },
     relations: {
       images: true,
@@ -54,12 +54,12 @@ export async function getBarberProfileData(barberId: number) {
 }
 
 export async function updateBarberDetails(
-  barberToSave: Barber,
+  barberToSave: Provider,
   imageFile: Express.Multer.File | undefined,
 ) {
   logger.info("Entering Barber Service => updateBarberDetails");
 
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberToSave.id },
   });
 
@@ -98,7 +98,7 @@ export async function updateBarberDetails(
 export async function deleteBarberAccount(barberId: number) {
   logger.info("Entering Barber Service => deleteBarberAccount");
 
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberId },
   });
 
@@ -125,7 +125,7 @@ export async function deleteBarberAccount(barberId: number) {
     );
   }
 
-  await AppDataSource.manager.delete(Barber, barberId);
+  await AppDataSource.manager.delete(Provider, barberId);
 
   logger.info("Exiting Barber Service => deleteBarberAccount");
 }

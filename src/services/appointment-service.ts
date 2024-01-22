@@ -1,5 +1,5 @@
 import { Appointment } from "../entities/appointment";
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { Client } from "../entities/client";
 import { Service } from "../entities/service";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
@@ -108,7 +108,7 @@ export async function createAppointment(
     throw new Error("Appointment time is not available");
   }
 
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { email: barberEmail },
   });
 

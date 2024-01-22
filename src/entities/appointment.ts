@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
-import { Barber } from "./barber";
+import { Provider } from "./barber";
 import { Client } from "./client";
 
 @Entity()
@@ -42,11 +42,11 @@ export class Appointment extends BaseEntity {
   @Column()
   updatedTime!: Date;
 
-  @ManyToOne(() => Barber, (barber) => barber.appointments, {
+  @ManyToOne(() => Provider, (barber) => barber.appointments, {
     onDelete: "CASCADE",
     eager: true,
   })
-  barber!: Barber;
+  barber!: Provider;
 
   @ManyToOne(() => Client, (client) => client.appointments, {
     onDelete: "CASCADE",

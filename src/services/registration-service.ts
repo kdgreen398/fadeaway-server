@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { BarberCityState } from "../entities/barber-city-state";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
@@ -11,7 +11,7 @@ async function checkEmailExists(email: string) {
   const client = await AppDataSource.manager.findOne(Client, {
     where: { email },
   });
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { email },
   });
 
@@ -42,7 +42,7 @@ export async function createClientInDB(clientObj: Client) {
   return createdClient;
 }
 
-export async function createBarberInDB(barber: Barber) {
+export async function createBarberInDB(barber: Provider) {
   logger.info("Entering Registration Service => createBarberInDB");
 
   const emailExists = await checkEmailExists(barber.email);
@@ -54,7 +54,7 @@ export async function createBarberInDB(barber: Barber) {
 
   barber.password = hashedPassword;
   const createdBarber = await AppDataSource.manager.save(
-    Barber.create({
+    Provider.create({
       ...barber,
     }),
   );

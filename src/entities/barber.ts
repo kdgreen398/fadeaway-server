@@ -14,7 +14,7 @@ import { Service } from "./service";
 
 @Entity()
 @Unique(["email"])
-export class Barber extends BaseEntity {
+export class Provider extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

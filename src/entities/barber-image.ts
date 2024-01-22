@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Barber } from "./barber";
+import { Provider } from "./barber";
 
 @Entity()
 export class BarberImage extends BaseEntity {
@@ -19,9 +19,9 @@ export class BarberImage extends BaseEntity {
   @Column()
   fileName!: string;
 
-  @ManyToOne(() => Barber, (barber) => barber.images, {
+  @ManyToOne(() => Provider, (barber) => barber.images, {
     onDelete: "CASCADE",
   })
   @JoinColumn()
-  barber!: Barber;
+  barber!: Provider;
 }

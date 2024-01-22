@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { BarberImage } from "../entities/barber-image";
 import { Client } from "../entities/client";
 import { Review } from "../entities/review";
@@ -39,7 +39,7 @@ const createTestData = async () => {
   // create some test data
 
   const barber = await createBarberInDB(
-    Barber.create({
+    Provider.create({
       firstName: "John",
       lastName: "Doe",
       // alias: "Johnny",

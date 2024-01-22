@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { Client } from "../entities/client";
 import { AppDataSource } from "../util/data-source";
 
@@ -19,7 +19,7 @@ export async function authenticateUser(email: string, password: string) {
   });
 
   if (!user) {
-    user = await AppDataSource.manager.findOne(Barber, {
+    user = await AppDataSource.manager.findOne(Provider, {
       where: { email },
     });
     accountType = RoleEnum.provider;

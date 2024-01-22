@@ -1,4 +1,4 @@
-import { Barber } from "../entities/barber";
+import { Provider } from "../entities/barber";
 import { BusinessHours } from "../entities/business-hours";
 import { AppDataSource } from "../util/data-source";
 
@@ -6,7 +6,7 @@ export async function createBusinessHours(
   barberId: number,
   dataToCreate: BusinessHours[],
 ) {
-  const barber = await AppDataSource.manager.findOne(Barber, {
+  const barber = await AppDataSource.manager.findOne(Provider, {
     where: { id: barberId },
     relations: {
       businessHours: true,

@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Appointment } from "./appointment";
-import { Review } from "./review";
 
 @Entity()
 export class Client extends BaseEntity {
@@ -24,9 +23,6 @@ export class Client extends BaseEntity {
 
   @Column({ select: false })
   password!: string;
-
-  @OneToMany(() => Review, (review) => review.provider)
-  reviews!: Review[];
 
   @OneToMany(() => Appointment, (appointment) => appointment.client)
   appointments!: Appointment[];

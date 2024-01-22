@@ -29,7 +29,7 @@ export class Review extends BaseEntity {
   @JoinColumn()
   provider!: Provider;
 
-  @ManyToOne(() => Client, (client) => client.reviews, {
+  @ManyToOne(() => Client, {
     eager: true,
     onDelete: "CASCADE",
   })

@@ -4,7 +4,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 import { Appointment } from "./appointment";
 import { BusinessHours } from "./business-hours";
@@ -13,7 +12,6 @@ import { Review } from "./review";
 import { Service } from "./service";
 
 @Entity()
-@Unique(["email"])
 export class Provider extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -48,10 +46,10 @@ export class Provider extends BaseEntity {
   @Column()
   zipCode!: string;
 
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({ select: false })
   password!: string;
 
   @Column({ nullable: true })

@@ -47,7 +47,7 @@ export async function getAppointments(email: string, accountType: string) {
           email: email,
         },
       },
-      relations: ["provider", "client"],
+      relations: { provider: true, client: true },
     });
   } else {
     appointments = await AppDataSource.manager.find(Appointment, {
@@ -56,7 +56,7 @@ export async function getAppointments(email: string, accountType: string) {
           email: email,
         },
       },
-      relations: ["provider", "client"],
+      relations: { provider: true, client: true },
     });
   }
 

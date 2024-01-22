@@ -1,6 +1,6 @@
 import { Appointment } from "../entities/appointment";
-import { Provider } from "../entities/barber";
 import { Client } from "../entities/client";
+import { Provider } from "../entities/provider";
 import { Service } from "../entities/service";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
@@ -47,16 +47,16 @@ export async function getAppointments(email: string, accountType: string) {
           email: email,
         },
       },
-      relations: ["barber", "client"],
+      relations: ["provider", "client"],
     });
   } else {
     appointments = await AppDataSource.manager.find(Appointment, {
       where: {
-        barber: {
+        provider: {
           email: email,
         },
       },
-      relations: ["barber", "client"],
+      relations: ["provider", "client"],
     });
   }
 
@@ -66,7 +66,7 @@ export async function getAppointments(email: string, accountType: string) {
 
 export async function createAppointment(
   clientEmail: string,
-  barberEmail: string,
+  providerEmail: string,
   startTime: Date,
   services: Service[],
 ) {
@@ -94,29 +94,29 @@ export async function createAppointment(
     throw new Error("You already have an appointment at that time");
   }
 
-  const barberAppointments = await AppDataSource.manager.find(Appointment, {
+  const providerAppointments = await AppDataSource.manager.find(Appointment, {
     where: {
-      barber: {
-        email: barberEmail,
+      provider: {
+        email: providerEmail,
       },
       status: AppointmentStatusEnum.PENDING || AppointmentStatusEnum.ACCEPTED,
     },
   });
 
   // Check if the new appointment can be created
-  if (!canCreateAppointment(barberAppointments, startTime, endTime)) {
+  if (!canCreateAppointment(providerAppointments, startTime, endTime)) {
     throw new Error("Appointment time is not available");
   }
 
-  const barber = await AppDataSource.manager.findOne(Provider, {
-    where: { email: barberEmail },
+  const provider = await AppDataSource.manager.findOne(Provider, {
+    where: { email: providerEmail },
   });
 
   const client = await AppDataSource.manager.findOne(Client, {
     where: { email: clientEmail },
   });
 
-  if (!barber || !client) {
+  if (!provider || !client) {
     throw new Error("Provider or client not found");
   }
 
@@ -130,7 +130,7 @@ export async function createAppointment(
       createdTime: new Date(),
       updatedBy: RoleEnum.client,
       updatedTime: new Date(),
-      barber,
+      provider,
       client,
     }),
   );
@@ -145,11 +145,11 @@ export async function updateAppointmentStatus(
   updatedBy: DecodedToken,
 ) {
   logger.info("Entering Appointment Service => updateAppointmentStatus");
-  // check if user is client or barber
+  // check if user is client or provider
   const isClient = updatedBy.accountType === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
-  // if barber, update appointment status by appointment id and barber id
+  // if provider, update appointment status by appointment id and provider id
 
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
@@ -168,7 +168,7 @@ export async function updateAppointmentStatus(
     throw new Error("Unauthorized");
   }
 
-  if (!isClient && appointment.barber.id !== updatedBy.id) {
+  if (!isClient && appointment.provider.id !== updatedBy.id) {
     throw new Error("Unauthorized");
   }
 
@@ -190,16 +190,16 @@ export async function cancelAppointment(
 ) {
   logger.info("Entering Appointment Service => cancelAppointment");
 
-  // check if user is client or barber
+  // check if user is client or provider
   const isClient = user.accountType === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
-  // if barber, update appointment status by appointment id and barber id
+  // if provider, update appointment status by appointment id and provider id
 
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
       id: appointmentId,
-      [isClient ? "client" : "barber"]: {
+      [isClient ? "client" : "provider"]: {
         id: user.id,
       },
     },

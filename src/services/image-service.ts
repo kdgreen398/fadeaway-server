@@ -1,6 +1,6 @@
 import { Storage } from "@google-cloud/storage";
 import sharp from "sharp";
-import { ProviderImage } from "../entities/barber-image";
+import { ProviderImage } from "../entities/provider-image";
 import { AppDataSource } from "../util/data-source";
 
 const storage = new Storage();
@@ -14,7 +14,7 @@ async function processImage(imageBuffer: Buffer) {
 
 export async function uploadProviderProfileImage(
   uploadedFile: Express.Multer.File,
-  barberId: number,
+  providerId: number,
 ) {
   const fileName = Date.now() + ".jpg";
   const stream = bucket.file(fileName).createWriteStream({
@@ -43,7 +43,7 @@ export async function uploadProviderProfileImage(
 
 export async function uploadProviderImage(
   uploadedFile: Express.Multer.File,
-  barberId: number,
+  providerId: number,
 ) {
   const fileName = Date.now() + ".jpg";
   const stream = bucket.file(fileName).createWriteStream({
@@ -70,7 +70,7 @@ export async function uploadProviderImage(
   const image = ProviderImage.create({
     fileName,
     url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
-    barber: { id: barberId },
+    provider: { id: providerId },
   });
 
   await AppDataSource.manager.save(image);
@@ -79,14 +79,14 @@ export async function uploadProviderImage(
 }
 
 export async function deleteProviderImage(
-  barberId: number,
+  providerId: number,
   imageToDelete: ProviderImage,
 ) {
   const image = await AppDataSource.manager.findOne(ProviderImage, {
     where: {
       fileName: imageToDelete.fileName,
-      barber: {
-        id: barberId,
+      provider: {
+        id: providerId,
       },
     },
   });

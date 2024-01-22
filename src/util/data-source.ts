@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { Provider } from "../entities/barber";
-import { ProviderImage } from "../entities/barber-image";
 import { Client } from "../entities/client";
+import { Provider } from "../entities/provider";
+import { ProviderImage } from "../entities/provider-image";
 import { Review } from "../entities/review";
 import { Service } from "../entities/service";
 import { createAppointment } from "../services/appointment-service";
@@ -38,13 +38,13 @@ AppDataSource.initialize()
 const createTestData = async () => {
   // create some test data
 
-  const barber = await createProviderInDB(
+  const provider = await createProviderInDB(
     Provider.create({
       firstName: "John",
       lastName: "Doe",
       // alias: "Johnny",
       shop: "John's Provider Shop",
-      bio: "I'm a barber",
+      bio: "I'm a provider",
       addressLine1: "123 Main St",
       addressLine2: "Suite 100",
       city: "Murfreesboro",
@@ -63,7 +63,7 @@ const createTestData = async () => {
   for (let i = 1; i < 10; i++) {
     images.push(
       ProviderImage.create({
-        barber,
+        provider,
         url: `https://picsum.photos/30${i}/30${i}`,
         fileName: "",
       }),
@@ -90,17 +90,19 @@ const createTestData = async () => {
         hours: i,
         minutes: i,
         price: i * 10,
-        barber,
+        provider,
       }),
     );
   }
 
   await AppDataSource.manager.save(services);
 
-  await createAppointment(client.email, barber.email, new Date("2024-01-29"), [
-    services[0],
-    services[1],
-  ]);
+  await createAppointment(
+    client.email,
+    provider.email,
+    new Date("2024-01-29"),
+    [services[0], services[1]],
+  );
 
   const reviews = [];
   for (let i = 1; i < 5; i++) {
@@ -113,7 +115,7 @@ const createTestData = async () => {
             Math.random() * (10000000000 - 1000000) +
             1000000,
         ),
-        barber,
+        provider,
         client,
       }),
     );

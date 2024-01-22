@@ -8,11 +8,11 @@ import { verifyToken } from "./util/jwt";
 
 import AppointmentController from "./controllers/appointment-controller";
 import AuthenticationController from "./controllers/authentication-controller";
-import ProviderController from "./controllers/barber-controller";
-import ProviderImageController from "./controllers/barber-image-controller";
 import BusinessHoursController from "./controllers/business-hours-controller";
 import ClientController from "./controllers/client-controller";
 import LocationController from "./controllers/location-controller";
+import ProviderController from "./controllers/provider-controller";
+import ProviderImageController from "./controllers/provider-image-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
 import ServiceManagementController from "./controllers/service-management-controller";

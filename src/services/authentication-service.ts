@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { Provider } from "../entities/barber";
 import { Client } from "../entities/client";
+import { Provider } from "../entities/provider";
 import { AppDataSource } from "../util/data-source";
 
 import { RoleEnum } from "../enums/role-enum";

@@ -1,19 +1,19 @@
-import { Provider } from "../entities/barber";
 import { BusinessHours } from "../entities/business-hours";
+import { Provider } from "../entities/provider";
 import { AppDataSource } from "../util/data-source";
 
 export async function createBusinessHours(
-  barberId: number,
+  providerId: number,
   dataToCreate: BusinessHours[],
 ) {
-  const barber = await AppDataSource.manager.findOne(Provider, {
-    where: { id: barberId },
+  const provider = await AppDataSource.manager.findOne(Provider, {
+    where: { id: providerId },
     relations: {
       businessHours: true,
     },
   });
 
-  if (!barber) {
+  if (!provider) {
     throw new Error("Provider not found");
   }
 
@@ -21,7 +21,7 @@ export async function createBusinessHours(
     const { day, startTime, endTime, isClosed } = data;
 
     // check if business hours already exist for this day
-    const dataInDB = barber.businessHours.find((hours) => hours.day === day);
+    const dataInDB = provider.businessHours.find((hours) => hours.day === day);
 
     // if business hours already exist for this day, update them
     if (dataInDB) {
@@ -35,7 +35,7 @@ export async function createBusinessHours(
         startTime: isClosed ? null : startTime,
         endTime: isClosed ? null : endTime,
         isClosed,
-        barber,
+        provider,
       });
     }
   });

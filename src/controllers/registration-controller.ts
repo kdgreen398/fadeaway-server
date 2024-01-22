@@ -52,9 +52,9 @@ router.post(
 );
 
 router.post(
-  "/registration/register-barber",
+  "/registration/register-provider",
   async (req: Request, res: Response) => {
-    logger.info("Entering Registration Controller => register-barber");
+    logger.info("Entering Registration Controller => register-provider");
 
     if (
       !req.body.firstName ||
@@ -87,12 +87,12 @@ router.post(
     }
 
     try {
-      const barber = await RegistrationService.createProviderInDB(req.body);
+      const provider = await RegistrationService.createProviderInDB(req.body);
 
-      delete (barber as Partial<typeof barber>).password;
+      delete (provider as Partial<typeof provider>).password;
 
-      logger.info("Exiting Registration Controller => register-barber");
-      res.json(ResponseObject.success(barber));
+      logger.info("Exiting Registration Controller => register-provider");
+      res.json(ResponseObject.success(provider));
     } catch (err: any) {
       logger.error(err);
       res.status(500).json(ResponseObject.error(err.message));

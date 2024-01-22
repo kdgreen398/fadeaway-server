@@ -34,9 +34,9 @@ router.post(
   async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => create-appointment");
 
-    const { barberEmail, startTime, services } = req.body;
+    const { providerEmail, startTime, services } = req.body;
 
-    if (!barberEmail || !startTime || !services) {
+    if (!providerEmail || !startTime || !services) {
       return res
         .status(400)
         .json(ResponseObject.error("Missing required fields"));
@@ -64,7 +64,7 @@ router.post(
     try {
       const appointment = await AppointmentService.createAppointment(
         user.email,
-        barberEmail,
+        providerEmail,
         startTime,
         services,
       );
@@ -108,7 +108,7 @@ router.put(
 );
 
 router.put(
-  "/appointments/barber/update-appointment-status",
+  "/appointments/provider/update-appointment-status",
   async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => update-appointment-status");
 

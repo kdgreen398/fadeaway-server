@@ -52,18 +52,18 @@ router.get(
   async (req: Request, res: Response) => {
     logger.info("Entering Service Management Controller => get-services");
 
-    const { barberId } = req.query;
+    const { providerId } = req.query;
 
-    if (!barberId) {
+    if (!providerId) {
       res
         .status(400)
-        .json(ResponseObject.error("Missing required parameters: barberId"));
+        .json(ResponseObject.error("Missing required parameters: providerId"));
       return;
     }
 
     try {
       const services = await ServiceManagementService.getServices(
-        Number(barberId),
+        Number(providerId),
       );
 
       res.json(ResponseObject.success(services));

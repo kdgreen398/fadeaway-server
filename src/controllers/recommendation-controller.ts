@@ -1,16 +1,16 @@
 import express, { Request, Response } from "express";
-import * as ProviderService from "../services/barber-service";
 import * as GeolocationService from "../services/geolocation-service";
+import * as ProviderService from "../services/provider-service";
 import logger from "../util/logger";
 import { ResponseObject } from "../util/response-object";
 
 const router = express.Router();
 
 router.get(
-  "/recommendation/get-barbers-by-location",
+  "/recommendation/get-providers-by-location",
   async (req: Request, res: Response) => {
     logger.info(
-      "Entering Recommendation Controller => get-barbers-by-location",
+      "Entering Recommendation Controller => get-providers-by-location",
     );
 
     const lat = req.get("lat") as string;
@@ -42,17 +42,17 @@ router.get(
         state = address.split(",")[2].split(" ")[1];
       }
 
-      const barbers = await ProviderService.getProvidersByCityState(
+      const providers = await ProviderService.getProvidersByCityState(
         city,
         state,
       );
 
       logger.info(
-        "Exiting Recommendation Controller => get-barbers-by-location",
+        "Exiting Recommendation Controller => get-providers-by-location",
       );
       return res.json(
         ResponseObject.success(
-          barbers.filter((barber) => barber.images.length > 0),
+          providers.filter((provider) => provider.images.length > 0),
         ),
       );
     } catch (err: any) {

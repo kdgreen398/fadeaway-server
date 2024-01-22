@@ -5,7 +5,7 @@ import { ResponseObject } from "../util/response-object";
 import * as ImageService from "../services/image-service";
 
 import multer from "multer";
-import { ProviderImage } from "../entities/barber-image";
+import { ProviderImage } from "../entities/provider-image";
 import { RoleEnum } from "../enums/role-enum";
 import { verifyToken } from "../util/jwt";
 
@@ -24,7 +24,7 @@ const upload = multer({
 });
 
 router.post(
-  "/barber-image/upload",
+  "/provider-image/upload",
   upload.single("image"),
   async (req: Request, res: Response) => {
     logger.info("Entering Image Controller => upload");
@@ -41,7 +41,7 @@ router.post(
     console.log(user);
 
     if (user.accountType !== RoleEnum.provider) {
-      res.status(400).json(ResponseObject.error("User is not a barber"));
+      res.status(400).json(ResponseObject.error("User is not a provider"));
       return;
     }
 
@@ -59,7 +59,7 @@ router.post(
   },
 );
 
-router.delete("/barber-image/delete", async (req: Request, res: Response) => {
+router.delete("/provider-image/delete", async (req: Request, res: Response) => {
   logger.info("Entering Image Controller => delete");
 
   const image: ProviderImage = req.body;
@@ -72,7 +72,7 @@ router.delete("/barber-image/delete", async (req: Request, res: Response) => {
   const user = verifyToken(req.cookies["auth-token"]);
 
   if (user.accountType !== RoleEnum.provider) {
-    res.status(400).json(ResponseObject.error("User is not a barber"));
+    res.status(400).json(ResponseObject.error("User is not a provider"));
     return;
   }
 

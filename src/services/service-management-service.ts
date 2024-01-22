@@ -1,15 +1,15 @@
-import { Provider } from "../entities/barber";
+import { Provider } from "../entities/provider";
 import { Service } from "../entities/service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
-export async function getServices(barberId: number) {
+export async function getServices(providerId: number) {
   logger.info("Entering Service Management Service => getServices");
 
   const services = await AppDataSource.manager.find(Service, {
     where: {
-      barber: {
-        id: barberId,
+      provider: {
+        id: providerId,
       },
     },
   });
@@ -24,32 +24,32 @@ export async function createService(
   minutes: number,
   description: string,
   price: number,
-  barberId: number,
+  providerId: number,
 ) {
   logger.info("Entering Service Management Service => createService");
 
   // if user has more than 6 services, throw error
   // const [{ serviceCount }] = await executeSelectQuery(
   //   FETCH_SERVICE_COUNT_BY_BARBER_ID,
-  //   [barberId],
+  //   [providerId],
   // );
 
   // if (serviceCount >= 6) {
   //   throw new Error("You have reached the maximum number of services");
   // }
 
-  const barber = await AppDataSource.manager.findOne(Provider, {
+  const provider = await AppDataSource.manager.findOne(Provider, {
     where: {
-      id: barberId,
+      id: providerId,
     },
   });
 
-  if (!barber) {
+  if (!provider) {
     throw new Error("Provider does not exist");
   }
 
   const createdService = await AppDataSource.manager.save(
-    Service.create({ name, description, hours, minutes, price, barber }),
+    Service.create({ name, description, hours, minutes, price, provider }),
   );
 
   logger.info("Exiting Service Management Service => createService");
@@ -63,15 +63,15 @@ export async function updateService(
   description: string,
   price: number,
   serviceId: number,
-  barberId: number,
+  providerId: number,
 ) {
   logger.info("Entering Service Management Service => updateService");
 
   const service = await AppDataSource.manager.findOne(Service, {
     where: {
       id: serviceId,
-      barber: {
-        id: barberId,
+      provider: {
+        id: providerId,
       },
     },
   });
@@ -92,14 +92,14 @@ export async function updateService(
   return updatedService;
 }
 
-export async function deleteService(serviceId: number, barberId: number) {
+export async function deleteService(serviceId: number, providerId: number) {
   logger.info("Entering Service Management Service => deleteService");
 
   const service = await AppDataSource.manager.findOne(Service, {
     where: {
       id: serviceId,
-      barber: {
-        id: barberId,
+      provider: {
+        id: providerId,
       },
     },
   });

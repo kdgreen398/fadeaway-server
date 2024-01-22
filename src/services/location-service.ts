@@ -1,4 +1,4 @@
-import { ProviderCityState } from "../entities/barber-city-state";
+import { ProviderCityState } from "../entities/provider-city-state";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 

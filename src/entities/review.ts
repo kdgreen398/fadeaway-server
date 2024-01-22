@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Provider } from "./barber";
 import { Client } from "./client";
+import { Provider } from "./provider";
 
 @Entity()
 export class Review extends BaseEntity {
@@ -23,11 +23,11 @@ export class Review extends BaseEntity {
   @Column()
   dateCreated!: Date;
 
-  @ManyToOne(() => Provider, (barber) => barber.reviews, {
+  @ManyToOne(() => Provider, (provider) => provider.reviews, {
     onDelete: "CASCADE",
   })
   @JoinColumn()
-  barber!: Provider;
+  provider!: Provider;
 
   @ManyToOne(() => Client, (client) => client.reviews, {
     eager: true,

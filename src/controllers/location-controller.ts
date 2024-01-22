@@ -41,18 +41,18 @@ router.get(
 );
 
 router.get(
-  "/location/get-barber-city-states",
+  "/location/get-provider-city-states",
   async (req: Request, res: Response) => {
-    logger.info("Entering Location Controller => get-barber-city-states");
+    logger.info("Entering Location Controller => get-provider-city-states");
     try {
-      const barberCityStates = await LocationService.getProviderCityStates();
-      res.json(ResponseObject.success(barberCityStates));
-      logger.info("Exiting Location Controller => get-barber-city-states");
+      const providerCityStates = await LocationService.getProviderCityStates();
+      res.json(ResponseObject.success(providerCityStates));
+      logger.info("Exiting Location Controller => get-provider-city-states");
     } catch (err: any) {
       logger.error(err);
       return res
         .status(500)
-        .json(ResponseObject.error("Error getting barber city states"));
+        .json(ResponseObject.error("Error getting provider city states"));
     }
   },
 );

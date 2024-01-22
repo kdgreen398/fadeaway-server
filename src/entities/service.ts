@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Provider } from "./barber";
+import { Provider } from "./provider";
 
 @Entity()
 export class Service extends BaseEntity {
@@ -27,8 +27,8 @@ export class Service extends BaseEntity {
   @Column()
   price!: number;
 
-  @ManyToOne(() => Provider, (barber) => barber.services, {
+  @ManyToOne(() => Provider, (provider) => provider.services, {
     onDelete: "CASCADE",
   })
-  barber!: Provider;
+  provider!: Provider;
 }

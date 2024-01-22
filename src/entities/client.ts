@@ -27,7 +27,7 @@ export class Client extends BaseEntity {
   @Column()
   password!: string;
 
-  @OneToMany(() => Review, (review) => review.barber)
+  @OneToMany(() => Review, (review) => review.provider)
   reviews!: Review[];
 
   @OneToMany(() => Appointment, (appointment) => appointment.client)

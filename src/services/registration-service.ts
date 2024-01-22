@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import { Provider } from "../entities/barber";
-import { ProviderCityState } from "../entities/barber-city-state";
 import { Client } from "../entities/client";
+import { Provider } from "../entities/provider";
+import { ProviderCityState } from "../entities/provider-city-state";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
@@ -11,11 +11,11 @@ async function checkEmailExists(email: string) {
   const client = await AppDataSource.manager.findOne(Client, {
     where: { email },
   });
-  const barber = await AppDataSource.manager.findOne(Provider, {
+  const provider = await AppDataSource.manager.findOne(Provider, {
     where: { email },
   });
 
-  return Boolean(client || barber);
+  return Boolean(client || provider);
 }
 
 export async function createClientInDB(clientObj: Client) {
@@ -42,25 +42,25 @@ export async function createClientInDB(clientObj: Client) {
   return createdClient;
 }
 
-export async function createProviderInDB(barber: Provider) {
+export async function createProviderInDB(provider: Provider) {
   logger.info("Entering Registration Service => createProviderInDB");
 
-  const emailExists = await checkEmailExists(barber.email);
+  const emailExists = await checkEmailExists(provider.email);
   if (emailExists) {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(barber.password, saltRounds);
+  const hashedPassword = await bcrypt.hash(provider.password, saltRounds);
 
-  barber.password = hashedPassword;
+  provider.password = hashedPassword;
   const createdProvider = await AppDataSource.manager.save(
     Provider.create({
-      ...barber,
+      ...provider,
     }),
   );
 
   await AppDataSource.manager.save(
-    ProviderCityState.create({ city: barber.city, state: barber.state }),
+    ProviderCityState.create({ city: provider.city, state: provider.state }),
   );
 
   logger.info("Exiting Registration Service => createProviderInDB");

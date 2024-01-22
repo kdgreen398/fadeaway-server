@@ -80,28 +80,37 @@ export async function createAppointment(
   endTime.setHours(endTime.getHours() + totalHours);
   endTime.setMinutes(endTime.getMinutes() + totalMinutes);
 
-  const clientAppointments = await AppDataSource.manager.find(Appointment, {
-    where: {
-      client: {
-        email: clientEmail,
+  const getQuery = (entity: string, email: string) => ({
+    where: [
+      {
+        [entity]: {
+          email,
+        },
+        status: AppointmentStatusEnum.PENDING,
       },
-      status: AppointmentStatusEnum.PENDING || AppointmentStatusEnum.ACCEPTED,
-    },
+      {
+        [entity]: {
+          email,
+        },
+        status: AppointmentStatusEnum.ACCEPTED,
+      },
+    ],
   });
+
+  const clientAppointments = await AppDataSource.manager.find(
+    Appointment,
+    getQuery("client", clientEmail),
+  );
 
   // Check if the new appointment can be created
   if (!canCreateAppointment(clientAppointments, startTime, endTime)) {
     throw new Error("You already have an appointment at that time");
   }
 
-  const providerAppointments = await AppDataSource.manager.find(Appointment, {
-    where: {
-      provider: {
-        email: providerEmail,
-      },
-      status: AppointmentStatusEnum.PENDING || AppointmentStatusEnum.ACCEPTED,
-    },
-  });
+  const providerAppointments = await AppDataSource.manager.find(
+    Appointment,
+    getQuery("provider", providerEmail),
+  );
 
   // Check if the new appointment can be created
   if (!canCreateAppointment(providerAppointments, startTime, endTime)) {

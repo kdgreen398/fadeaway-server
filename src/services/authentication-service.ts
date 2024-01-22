@@ -10,7 +10,6 @@ import logger from "../util/logger";
 export async function authenticateUser(email: string, password: string) {
   logger.info("Entering Authentication Service => authenticateUser");
 
-  let isAuthenticated = false;
   let token;
   let accountType = RoleEnum.client;
 
@@ -39,20 +38,23 @@ export async function authenticateUser(email: string, password: string) {
     accountType = RoleEnum.provider;
   }
 
-  if (user) {
-    isAuthenticated = await bcrypt.compare(password, user.password);
+  if (!user) {
+    return null;
   }
 
-  if (user && isAuthenticated) {
-    token = generateToken({
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      accountType,
-    });
+  const isAuthenticated = await bcrypt.compare(password, user.password);
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   logger.info("Exiting Authentication Service => authenticateUser");
-  return token;
+
+  return generateToken({
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    accountType,
+  });
 }

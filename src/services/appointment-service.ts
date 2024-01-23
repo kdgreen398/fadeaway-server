@@ -1,5 +1,6 @@
 import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
+import { BusinessHours } from "../entities/business-hours";
 import { Client } from "../entities/client";
 import { Provider } from "../entities/provider";
 import { Service } from "../entities/service";
@@ -9,6 +10,18 @@ import { allowedStatusChanges } from "../util/appointment-status-validation";
 import { AppDataSource } from "../util/data-source";
 import { DecodedToken } from "../util/jwt";
 import logger from "../util/logger";
+
+function getDayName(dayNumber: number) {
+  return [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ][dayNumber];
+}
 
 // Function to check for overlapping appointments
 function doesOverlap(
@@ -73,6 +86,42 @@ export async function createAppointment(
 ) {
   logger.info("Entering Appointment Service => createAppointment");
 
+  const provider = await AppDataSource.manager.findOne(Provider, {
+    where: { email: providerEmail },
+  });
+
+  const client = await AppDataSource.manager.findOne(Client, {
+    where: { email: clientEmail },
+  });
+
+  if (!provider || !client) {
+    throw new Error("Provider or client not found");
+  }
+
+  // check if appointment is within business hours
+  const businessHours = await AppDataSource.manager.findOne(BusinessHours, {
+    where: {
+      isClosed: false,
+      day: getDayName(startTime.getDay()),
+      provider: { id: provider.id },
+    },
+  });
+
+  if (!businessHours || !businessHours.startTime || !businessHours.endTime) {
+    throw new Error("Business is closed on this day");
+  }
+
+  // check if appointment is within business hours
+  const businessHoursStart = Number(businessHours.startTime.split(":")[0]);
+  const businessHoursEnd = Number(businessHours.endTime.split(":")[0]);
+
+  if (
+    startTime.getHours() < businessHoursStart ||
+    startTime.getHours() > businessHoursEnd
+  ) {
+    throw new Error("Appointment is outside of business hours");
+  }
+
   const totalHours = services.reduce((acc, curr) => acc + curr.hours, 0);
   const totalMinutes = services.reduce((acc, curr) => acc + curr.minutes, 0);
   // endtime calculated from start time and services
@@ -113,18 +162,6 @@ export async function createAppointment(
   // Check if the new appointment can be created
   if (!canCreateAppointment(providerAppointments, startTime, endTime)) {
     throw new Error("Appointment time is not available");
-  }
-
-  const provider = await AppDataSource.manager.findOne(Provider, {
-    where: { email: providerEmail },
-  });
-
-  const client = await AppDataSource.manager.findOne(Client, {
-    where: { email: clientEmail },
-  });
-
-  if (!provider || !client) {
-    throw new Error("Provider or client not found");
   }
 
   // Create new appointment

@@ -65,7 +65,7 @@ router.post(
       const appointment = await AppointmentService.createAppointment(
         user.email,
         providerEmail,
-        startTime,
+        new Date(startTime),
         services,
       );
       res.json(ResponseObject.success(appointment));

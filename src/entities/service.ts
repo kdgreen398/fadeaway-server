@@ -3,9 +3,11 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Provider } from "./provider";
+import { ProviderImage } from "./provider-image";
 
 @Entity()
 export class Service extends BaseEntity {
@@ -29,6 +31,10 @@ export class Service extends BaseEntity {
 
   @ManyToOne(() => Provider, (provider) => provider.services, {
     onDelete: "CASCADE",
+    nullable: false,
   })
   provider!: Provider;
+
+  @OneToMany(() => ProviderImage, (image) => image.service)
+  images!: ProviderImage[];
 }

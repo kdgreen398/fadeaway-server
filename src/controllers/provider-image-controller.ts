@@ -6,6 +6,7 @@ import * as ImageService from "../services/image-service";
 
 import multer from "multer";
 import { ProviderImage } from "../entities/provider-image";
+import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { verifyToken } from "../util/jwt";
 
@@ -24,10 +25,10 @@ const upload = multer({
 });
 
 router.post(
-  "/provider-image/upload",
+  "/provider-image/upload-gallery-photo",
   upload.single("image"),
   async (req: Request, res: Response) => {
-    logger.info("Entering Image Controller => upload");
+    logger.info("Entering Image Controller => upload-gallery-photo");
 
     const uploadedFile = req.file;
 
@@ -38,24 +39,26 @@ router.post(
 
     const user = verifyToken(req.cookies["auth-token"]);
 
-    console.log(user);
-
     if (user.accountType !== RoleEnum.provider) {
       res.status(400).json(ResponseObject.error("User is not a provider"));
       return;
     }
 
+    const { serviceId } = req.query;
+
     try {
       const imageUrl = await ImageService.uploadProviderImage(
         uploadedFile,
+        ProviderImageTypeEnum.gallery,
         user.id,
+        serviceId ? parseInt(serviceId as string) : null,
       );
       res.json(ResponseObject.success(imageUrl));
     } catch (err: any) {
       logger.error(err);
       res.status(500).json(ResponseObject.error("Error uploading image"));
     }
-    logger.info("Exiting Image Controller => upload");
+    logger.info("Exiting Image Controller => upload-gallery-photo");
   },
 );
 

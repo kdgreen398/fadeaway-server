@@ -1,6 +1,9 @@
 import { Storage } from "@google-cloud/storage";
 import sharp from "sharp";
+import { Provider } from "../entities/provider";
 import { ProviderImage } from "../entities/provider-image";
+import { Service } from "../entities/service";
+import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
 import { AppDataSource } from "../util/data-source";
 
 const storage = new Storage();
@@ -12,39 +15,32 @@ async function processImage(imageBuffer: Buffer) {
     .toBuffer();
 }
 
-export async function uploadProviderProfileImage(
-  uploadedFile: Express.Multer.File,
-  providerId: number,
-) {
-  const fileName = Date.now() + ".jpg";
-  const stream = bucket.file(fileName).createWriteStream({
-    metadata: {
-      contentType: "image/jpeg",
-    },
-  });
-
-  const imageBuffer = await processImage(uploadedFile.buffer);
-
-  await new Promise((resolve, reject) => {
-    stream.end(imageBuffer);
-
-    stream.on("finish", () => {
-      // File uploaded successfully
-      resolve(true);
-    });
-
-    stream.on("error", (err) => {
-      reject(false);
-    });
-  });
-
-  return `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-}
-
 export async function uploadProviderImage(
   uploadedFile: Express.Multer.File,
+  imageType: ProviderImageTypeEnum,
   providerId: number,
+  serviceId: number | null,
 ) {
+  // check if provider exists
+  const provider = await AppDataSource.manager.findOne(Provider, {
+    where: { id: providerId },
+  });
+
+  if (!provider) {
+    throw new Error("Provider not found");
+  }
+
+  // check if service belongs to provider
+  const service = serviceId
+    ? await AppDataSource.manager.findOne(Service, {
+        where: { id: serviceId, provider: { id: providerId } },
+      })
+    : null;
+
+  if (serviceId && !service) {
+    throw new Error("Service not found");
+  }
+
   const fileName = Date.now() + ".jpg";
   const stream = bucket.file(fileName).createWriteStream({
     metadata: {
@@ -70,12 +66,14 @@ export async function uploadProviderImage(
   const image = ProviderImage.create({
     fileName,
     url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
-    provider: { id: providerId },
+    imageType,
+    service,
+    provider,
   });
 
   await AppDataSource.manager.save(image);
 
-  return image.url;
+  return image;
 }
 
 export async function deleteProviderImage(

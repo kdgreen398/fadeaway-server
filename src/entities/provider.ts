@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Appointment } from "./appointment";
@@ -52,8 +53,10 @@ export class Provider extends BaseEntity {
   @Column({ select: false })
   password!: string;
 
-  @Column({ nullable: true })
-  profileImage!: string;
+  @OneToOne(() => ProviderImage, (image) => image.provider, {
+    onDelete: "SET NULL",
+  })
+  profileImage!: ProviderImage;
 
   @OneToMany(() => ProviderImage, (image) => image.provider)
   images!: ProviderImage[];

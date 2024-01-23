@@ -12,8 +12,7 @@ router.post("/business-hours/create", async (req: Request, res: Response) => {
 
   const user = verifyToken(req.cookies["auth-token"]);
   if (user.accountType !== RoleEnum.provider) {
-    res.status(401).json(ResponseObject.error("User is not a provider"));
-    return;
+    return res.status(401).json(ResponseObject.error("User is not a provider"));
   }
 
   try {

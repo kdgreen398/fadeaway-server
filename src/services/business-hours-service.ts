@@ -2,6 +2,18 @@ import { BusinessHours } from "../entities/business-hours";
 import { Provider } from "../entities/provider";
 import { AppDataSource } from "../util/data-source";
 
+function removeDuplicates(data: BusinessHours[]) {
+  const uniqueDays = Array.from(new Set(data.map((item) => item.day)));
+  return data.filter((item) => {
+    if (uniqueDays.includes(item.day)) {
+      const index = uniqueDays.indexOf(item.day);
+      uniqueDays.splice(index, 1);
+      return true;
+    }
+    return false;
+  });
+}
+
 export async function createBusinessHours(
   providerId: number,
   dataToCreate: BusinessHours[],
@@ -17,7 +29,7 @@ export async function createBusinessHours(
     throw new Error("Provider not found");
   }
 
-  const createdBusinessHours = dataToCreate.map((data) => {
+  const createdBusinessHours = removeDuplicates(dataToCreate).map((data) => {
     const { day, startTime, endTime, isClosed } = data;
 
     // check if business hours already exist for this day

@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -17,7 +16,7 @@ export class Review extends BaseEntity {
   @Column()
   rating!: number;
 
-  @Column()
+  @Column({ nullable: true })
   description!: string;
 
   @Column()
@@ -26,13 +25,11 @@ export class Review extends BaseEntity {
   @ManyToOne(() => Provider, (provider) => provider.reviews, {
     onDelete: "CASCADE",
   })
-  @JoinColumn()
   provider!: Provider;
 
   @ManyToOne(() => Client, {
     eager: true,
     onDelete: "CASCADE",
   })
-  @JoinColumn()
   client!: Client;
 }

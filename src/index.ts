@@ -15,6 +15,7 @@ import LocationController from "./controllers/location-controller";
 import ProviderController from "./controllers/provider-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import RegistrationController from "./controllers/registration-controller";
+import ReviewController from "./controllers/review-controller";
 import ServiceManagementController from "./controllers/service-management-controller";
 
 const express = require("express");
@@ -74,6 +75,7 @@ app.use(ClientController);
 app.use(ProviderController);
 app.use(AppointmentController);
 app.use(ServiceManagementController);
+app.use(ReviewController);
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

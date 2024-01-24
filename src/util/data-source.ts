@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { Client } from "../entities/client";
+import { Image } from "../entities/image";
 import { Provider } from "../entities/provider";
-import { ProviderImage } from "../entities/provider-image";
 import { Review } from "../entities/review";
 import { Service } from "../entities/service";
 import { createAppointment } from "../services/appointment-service";
@@ -22,7 +22,7 @@ export const AppDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
   entities: ["src/entities/*.ts"],
   // logging: true,
-  dropSchema: true,
+  // dropSchema: true,
 });
 
 AppDataSource.initialize()
@@ -52,8 +52,8 @@ const createTestData = async () => {
       zipCode: "92101",
       email: "john.doe@example.com",
       password: "password",
-      profileImage:
-        "https://images.unsplash.com/photo-1567894340315-735d7c361db0?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJhcmJlcnxlbnwwfHwwfHx8MA%3D%3D",
+      // profileImage:
+      //   "https://images.unsplash.com/photo-1567894340315-735d7c361db0?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJhcmJlcnxlbnwwfHwwfHx8MA%3D%3D",
       // "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmFyYmVyfGVufDB8fDB8fHww",
     }),
   );
@@ -62,7 +62,7 @@ const createTestData = async () => {
 
   for (let i = 1; i < 10; i++) {
     images.push(
-      ProviderImage.create({
+      Image.create({
         provider,
         url: `https://picsum.photos/30${i}/30${i}`,
         fileName: "",

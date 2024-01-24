@@ -187,6 +187,10 @@ router.delete(
     const { id } = req.query;
     const user = verifyToken(req.cookies["auth-token"]);
 
+    if (user.accountType !== RoleEnum.provider) {
+      return res.status(403).json(ResponseObject.error("Unauthorized"));
+    }
+
     if (!id) {
       return res
         .status(400)

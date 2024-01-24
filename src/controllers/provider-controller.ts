@@ -61,14 +61,12 @@ router.put(
   async (req: Request, res: Response) => {
     logger.info("Entering Provider Controller => update-provider-details");
 
-    const uploadedFile = req.file;
+    const user = verifyToken(req.cookies["auth-token"]);
 
-    if (!uploadedFile) {
-      res.status(400).json(ResponseObject.error("Missing file"));
+    if (user.accountType !== RoleEnum.provider) {
+      res.status(403).json(ResponseObject.error("Unauthorized"));
       return;
     }
-
-    const user = verifyToken(req.cookies["auth-token"]);
 
     if (
       !req.body.firstName ||
@@ -85,15 +83,11 @@ router.put(
       return;
     }
 
-    if (user.accountType !== RoleEnum.provider) {
-      res.status(403).json(ResponseObject.error("Unauthorized"));
-      return;
-    }
-
     try {
       const providerDetails = await ProviderService.updateProviderDetails(
         req.body,
         req.file,
+        // user.id,
       );
 
       res.json(ResponseObject.success(providerDetails));

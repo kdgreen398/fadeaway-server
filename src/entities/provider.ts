@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -56,6 +57,7 @@ export class Provider extends BaseEntity {
   @OneToOne(() => Image, (image) => image.provider, {
     onDelete: "SET NULL",
   })
+  @JoinColumn()
   profileImage!: Image;
 
   @OneToMany(() => Image, (image) => image.provider)

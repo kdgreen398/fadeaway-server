@@ -15,7 +15,7 @@ async function processImage(imageBuffer: Buffer) {
     .toBuffer();
 }
 
-export async function uploadProviderImage(
+export async function uploadImage(
   uploadedFile: Express.Multer.File,
   imageType: ImageTypeEnum,
   providerId: number,
@@ -76,10 +76,7 @@ export async function uploadProviderImage(
   return image;
 }
 
-export async function deleteProviderImage(
-  providerId: number,
-  imageToDelete: Image,
-) {
+export async function deleteImage(providerId: number, imageToDelete: Image) {
   const image = await AppDataSource.manager.findOne(Image, {
     where: {
       fileName: imageToDelete.fileName,

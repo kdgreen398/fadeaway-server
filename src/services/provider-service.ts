@@ -63,6 +63,9 @@ export async function updateProviderDetails(
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerToSave.id },
+    relations: {
+      profileImage: true,
+    },
   });
 
   if (!provider) {
@@ -70,7 +73,13 @@ export async function updateProviderDetails(
   }
 
   if (imageFile) {
-    provider.profileImage = await ImageService.uploadProviderImage(
+    // delete existing profile image
+    if (provider.profileImage) {
+      await ImageService.deleteImage(provider.id, provider.profileImage);
+    }
+
+    // upload new profile image
+    provider.profileImage = await ImageService.uploadImage(
       imageFile,
       ImageTypeEnum.profile,
       provider.id,

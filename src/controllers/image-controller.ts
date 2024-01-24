@@ -47,7 +47,7 @@ router.post(
     const { serviceId } = req.query;
 
     try {
-      const imageUrl = await ImageService.uploadProviderImage(
+      const imageUrl = await ImageService.uploadImage(
         uploadedFile,
         ImageTypeEnum.gallery,
         user.id,
@@ -56,7 +56,7 @@ router.post(
       res.json(ResponseObject.success(imageUrl));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error("Error uploading image"));
+      res.status(500).json(ResponseObject.error(err.message));
     }
     logger.info("Exiting Image Controller => upload-gallery-photo");
   },
@@ -80,7 +80,7 @@ router.delete("/image/delete", async (req: Request, res: Response) => {
   }
 
   try {
-    await ImageService.deleteProviderImage(user.id, image);
+    await ImageService.deleteImage(user.id, image);
     res.json(ResponseObject.success("Image deleted successfully"));
   } catch (err: any) {
     logger.error(err);

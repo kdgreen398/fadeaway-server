@@ -3,7 +3,7 @@ interface AllowedStatusChanges {
 }
 
 export const allowedStatusChanges: AllowedStatusChanges = {
-  pending: ["accepted", "declined"],
+  pending: ["accepted", "declined", "canceled"],
   accepted: ["completed", "canceled"],
   declined: [],
   canceled: [],

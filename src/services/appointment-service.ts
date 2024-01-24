@@ -208,14 +208,6 @@ export async function updateAppointmentStatus(
     throw new Error("Appointment not found");
   }
 
-  if (isClient && appointment.client.id !== updatedBy.id) {
-    throw new Error("Unauthorized");
-  }
-
-  if (!isClient && appointment.provider.id !== updatedBy.id) {
-    throw new Error("Unauthorized");
-  }
-
   if (!allowedStatusChanges[appointment.status].includes(status)) {
     throw new Error("Invalid status from validation");
   }
@@ -229,13 +221,13 @@ export async function updateAppointmentStatus(
 }
 
 export async function cancelAppointment(
-  user: DecodedToken,
+  updatedBy: DecodedToken,
   appointmentId: number,
 ) {
   logger.info("Entering Appointment Service => cancelAppointment");
 
   // check if user is client or provider
-  const isClient = user.accountType === RoleEnum.client;
+  const isClient = updatedBy.accountType === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
   // if provider, update appointment status by appointment id and provider id
@@ -243,14 +235,22 @@ export async function cancelAppointment(
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
       id: appointmentId,
-      [isClient ? "client" : "provider"]: {
-        id: user.id,
+      [isClient ? RoleEnum.client : RoleEnum.provider]: {
+        id: updatedBy.id,
       },
     },
   });
 
   if (!appointment) {
     throw new Error("Appointment not found");
+  }
+
+  if (
+    !allowedStatusChanges[appointment.status].includes(
+      AppointmentStatusEnum.CANCELED,
+    )
+  ) {
+    throw new Error("Invalid status from validation");
   }
 
   appointment.status = AppointmentStatusEnum.CANCELED;

@@ -30,7 +30,7 @@ router.get(
 );
 
 router.post(
-  "/appointments/create-appointment",
+  "/appointments/client/create-appointment",
   async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => create-appointment");
 
@@ -79,7 +79,7 @@ router.post(
 );
 
 router.put(
-  "/appointments/cancel-appointment",
+  "/appointments/client/cancel-appointment",
   async (req: Request, res: Response) => {
     logger.info("Entering Appointment Controller => cancel-appointment");
 
@@ -91,8 +91,13 @@ router.put(
         .json(ResponseObject.error("Missing required fields"));
     }
 
+    const user = verifyToken(req.cookies["auth-token"]);
+
+    if (user.accountType !== RoleEnum.client) {
+      return res.status(401).json(ResponseObject.error("Unauthorized"));
+    }
+
     try {
-      const user = verifyToken(req.cookies["auth-token"]);
       const appointment = await AppointmentService.cancelAppointment(
         user,
         Number(apptId),

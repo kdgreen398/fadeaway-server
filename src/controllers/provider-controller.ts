@@ -57,9 +57,16 @@ router.get(
 
 router.put(
   "/provider/update-provider-details",
-  upload.single("file"),
+  upload.single("image"),
   async (req: Request, res: Response) => {
     logger.info("Entering Provider Controller => update-provider-details");
+
+    const uploadedFile = req.file;
+
+    if (!uploadedFile) {
+      res.status(400).json(ResponseObject.error("Missing file"));
+      return;
+    }
 
     const user = verifyToken(req.cookies["auth-token"]);
 

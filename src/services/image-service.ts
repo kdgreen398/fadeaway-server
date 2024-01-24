@@ -1,9 +1,9 @@
 import { Storage } from "@google-cloud/storage";
 import sharp from "sharp";
+import { Image } from "../entities/image";
 import { Provider } from "../entities/provider";
-import { ProviderImage } from "../entities/provider-image";
 import { Service } from "../entities/service";
-import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
+import { ImageTypeEnum } from "../enums/image-type-enum";
 import { AppDataSource } from "../util/data-source";
 
 const storage = new Storage();
@@ -17,7 +17,7 @@ async function processImage(imageBuffer: Buffer) {
 
 export async function uploadProviderImage(
   uploadedFile: Express.Multer.File,
-  imageType: ProviderImageTypeEnum,
+  imageType: ImageTypeEnum,
   providerId: number,
   serviceId: number | null,
 ) {
@@ -63,7 +63,7 @@ export async function uploadProviderImage(
     });
   });
 
-  const image = ProviderImage.create({
+  const image = Image.create({
     fileName,
     url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
     imageType,
@@ -78,9 +78,9 @@ export async function uploadProviderImage(
 
 export async function deleteProviderImage(
   providerId: number,
-  imageToDelete: ProviderImage,
+  imageToDelete: Image,
 ) {
-  const image = await AppDataSource.manager.findOne(ProviderImage, {
+  const image = await AppDataSource.manager.findOne(Image, {
     where: {
       fileName: imageToDelete.fileName,
       provider: {
@@ -95,7 +95,7 @@ export async function deleteProviderImage(
 
   await bucket.file(image.fileName).delete();
 
-  await AppDataSource.manager.delete(ProviderImage, image);
+  await AppDataSource.manager.delete(Image, image);
 
   return "image deleted successfully";
 }

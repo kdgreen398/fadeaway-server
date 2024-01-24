@@ -1,4 +1,4 @@
-export enum ProviderImageTypeEnum {
+export enum ImageTypeEnum {
   profile = "profile",
   gallery = "gallery",
 }

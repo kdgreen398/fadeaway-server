@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Appointment } from "./appointment";
 import { BusinessHours } from "./business-hours";
-import { ProviderImage } from "./provider-image";
+import { Image } from "./image";
 import { Review } from "./review";
 import { Service } from "./service";
 
@@ -53,13 +53,13 @@ export class Provider extends BaseEntity {
   @Column({ select: false })
   password!: string;
 
-  @OneToOne(() => ProviderImage, (image) => image.provider, {
+  @OneToOne(() => Image, (image) => image.provider, {
     onDelete: "SET NULL",
   })
-  profileImage!: ProviderImage;
+  profileImage!: Image;
 
-  @OneToMany(() => ProviderImage, (image) => image.provider)
-  images!: ProviderImage[];
+  @OneToMany(() => Image, (image) => image.provider)
+  images!: Image[];
 
   @OneToMany(() => Review, (review) => review.provider)
   reviews!: Review[];

@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Image } from "./image";
 import { Provider } from "./provider";
-import { ProviderImage } from "./provider-image";
 
 @Entity()
 export class Service extends BaseEntity {
@@ -35,6 +35,6 @@ export class Service extends BaseEntity {
   })
   provider!: Provider;
 
-  @OneToMany(() => ProviderImage, (image) => image.service)
-  images!: ProviderImage[];
+  @OneToMany(() => Image, (image) => image.service)
+  images!: Image[];
 }

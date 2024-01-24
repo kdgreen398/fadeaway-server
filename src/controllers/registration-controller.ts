@@ -89,8 +89,6 @@ router.post(
     try {
       const provider = await RegistrationService.createProviderInDB(req.body);
 
-      delete (provider as Partial<typeof provider>).password;
-
       logger.info("Exiting Registration Controller => register-provider");
       res.json(ResponseObject.success(provider));
     } catch (err: any) {

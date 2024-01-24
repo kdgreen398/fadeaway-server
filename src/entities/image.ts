@@ -6,12 +6,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
+import { ImageTypeEnum } from "../enums/image-type-enum";
 import { Provider } from "./provider";
 import { Service } from "./service";
 
 @Entity()
-export class ProviderImage extends BaseEntity {
+export class Image extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -23,9 +23,9 @@ export class ProviderImage extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: ProviderImageTypeEnum,
+    enum: ImageTypeEnum,
   })
-  imageType!: ProviderImageTypeEnum;
+  imageType!: ImageTypeEnum;
 
   @ManyToOne(() => Service, (service) => service.images, {
     onDelete: "SET NULL",

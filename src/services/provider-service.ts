@@ -2,7 +2,7 @@ import { In } from "typeorm";
 import { Appointment } from "../entities/appointment";
 import { Provider } from "../entities/provider";
 import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
-import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
+import { ImageTypeEnum } from "../enums/image-type-enum";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 import * as ImageService from "./image-service";
@@ -72,7 +72,7 @@ export async function updateProviderDetails(
   if (imageFile) {
     provider.profileImage = await ImageService.uploadProviderImage(
       imageFile,
-      ProviderImageTypeEnum.profile,
+      ImageTypeEnum.profile,
       provider.id,
       null,
     );

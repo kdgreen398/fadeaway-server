@@ -5,8 +5,8 @@ import { ResponseObject } from "../util/response-object";
 import * as ImageService from "../services/image-service";
 
 import multer from "multer";
-import { ProviderImage } from "../entities/provider-image";
-import { ProviderImageTypeEnum } from "../enums/provider-image-type-enum";
+import { Image } from "../entities/image";
+import { ImageTypeEnum } from "../enums/image-type-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { verifyToken } from "../util/jwt";
 
@@ -25,7 +25,7 @@ const upload = multer({
 });
 
 router.post(
-  "/provider-image/upload-gallery-photo",
+  "/image/upload-gallery-photo",
   upload.single("image"),
   async (req: Request, res: Response) => {
     logger.info("Entering Image Controller => upload-gallery-photo");
@@ -49,7 +49,7 @@ router.post(
     try {
       const imageUrl = await ImageService.uploadProviderImage(
         uploadedFile,
-        ProviderImageTypeEnum.gallery,
+        ImageTypeEnum.gallery,
         user.id,
         serviceId ? parseInt(serviceId as string) : null,
       );
@@ -62,10 +62,10 @@ router.post(
   },
 );
 
-router.delete("/provider-image/delete", async (req: Request, res: Response) => {
+router.delete("/image/delete", async (req: Request, res: Response) => {
   logger.info("Entering Image Controller => delete");
 
-  const image: ProviderImage = req.body;
+  const image: Image = req.body;
 
   if (!image.fileName) {
     res.status(400).json(ResponseObject.error("Missing file name"));

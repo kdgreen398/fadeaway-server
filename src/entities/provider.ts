@@ -56,6 +56,7 @@ export class Provider extends BaseEntity {
 
   @OneToOne(() => Image, (image) => image.provider, {
     onDelete: "SET NULL",
+    eager: true,
   })
   @JoinColumn()
   profileImage!: Image;

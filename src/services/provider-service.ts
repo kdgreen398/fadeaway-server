@@ -63,9 +63,6 @@ export async function updateProviderDetails(
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerToSave.id },
-    relations: {
-      profileImage: true,
-    },
   });
 
   if (!provider) {
@@ -113,6 +110,9 @@ export async function deleteProviderAccount(providerId: number) {
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerId },
+    relations: {
+      images: true,
+    },
   });
 
   if (!provider) {
@@ -139,6 +139,11 @@ export async function deleteProviderAccount(providerId: number) {
   }
 
   // delete provider profile and other images from storage
+  const promises = provider.images.map((image) =>
+    ImageService.deleteImage(provider.id, image),
+  );
+
+  await Promise.all(promises);
 
   await AppDataSource.manager.delete(Provider, providerId);
 

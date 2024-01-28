@@ -13,11 +13,12 @@ import BusinessHoursController from "./controllers/business-hours-controller";
 import ClientController from "./controllers/client-controller";
 import ProviderImageController from "./controllers/image-controller";
 import LocationController from "./controllers/location-controller";
-import ProviderController from "./controllers/provider-controller";
 import RecommendationController from "./controllers/recommendation-controller";
 import ReviewController from "./controllers/review-controller";
 import ServiceManagementController from "./controllers/service-management-controller";
 import CommonController from "./controllers/common";
+import ProviderController from "./controllers/provider";
+import { RoleEnum } from "./enums/role-enum";
 
 const app = express();
 const bodyParser = require("body-parser");
@@ -44,27 +45,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use("/api/v1/common", CommonController);
-
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   // get auth token from cookies
-//   const token = req.cookies["auth-token"];
-
-//   if (!token) {
-//     // remove client-side auth cookie
-//     res.clearCookie("auth-token");
-//     res.status(401).json({ error: "Unauthorized" });
-//     return;
-//   }
-
-//   try {
-//     verifyToken(token);
-//   } catch {
-//     res.status(401).json({ error: "Unauthorized" });
-//     return;
-//   }
-
-//   next();
-// });
+app.use("/api/v1/provider", ProviderController);
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

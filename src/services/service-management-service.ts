@@ -26,7 +26,7 @@ export async function createService(
   price: number,
   providerId: number,
 ) {
-  logger.info("Entering Service Management Service => createService");
+  logger.info("service-management-service => createService");
 
   // if user has more than 6 services, throw error
   // const [{ serviceCount }] = await executeSelectQuery(
@@ -52,7 +52,6 @@ export async function createService(
     Service.create({ name, description, hours, minutes, price, provider }),
   );
 
-  logger.info("Exiting Service Management Service => createService");
   return createdService;
 }
 
@@ -65,7 +64,7 @@ export async function updateService(
   serviceId: number,
   providerId: number,
 ) {
-  logger.info("Entering Service Management Service => updateService");
+  logger.info("service-management-service => updateService");
 
   const service = await AppDataSource.manager.findOne(Service, {
     where: {
@@ -88,12 +87,11 @@ export async function updateService(
 
   const updatedService = await AppDataSource.manager.save(service);
 
-  logger.info("Exiting Service Management Service => updateService");
   return updatedService;
 }
 
 export async function deleteService(serviceId: number, providerId: number) {
-  logger.info("Entering Service Management Service => deleteService");
+  logger.info("service-management-service => deleteService");
 
   const service = await AppDataSource.manager.findOne(Service, {
     where: {
@@ -110,7 +108,6 @@ export async function deleteService(serviceId: number, providerId: number) {
 
   await AppDataSource.manager.delete(Service, serviceId);
 
-  logger.info("Exiting Service Management Service => deleteService");
   return "Service deleted successfully";
 }
 

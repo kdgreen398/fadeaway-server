@@ -31,7 +31,7 @@ export async function getProvidersByCityState(city: string, state: string) {
 }
 
 export async function getProviderProfileData(username: string) {
-  logger.info("Entering Provider Service => getProviderDetails");
+  logger.info("provider-service => getProviderProfileData");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { username },
@@ -47,7 +47,6 @@ export async function getProviderProfileData(username: string) {
     throw new Error("Provider does not exist");
   }
 
-  logger.info("Exiting Provider Service => getProviderDetails");
   return {
     ...provider,
     formattedAddress: formatAddress(provider),
@@ -55,11 +54,11 @@ export async function getProviderProfileData(username: string) {
   };
 }
 
-export async function updateProviderDetails(
+export async function updateProviderProfileData(
   providerToSave: Provider,
-  imageFile: Express.Multer.File | undefined,
+  profileImage: Express.Multer.File | undefined,
 ) {
-  logger.info("Entering Provider Service => updateProviderDetails");
+  logger.info("provider-service => updateProviderProfileData");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerToSave.id },
@@ -69,7 +68,7 @@ export async function updateProviderDetails(
     throw new Error("Provider does not exist");
   }
 
-  if (imageFile) {
+  if (profileImage) {
     // delete existing profile image
     if (provider.profileImage) {
       await ImageService.deleteImage(provider.id, provider.profileImage);
@@ -77,7 +76,7 @@ export async function updateProviderDetails(
 
     // upload new profile image
     provider.profileImage = await ImageService.uploadImage(
-      imageFile,
+      profileImage,
       ImageTypeEnum.profile,
       provider.id,
       null,
@@ -97,7 +96,6 @@ export async function updateProviderDetails(
 
   const updatedProvider = await AppDataSource.manager.save(provider);
 
-  logger.info("Exiting Provider Service => updateProviderDetails");
   return {
     ...updatedProvider,
     formattedAddress: formatAddress(updatedProvider),
@@ -106,7 +104,7 @@ export async function updateProviderDetails(
 }
 
 export async function deleteProviderAccount(providerId: number) {
-  logger.info("Entering Provider Service => deleteProviderAccount");
+  logger.info("provider-service => deleteProviderAccount");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerId },
@@ -146,6 +144,4 @@ export async function deleteProviderAccount(providerId: number) {
   await Promise.all(promises);
 
   await AppDataSource.manager.delete(Provider, providerId);
-
-  logger.info("Exiting Provider Service => deleteProviderAccount");
 }

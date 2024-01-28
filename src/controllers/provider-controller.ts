@@ -84,7 +84,7 @@ router.put(
     }
 
     try {
-      const providerDetails = await ProviderService.updateProviderDetails(
+      const providerDetails = await ProviderService.updateProviderProfileData(
         req.body,
         req.file,
         // user.id,

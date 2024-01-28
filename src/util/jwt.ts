@@ -8,7 +8,7 @@ export interface DecodedToken {
   lastName: string;
   email: string;
   id: number;
-  accountType: RoleEnum;
+  role: RoleEnum;
 }
 
 export function verifyToken(token: string): DecodedToken {

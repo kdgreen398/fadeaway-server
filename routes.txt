@@ -7,13 +7,13 @@
     /profile/view?username={username}
 
 /api/v1/provider
+    /account/delete
     /service/create
     /service/update
     /service/delete
     /appointment/view-all
-    /appointment/update-status
+    /appointment/update-status?appointmentId={id}&status={status}
     /profile/update
-    /account/delete
 
 /api/v1/client
     /review/create?provider={username}
@@ -22,8 +22,6 @@
     /appointment/cancel
     /account/delete    
 
-
-/
     
     
 

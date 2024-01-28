@@ -5,6 +5,7 @@ import { Provider } from "../entities/provider";
 import { Service } from "../entities/service";
 import { ImageTypeEnum } from "../enums/image-type-enum";
 import { AppDataSource } from "../util/data-source";
+import logger from "../util/logger";
 
 const storage = new Storage();
 const bucket = storage.bucket(process.env.CLOUD_IMAGE_STORAGE_BUCKET || "");
@@ -21,6 +22,7 @@ export async function uploadImage(
   providerId: number,
   serviceId: number | null,
 ) {
+  logger.info("image-service => uploadImage");
   // check if provider exists
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerId },
@@ -76,10 +78,16 @@ export async function uploadImage(
   return image;
 }
 
-export async function deleteImage(providerId: number, imageToDelete: Image) {
+export async function deleteImage(
+  providerId: number,
+  imageId: number,
+  fileName: string,
+) {
+  logger.info("image-service => deleteImage");
   const image = await AppDataSource.manager.findOne(Image, {
     where: {
-      fileName: imageToDelete.fileName,
+      id: imageId,
+      fileName,
       provider: {
         id: providerId,
       },
@@ -95,4 +103,41 @@ export async function deleteImage(providerId: number, imageToDelete: Image) {
   await AppDataSource.manager.delete(Image, image);
 
   return "image deleted successfully";
+}
+
+export async function updateImageService(
+  providerId: number,
+  serviceId: number,
+  imageId: number,
+) {
+  logger.info("image-service => updateImageService");
+  const provider = await AppDataSource.manager.findOne(Provider, {
+    where: { id: providerId },
+  });
+
+  if (!provider) {
+    throw new Error("Provider not found");
+  }
+
+  const service = await AppDataSource.manager.findOne(Service, {
+    where: { id: serviceId, provider: { id: providerId } },
+  });
+
+  if (!service) {
+    throw new Error("Service not found");
+  }
+
+  const imageToUpdate = await AppDataSource.manager.findOne(Image, {
+    where: { id: imageId, provider: { id: providerId } },
+  });
+
+  if (!imageToUpdate) {
+    throw new Error("Image not found");
+  }
+
+  imageToUpdate.service = service;
+
+  await AppDataSource.manager.save(imageToUpdate);
+
+  return imageToUpdate;
 }

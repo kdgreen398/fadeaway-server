@@ -13,6 +13,10 @@
     /service/delete
     /appointment/view-all
     /appointment/update-status?appointmentId={id}&status={status}
+    /business-hours/update
+    /image/upload-gallery-photo
+    /image/update-image-service
+    /image/delete
     /profile/update
 
 /api/v1/client

@@ -1,15 +1,5 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { Client } from "../entities/client";
-import { Image } from "../entities/image";
-import { Provider } from "../entities/provider";
-import { Review } from "../entities/review";
-import { Service } from "../entities/service";
-import { createAppointment } from "../services/appointment-service";
-import {
-  createClientInDB,
-  createProviderInDB,
-} from "../services/registration-service";
 
 export const AppDataSource = new DataSource({
   type: "mysql",

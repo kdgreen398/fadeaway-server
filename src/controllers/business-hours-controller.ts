@@ -18,7 +18,7 @@ router.post("/business-hours/create", async (req: Request, res: Response) => {
   }
 
   try {
-    const newBusinessHours = await BusinessHoursService.createBusinessHours(
+    const newBusinessHours = await BusinessHoursService.updateBusinessHours(
       user.id,
       req.body,
     );

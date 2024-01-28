@@ -16,7 +16,7 @@ const getFullName = (provider: Provider) =>
   `${provider.firstName} ${provider.lastName}`.trim();
 
 export async function getProvidersByCityState(city: string, state: string) {
-  logger.info("Entering Provider Service => getProvidersByCityState");
+  logger.info("provider-service => getProvidersByCityState");
 
   const providers = await AppDataSource.manager.find(Provider, {
     where: { city, state },
@@ -26,7 +26,6 @@ export async function getProvidersByCityState(city: string, state: string) {
     },
   });
 
-  logger.info("Exiting Provider Service => getProvidersByCityState");
   return providers;
 }
 
@@ -71,7 +70,11 @@ export async function updateProviderProfileData(
   if (profileImage) {
     // delete existing profile image
     if (provider.profileImage) {
-      await ImageService.deleteImage(provider.id, provider.profileImage);
+      await ImageService.deleteImage(
+        provider.id,
+        provider.profileImage.id,
+        provider.profileImage.fileName,
+      );
     }
 
     // upload new profile image
@@ -138,7 +141,7 @@ export async function deleteProviderAccount(providerId: number) {
 
   // delete provider profile and other images from storage
   const promises = provider.images.map((image) =>
-    ImageService.deleteImage(provider.id, image),
+    ImageService.deleteImage(provider.id, image.id, image.fileName),
   );
 
   await Promise.all(promises);

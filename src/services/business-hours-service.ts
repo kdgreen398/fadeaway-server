@@ -1,6 +1,7 @@
 import { BusinessHours } from "../entities/business-hours";
 import { Provider } from "../entities/provider";
 import { AppDataSource } from "../util/data-source";
+import logger from "../util/logger";
 
 function removeDuplicates(data: BusinessHours[]) {
   const uniqueDays = Array.from(new Set(data.map((item) => item.day)));
@@ -14,10 +15,11 @@ function removeDuplicates(data: BusinessHours[]) {
   });
 }
 
-export async function createBusinessHours(
+export async function updateBusinessHours(
   providerId: number,
   dataToCreate: BusinessHours[],
 ) {
+  logger.info("business-hours-service => updateBusinessHours");
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerId },
     relations: {

@@ -30,11 +30,11 @@ export async function getProvidersByCityState(city: string, state: string) {
   return providers;
 }
 
-export async function getProviderProfileData(providerId: number) {
+export async function getProviderProfileData(username: string) {
   logger.info("Entering Provider Service => getProviderDetails");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
-    where: { id: providerId },
+    where: { username },
     relations: {
       images: true,
       reviews: true,

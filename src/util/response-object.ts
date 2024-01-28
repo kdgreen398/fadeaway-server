@@ -9,7 +9,7 @@ export class ResponseObject {
     this.error = error;
   }
 
-  static success(data: any) {
+  static success(data?: any) {
     return new ResponseObject(true, data);
   }
 

@@ -1,0 +1,30 @@
+/api/v1/common
+    /authentication/request
+    /authentication/revoke
+    /account/client/create
+    /account/provider/create
+    /search?location=city-state&lat=1.3241&lng=4.32144&service=men's-haircut
+    /profile/view?username={username}
+
+/api/v1/provider
+    /service/create
+    /service/update
+    /service/delete
+    /appointment/view-all
+    /appointment/update-status
+    /profile/update
+    /account/delete
+
+/api/v1/client
+    /review/create?provider={username}
+    /appointment/view-all
+    /appointment/create
+    /appointment/cancel
+    /account/delete    
+
+
+/
+    
+    
+
+

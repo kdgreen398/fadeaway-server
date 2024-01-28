@@ -1,3 +1,5 @@
+// These updates should be moved to the update profile route
+
 import express, { Request, Response } from "express";
 import { RoleEnum } from "../enums/role-enum";
 import * as BusinessHoursService from "../services/business-hours-service";

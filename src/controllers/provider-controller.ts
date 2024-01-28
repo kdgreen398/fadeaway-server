@@ -38,7 +38,7 @@ router.get(
 
     try {
       const providerDetails = await ProviderService.getProviderProfileData(
-        Number(id),
+        Number(id).toString(),
       );
 
       if (!providerDetails) {

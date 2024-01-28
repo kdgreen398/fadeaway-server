@@ -5,9 +5,6 @@ import { ResponseObject } from "../../util/response-object";
 import { getProviderProfileData } from "../../services/provider-service";
 const router = express.Router();
 
-// const authExpiration = 900000; // 15 minutes
-const authExpiration = 3600000 * 24; // 24 hours
-
 router.get("/view", async (req: Request, res: Response) => {
   logger.info("common-controller => profile-router/view");
 

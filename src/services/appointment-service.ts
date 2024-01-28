@@ -85,7 +85,7 @@ export async function createAppointment(
   startTime: Date,
   services: Service[],
 ) {
-  logger.info("Entering Appointment Service => createAppointment");
+  logger.info("appointment-service => createAppointment");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { email: providerEmail },
@@ -180,7 +180,6 @@ export async function createAppointment(
     }),
   );
 
-  logger.info("Exiting Appointment Service => createAppointment");
   return createdAppointment;
 }
 
@@ -224,7 +223,7 @@ export async function cancelAppointment(
   updatedBy: DecodedToken,
   appointmentId: number,
 ) {
-  logger.info("Entering Appointment Service => cancelAppointment");
+  logger.info("appointment-service => cancelAppointment");
 
   // check if user is client or provider
   const isClient = updatedBy.role === RoleEnum.client;
@@ -261,6 +260,5 @@ export async function cancelAppointment(
     Appointment,
     appointment,
   );
-  logger.info("Exiting Appointment Service => cancelAppointment");
   return updatedAppointment;
 }

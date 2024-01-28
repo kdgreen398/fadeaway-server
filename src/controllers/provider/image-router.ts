@@ -28,8 +28,7 @@ router.post(
     const uploadedFile = req.file;
 
     if (!uploadedFile) {
-      res.status(400).json(ResponseObject.error("Missing file"));
-      return;
+      return res.status(400).json(ResponseObject.error("Missing file"));
     }
 
     const user = (req as any).user as DecodedToken;
@@ -43,10 +42,10 @@ router.post(
         user.id,
         serviceId ? parseInt(serviceId as string) : null,
       );
-      res.json(ResponseObject.success(imageUrl));
+      return res.json(ResponseObject.success(imageUrl));
     } catch (err: any) {
       logger.error(err);
-      res.status(500).json(ResponseObject.error(err.message));
+      return res.status(500).json(ResponseObject.error(err.message));
     }
   },
 );
@@ -59,8 +58,7 @@ router.put("/update-image-service", async (req: Request, res: Response) => {
   const { serviceId, imageId } = req.query;
 
   if (!serviceId || !imageId) {
-    res.status(400).json(ResponseObject.error("Missing query params"));
-    return;
+    return res.status(400).json(ResponseObject.error("Missing query params"));
   }
 
   try {
@@ -69,10 +67,10 @@ router.put("/update-image-service", async (req: Request, res: Response) => {
       parseInt(serviceId as string),
       parseInt(imageId as string),
     );
-    res.json(ResponseObject.success(imageUrl));
+    return res.json(ResponseObject.success(imageUrl));
   } catch (err: any) {
     logger.error(err);
-    res.status(500).json(ResponseObject.error(err.message));
+    return res.status(500).json(ResponseObject.error(err.message));
   }
 });
 
@@ -84,8 +82,7 @@ router.delete("/delete", async (req: Request, res: Response) => {
   const { imageId, fileName } = req.query;
 
   if (!imageId) {
-    res.status(400).json(ResponseObject.error("Missing query params"));
-    return;
+    return res.status(400).json(ResponseObject.error("Missing query params"));
   }
 
   try {
@@ -94,10 +91,10 @@ router.delete("/delete", async (req: Request, res: Response) => {
       parseInt(imageId as string),
       fileName as string,
     );
-    res.json(ResponseObject.success(imageUrl));
+    return res.json(ResponseObject.success(imageUrl));
   } catch (err: any) {
     logger.error(err);
-    res.status(500).json(ResponseObject.error(err.message));
+    return res.status(500).json(ResponseObject.error(err.message));
   }
 });
 

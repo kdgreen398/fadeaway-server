@@ -12,10 +12,6 @@ router.post("/create", async (req: Request, res: Response) => {
 
   const user = (req as any).user as DecodedToken;
 
-  if (user.role !== RoleEnum.client) {
-    return res.status(401).json(ResponseObject.error("Unauthorized"));
-  }
-
   if (!req.body.rating || !req.body.providerId) {
     return res
       .status(400)
@@ -30,7 +26,6 @@ router.post("/create", async (req: Request, res: Response) => {
       user.id,
     );
 
-    logger.info("Exiting Review Controller => create-review");
     res.json(ResponseObject.success(review));
   } catch (err: any) {
     logger.error(err);

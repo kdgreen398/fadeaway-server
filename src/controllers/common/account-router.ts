@@ -80,7 +80,7 @@ router.post("/provider/create", async (req: Request, res: Response) => {
     return res.json(ResponseObject.success());
   } catch (err: any) {
     logger.error(err);
-    res.status(500).json(ResponseObject.error(err.message));
+    return res.status(500).json(ResponseObject.error(err.message));
   }
 });
 

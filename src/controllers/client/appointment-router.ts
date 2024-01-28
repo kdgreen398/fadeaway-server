@@ -55,10 +55,10 @@ router.post("/create", async (req: Request, res: Response) => {
       new Date(startTime),
       services,
     );
-    res.json(ResponseObject.success(appointment));
+    return res.json(ResponseObject.success(appointment));
   } catch (error: any) {
     logger.error(error);
-    res.status(500).json(ResponseObject.error(error.message));
+    return res.status(500).json(ResponseObject.error(error.message));
   }
 });
 
@@ -80,10 +80,10 @@ router.put("/cancel", async (req: Request, res: Response) => {
       user,
       Number(appointmentId),
     );
-    res.json(ResponseObject.success(appointment));
+    return res.json(ResponseObject.success(appointment));
   } catch (error: any) {
     logger.error(error);
-    res.status(500).json(ResponseObject.error(error.message));
+    return res.status(500).json(ResponseObject.error(error.message));
   }
 });
 

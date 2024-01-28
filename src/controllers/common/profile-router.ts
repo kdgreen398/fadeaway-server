@@ -20,7 +20,7 @@ router.get("/view", async (req: Request, res: Response) => {
     return res.json(ResponseObject.success(profile));
   } catch (err: any) {
     logger.error(err);
-    res.status(500).send(ResponseObject.error(err.message));
+    return res.status(500).send(ResponseObject.error(err.message));
   }
 });
 

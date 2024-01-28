@@ -16,10 +16,10 @@ router.delete("/delete", async (req: Request, res: Response) => {
 
     res.clearCookie("auth-token");
 
-    res.json(ResponseObject.success());
+    return res.json(ResponseObject.success());
   } catch (err: any) {
     logger.error(err);
-    res.status(500).json(ResponseObject.error(err.message));
+    return res.status(500).json(ResponseObject.error(err.message));
   }
 });
 

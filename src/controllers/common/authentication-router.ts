@@ -45,7 +45,7 @@ router.post("/request", async (req: Request, res: Response) => {
     return res.send(ResponseObject.success("Authenticated successfully"));
   } catch (err: any) {
     logger.error(err);
-    res.status(500).send(ResponseObject.error(err.message));
+    return res.status(500).send(ResponseObject.error(err.message));
   }
 });
 
@@ -54,7 +54,7 @@ router.post("/revoke", async (req: Request, res: Response) => {
 
   res.clearCookie("auth-token");
 
-  res.send(ResponseObject.success("Authentication revoked"));
+  return res.send(ResponseObject.success("Authentication revoked"));
 });
 
 export default router;

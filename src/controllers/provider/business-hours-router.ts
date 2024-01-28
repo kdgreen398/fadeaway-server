@@ -16,10 +16,10 @@ router.put("/update", async (req: Request, res: Response) => {
       user.id,
       req.body,
     );
-    res.json(ResponseObject.success(newBusinessHours));
+    return res.json(ResponseObject.success(newBusinessHours));
   } catch (error: any) {
     logger.error(error);
-    res.status(500).json(ResponseObject.error(error.message));
+    return res.status(500).json(ResponseObject.error(error.message));
   }
 });
 

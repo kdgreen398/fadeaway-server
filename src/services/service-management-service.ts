@@ -3,21 +3,6 @@ import { Service } from "../entities/service";
 import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
-export async function getServices(providerId: number) {
-  logger.info("Entering Service Management Service => getServices");
-
-  const services = await AppDataSource.manager.find(Service, {
-    where: {
-      provider: {
-        id: providerId,
-      },
-    },
-  });
-
-  logger.info("Exiting Service Management Service => getServices");
-  return services;
-}
-
 export async function createService(
   name: string,
   hours: number,
@@ -112,7 +97,6 @@ export async function deleteService(serviceId: number, providerId: number) {
 }
 
 module.exports = {
-  getServices,
   createService,
   updateService,
   deleteService,

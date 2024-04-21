@@ -11,7 +11,7 @@ export async function createReview(
   providerId: number,
   clientId: number,
 ) {
-  logger.info("Entering Review Service => createReview");
+  logger.info("review-service => createReview");
 
   if (rating < 1 || rating > 5) {
     throw new Error("Rating must be between 1 and 5");
@@ -54,7 +54,6 @@ export async function createReview(
     throw new Error("Client does not have completed appointment with provider");
   }
 
-  logger.info("Exiting Review Service => createReview");
   return await AppDataSource.manager.save(Review, {
     rating,
     description,

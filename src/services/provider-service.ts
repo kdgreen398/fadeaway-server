@@ -16,7 +16,7 @@ const getFullName = (provider: Provider) =>
   `${provider.firstName} ${provider.lastName}`.trim();
 
 export async function getProvidersByCityState(city: string, state: string) {
-  logger.info("Entering Provider Service => getProvidersByCityState");
+  logger.info("provider-service => getProvidersByCityState");
 
   const providers = await AppDataSource.manager.find(Provider, {
     where: { city, state },
@@ -26,15 +26,14 @@ export async function getProvidersByCityState(city: string, state: string) {
     },
   });
 
-  logger.info("Exiting Provider Service => getProvidersByCityState");
   return providers;
 }
 
-export async function getProviderProfileData(providerId: number) {
-  logger.info("Entering Provider Service => getProviderDetails");
+export async function getProviderProfileData(username: string) {
+  logger.info("provider-service => getProviderProfileData");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
-    where: { id: providerId },
+    where: { username },
     relations: {
       images: true,
       reviews: true,
@@ -47,7 +46,6 @@ export async function getProviderProfileData(providerId: number) {
     throw new Error("Provider does not exist");
   }
 
-  logger.info("Exiting Provider Service => getProviderDetails");
   return {
     ...provider,
     formattedAddress: formatAddress(provider),
@@ -55,11 +53,11 @@ export async function getProviderProfileData(providerId: number) {
   };
 }
 
-export async function updateProviderDetails(
+export async function updateProviderProfileData(
   providerToSave: Provider,
-  imageFile: Express.Multer.File | undefined,
+  profileImage: Express.Multer.File | undefined,
 ) {
-  logger.info("Entering Provider Service => updateProviderDetails");
+  logger.info("provider-service => updateProviderProfileData");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerToSave.id },
@@ -69,15 +67,19 @@ export async function updateProviderDetails(
     throw new Error("Provider does not exist");
   }
 
-  if (imageFile) {
+  if (profileImage) {
     // delete existing profile image
     if (provider.profileImage) {
-      await ImageService.deleteImage(provider.id, provider.profileImage);
+      await ImageService.deleteImage(
+        provider.id,
+        provider.profileImage.id,
+        provider.profileImage.fileName,
+      );
     }
 
     // upload new profile image
     provider.profileImage = await ImageService.uploadImage(
-      imageFile,
+      profileImage,
       ImageTypeEnum.profile,
       provider.id,
       null,
@@ -97,7 +99,6 @@ export async function updateProviderDetails(
 
   const updatedProvider = await AppDataSource.manager.save(provider);
 
-  logger.info("Exiting Provider Service => updateProviderDetails");
   return {
     ...updatedProvider,
     formattedAddress: formatAddress(updatedProvider),
@@ -106,7 +107,7 @@ export async function updateProviderDetails(
 }
 
 export async function deleteProviderAccount(providerId: number) {
-  logger.info("Entering Provider Service => deleteProviderAccount");
+  logger.info("provider-service => deleteProviderAccount");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { id: providerId },
@@ -140,12 +141,10 @@ export async function deleteProviderAccount(providerId: number) {
 
   // delete provider profile and other images from storage
   const promises = provider.images.map((image) =>
-    ImageService.deleteImage(provider.id, image),
+    ImageService.deleteImage(provider.id, image.id, image.fileName),
   );
 
   await Promise.all(promises);
 
   await AppDataSource.manager.delete(Provider, providerId);
-
-  logger.info("Exiting Provider Service => deleteProviderAccount");
 }

@@ -2,23 +2,12 @@ import * as dotenv from "dotenv";
 import "reflect-metadata";
 dotenv.config(); // Loads environment variables from .env file into process.env
 
-import { NextFunction } from "connect";
-import { Request, Response } from "express";
-import { verifyToken } from "./util/jwt";
+import express from "express";
 
-import AppointmentController from "./controllers/appointment-controller";
-import AuthenticationController from "./controllers/authentication-controller";
-import BusinessHoursController from "./controllers/business-hours-controller";
-import ClientController from "./controllers/client-controller";
-import ProviderImageController from "./controllers/image-controller";
-import LocationController from "./controllers/location-controller";
-import ProviderController from "./controllers/provider-controller";
-import RecommendationController from "./controllers/recommendation-controller";
-import RegistrationController from "./controllers/registration-controller";
-import ReviewController from "./controllers/review-controller";
-import ServiceManagementController from "./controllers/service-management-controller";
+import ClientController from "./controllers/client";
+import CommonController from "./controllers/common";
+import ProviderController from "./controllers/provider";
 
-const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -43,39 +32,9 @@ app.use(
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use(AuthenticationController);
-app.use(RegistrationController);
-
-app.use((req: Request, res: Response, next: NextFunction) => {
-  // get auth token from cookies
-  const token = req.cookies["auth-token"];
-
-  if (!token) {
-    // remove client-side auth cookie
-    res.clearCookie("auth-token");
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
-  try {
-    verifyToken(token);
-  } catch {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
-  next();
-});
-
-app.use(ProviderImageController);
-app.use(BusinessHoursController);
-app.use(LocationController);
-app.use(RecommendationController);
-app.use(ClientController);
-app.use(ProviderController);
-app.use(AppointmentController);
-app.use(ServiceManagementController);
-app.use(ReviewController);
+app.use("/api/v1/common", CommonController);
+app.use("/api/v1/provider", ProviderController);
+app.use("/api/v1/client", ClientController);
 
 app.listen(port, () => {
   console.log("Server running on port ".concat(port), new Date());

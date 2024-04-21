@@ -18,51 +18,42 @@ async function checkEmailExists(email: string) {
   return Boolean(client || provider);
 }
 
-export async function createClientInDB(clientObj: Client) {
-  logger.info("Entering Registration Service => createClientInDB");
-  const { firstName, lastName, email, password } = clientObj;
+export async function createClientInDB(client: Client) {
+  logger.info("registration-service => createClientInDB");
+
+  const { firstName, lastName, email, password } = client;
 
   const emailExists = await checkEmailExists(email);
   if (emailExists) {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  const client = Client.create({
-    firstName,
-    lastName,
-    email,
-    password: hashedPassword,
-  });
-
-  const createdClient = await AppDataSource.manager.save(client);
-
-  logger.info("Exiting Registration Service => createClientInDB");
-  return createdClient;
+  await AppDataSource.manager.save(
+    Client.create({
+      firstName,
+      lastName,
+      email,
+      password: await bcrypt.hash(password, saltRounds),
+    }),
+  );
 }
 
 export async function createProviderInDB(provider: Provider) {
-  logger.info("Entering Registration Service => createProviderInDB");
+  logger.info("registration-service => createProviderInDB");
 
   const emailExists = await checkEmailExists(provider.email);
   if (emailExists) {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(provider.password, saltRounds);
-
-  provider.password = hashedPassword;
-  const createdProvider = await AppDataSource.manager.save(
+  await AppDataSource.manager.save(
     Provider.create({
       ...provider,
+      password: await bcrypt.hash(provider.password, saltRounds),
     }),
   );
 
   await AppDataSource.manager.save(
     ProviderCityState.create({ city: provider.city, state: provider.state }),
   );
-
-  logger.info("Exiting Registration Service => createProviderInDB");
-  return createdProvider;
 }

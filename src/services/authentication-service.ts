@@ -8,7 +8,7 @@ import { generateToken } from "../util/jwt";
 import logger from "../util/logger";
 
 export async function authenticateUser(email: string, password: string) {
-  logger.info("Entering Authentication Service => authenticateUser");
+  logger.info("authenticaton-service => authenticateUser");
 
   let token;
   let accountType = RoleEnum.client;
@@ -48,13 +48,11 @@ export async function authenticateUser(email: string, password: string) {
     return null;
   }
 
-  logger.info("Exiting Authentication Service => authenticateUser");
-
   return generateToken({
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    accountType,
+    role: accountType,
   });
 }

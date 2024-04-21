@@ -49,32 +49,33 @@ function canCreateAppointment(
   return true; // No overlap found with existing appointments
 }
 
-export async function getAppointments(email: string, accountType: string) {
-  logger.info("Entering Appointment Service => getAppointments");
+export async function getAppointments(
+  accountId: number,
+  accountRole: RoleEnum,
+) {
+  logger.info("appointment-service => getAppointments");
 
-  // If user is a client, return appointments where client id matches
-  let appointments = [];
-  if (accountType === RoleEnum.client) {
-    appointments = await AppDataSource.manager.find(Appointment, {
-      where: {
-        client: {
-          email: email,
-        },
-      },
-      relations: { provider: true, client: true },
-    });
-  } else {
-    appointments = await AppDataSource.manager.find(Appointment, {
-      where: {
-        provider: {
-          email: email,
-        },
-      },
-      relations: { provider: true, client: true },
-    });
+  // check if account exists
+  const account = await AppDataSource.manager.findOne(
+    accountRole === RoleEnum.client ? Client : Provider,
+    {
+      where: { id: accountId },
+    },
+  );
+
+  if (!account) {
+    throw new Error("Account not found");
   }
 
-  logger.info("Exiting Appointment Service => getAppointments");
+  let appointments = await AppDataSource.manager.find(Appointment, {
+    where: {
+      [accountRole]: {
+        id: accountId,
+      },
+    },
+    relations: { provider: true, client: true },
+  });
+
   return appointments;
 }
 
@@ -84,7 +85,7 @@ export async function createAppointment(
   startTime: Date,
   services: Service[],
 ) {
-  logger.info("Entering Appointment Service => createAppointment");
+  logger.info("appointment-service => createAppointment");
 
   const provider = await AppDataSource.manager.findOne(Provider, {
     where: { email: providerEmail },
@@ -179,7 +180,6 @@ export async function createAppointment(
     }),
   );
 
-  logger.info("Exiting Appointment Service => createAppointment");
   return createdAppointment;
 }
 
@@ -188,9 +188,9 @@ export async function updateAppointmentStatus(
   status: AppointmentStatusEnum,
   updatedBy: DecodedToken,
 ) {
-  logger.info("Entering Appointment Service => updateAppointmentStatus");
+  logger.info("appointment-service => updateAppointmentStatus");
   // check if user is client or provider
-  const isClient = updatedBy.accountType === RoleEnum.client;
+  const isClient = updatedBy.role === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
   // if provider, update appointment status by appointment id and provider id
@@ -216,7 +216,6 @@ export async function updateAppointmentStatus(
   appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.provider;
   appointment.updatedTime = new Date();
 
-  logger.info("Exiting Appointment Service => updateAppointmentStatus");
   return await AppDataSource.manager.save(Appointment, appointment);
 }
 
@@ -224,10 +223,10 @@ export async function cancelAppointment(
   updatedBy: DecodedToken,
   appointmentId: number,
 ) {
-  logger.info("Entering Appointment Service => cancelAppointment");
+  logger.info("appointment-service => cancelAppointment");
 
   // check if user is client or provider
-  const isClient = updatedBy.accountType === RoleEnum.client;
+  const isClient = updatedBy.role === RoleEnum.client;
 
   // if client, update appointment status by appointment id and client id
   // if provider, update appointment status by appointment id and provider id
@@ -261,6 +260,5 @@ export async function cancelAppointment(
     Appointment,
     appointment,
   );
-  logger.info("Exiting Appointment Service => cancelAppointment");
   return updatedAppointment;
 }

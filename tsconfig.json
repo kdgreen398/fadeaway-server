@@ -1,18 +1,15 @@
 {
-  // ... other options
   "compilerOptions": {
     "target": "ES6",
-    "module": "commonjs",
-    "outDir": "dist",
+    "module": "CommonJS",
+    "outDir": "./dist",
     "strict": true,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "lib": ["ES6"]
   },
-  "include": [
-    "**/*.ts" // Add the pattern to include TypeScript files
-  ],
-  "exclude": [
-    "node_modules" // Add any directories to exclude from compilation
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   database: "app-data",
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: ["src/entities/*.ts"],
+  entities: ["entities/*.js"],
   // logging: true,
   // dropSchema: true,
 });

@@ -4,10 +4,14 @@ import logger from "./logger";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: process.env.DB_HOST,
+  host: process.env.NODE_ENV === "production" ? undefined : process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
+  socketPath:
+    process.env.NODE_ENV === "production"
+      ? process.env.INSTANCE_UNIX_SOCKET
+      : undefined,
   database: "app-data",
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),

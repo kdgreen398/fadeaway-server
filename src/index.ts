@@ -13,7 +13,7 @@ import ProviderController from "./controllers/provider";
 
 const app = express();
 
-const port = "3008";
+const port = process.env.PORT || 3000;
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -35,5 +35,5 @@ app.use("/api/v1/provider", ProviderController);
 app.use("/api/v1/client", ClientController);
 
 app.listen(port, () => {
-  console.log("Server running on port ".concat(port), new Date());
+  console.log("Server running on port ".concat(port as string), new Date());
 });

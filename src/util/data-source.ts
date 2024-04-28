@@ -1,25 +1,29 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import logger from "./logger";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: process.env.DB_HOST,
+  host: process.env.NODE_ENV === "production" ? undefined : process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
+  socketPath:
+    process.env.NODE_ENV === "production"
+      ? process.env.INSTANCE_UNIX_SOCKET
+      : undefined,
   database: "app-data",
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: ["src/entities/*.ts"],
+  entities: ["entities/*.js"],
   // logging: true,
-  // dropSchema: true,
 });
 
 AppDataSource.initialize()
   .then(() => {
-    console.log("Data Source has been initialized!");
+    logger.info("Data Source has been initialized!");
   })
-  .catch((err: any) => {
+  .catch((err: unknown) => {
     console.error("Error during Data Source initialization", err);
     throw err;
   });

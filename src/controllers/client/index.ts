@@ -8,7 +8,7 @@ import ReviewRouter from "./review-router";
 
 const router = express.Router();
 
-router.use(verifyRole(RoleEnum.client));
+router.use(verifyRole(RoleEnum.CLIENT));
 
 router.use("/account", AccountRouter);
 

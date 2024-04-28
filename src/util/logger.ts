@@ -7,12 +7,12 @@ export default {
         .replace(/\..+/, "")} - INFO - ${message}`,
     );
   },
-  error: (message: string) => {
+  error: (error: Error | string) => {
     console.error(
       `${new Date()
         .toISOString()
         .replace(/T/, " ")
-        .replace(/\..+/, "")} - ERROR - ${message}`,
+        .replace(/\..+/, "")} - ERROR - ${error}`,
     );
   },
   warn: (message: string) => {

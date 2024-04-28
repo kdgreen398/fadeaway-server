@@ -1,11 +1,9 @@
 import express, { Request, Response } from "express";
-import logger from "../../util/logger";
-import * as ProviderService from "../../services/provider-service";
-import { ResponseObject } from "../../util/response-object";
-import multer from "multer";
-import { RoleEnum } from "../../enums/role-enum";
-import { DecodedToken } from "../../util/jwt";
+import expressAsyncHandler from "express-async-handler";
 import * as ServiceManagementService from "../../services/service-management-service";
+import { AuthorizedRequest } from "../../types/authorized-request";
+import logger from "../../util/logger";
+import { ResponseObject } from "../../util/response-object";
 
 const router = express.Router();
 
@@ -15,93 +13,93 @@ function validateParameters(hours: number, minutes: number, price: number) {
     !Number.isInteger(hours) ||
     !Number.isInteger(price)
   ) {
-    throw new Error(
-      "Invalid values: minutes, hours, and price must be whole numbers",
-    );
+    return {
+      error: "Invalid values: minutes, hours, and price must be whole numbers",
+    };
   }
 
   if (hours < 0 || minutes < 0 || price < 0) {
-    throw new Error(
-      "Invalid values: minutes, hours, and price must be greater than 0",
-    );
+    return {
+      error: "Invalid values: minutes, hours, and price must be greater than 0",
+    };
   }
 
   if (hours === 0 && minutes === 0) {
-    throw new Error("Invalid time: hours and minutes cannot both be 0");
+    return { error: "Invalid time: hours and minutes cannot both be 0" };
   }
 
   if (price === 0) {
-    throw new Error("Invalid price: price cannot be 0");
+    return { error: "Invalid price: price cannot be 0" };
   }
 
   if (price > 999) {
-    throw new Error("Invalid price: price cannot be greater than 999");
+    return { error: "Invalid price: price cannot be greater than 999" };
   }
 
   if (hours >= 24 || minutes >= 60) {
-    throw new Error(
-      "Invalid time: minutes must be less than 60 and hours less than 24",
-    );
+    return {
+      error:
+        "Invalid time: minutes must be less than 60 and hours less than 24",
+    };
   }
 
   if (minutes % 15 !== 0) {
-    throw new Error("Invalid time: minutes must be a multiple of 15");
+    return { error: "Invalid time: minutes must be a multiple of 15" };
   }
+  return { error: null };
 }
 
-router.post("/create", async (req: Request, res: Response) => {
-  logger.info("provider-controller => service-router/create");
+router.post(
+  "/create",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("provider-controller => service-router/create");
 
-  const { name, hours, minutes, description, price } = req.body;
+    const { name, hours, minutes, description, price } = req.body;
 
-  const user = (req as any).user as DecodedToken;
-
-  if (user.role !== RoleEnum.provider) {
-    return res.status(403).json(ResponseObject.error("Unauthorized"));
-  }
-
-  try {
+    const { decodedToken } = req as AuthorizedRequest;
     if (
       !name ||
       (!hours && hours !== 0) ||
       (!minutes && minutes !== 0) ||
       (!price && price !== 0)
     ) {
-      throw new Error(
-        "Missing required parameters: name, hours, minutes, price",
-      );
+      res
+        .status(400)
+        .send(
+          ResponseObject.error(
+            "Missing required parameters: name, hours, minutes, price",
+          ),
+        );
+      return;
     }
-    validateParameters(hours, minutes, price);
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(400).json(ResponseObject.error(err.message));
-  }
+    const { error } = validateParameters(hours, minutes, price);
+    if (error) {
+      res.status(400).send(ResponseObject.error(error));
+      return;
+    }
 
-  try {
     const service = await ServiceManagementService.createService(
       name,
       hours,
       minutes,
       description,
       price,
-      user.id,
+      decodedToken.id,
     );
 
-    return res.status(201).json(ResponseObject.success(service));
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(500).json(ResponseObject.error(err.message));
-  }
-});
+    res.status(201).send(ResponseObject.success(service));
+  }),
+);
 
-router.put("/update", async (req: Request, res: Response) => {
-  logger.info("provider-controller => service-router/update");
+router.put(
+  "/update",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("provider-controller => service-router/update");
 
-  const { name, hours, minutes, description, price, id } = req.body;
+    const { name, hours, minutes, description, price, id } = req.body;
 
-  const user = (req as any).user as DecodedToken;
+    const { decodedToken } = req as AuthorizedRequest;
 
-  try {
     if (
       !name ||
       (!hours && hours !== 0) ||
@@ -109,21 +107,21 @@ router.put("/update", async (req: Request, res: Response) => {
       (!price && price !== 0) ||
       !id
     ) {
-      return res
+      res
         .status(400)
-        .json(
+        .send(
           ResponseObject.error(
             "Missing required parameters: name, hours, minutes, price, id",
           ),
         );
+      return;
     }
-    validateParameters(hours, minutes, price);
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(400).json(ResponseObject.error(err.message));
-  }
+    const { error } = validateParameters(hours, minutes, price);
+    if (error) {
+      res.status(400).send(ResponseObject.error(error));
+      return;
+    }
 
-  try {
     const updatedService = await ServiceManagementService.updateService(
       name,
       hours,
@@ -131,39 +129,35 @@ router.put("/update", async (req: Request, res: Response) => {
       description,
       price,
       id,
-      user.id,
+      decodedToken.id,
     );
 
-    return res.json(ResponseObject.success(updatedService));
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(500).json(ResponseObject.error(err.message));
-  }
-});
+    res.send(ResponseObject.success(updatedService));
+  }),
+);
 
-router.delete("/delete", async (req: Request, res: Response) => {
-  logger.info("provider-controller => service-router/delete");
+router.delete(
+  "/delete",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("provider-controller => service-router/delete");
 
-  const { serviceId } = req.query;
-  const user = (req as any).user as DecodedToken;
+    const { serviceId } = req.query;
+    const { decodedToken } = req as AuthorizedRequest;
 
-  if (!serviceId) {
-    return res
-      .status(400)
-      .json(ResponseObject.error("Missing required parameters: id"));
-  }
+    if (!serviceId) {
+      res
+        .status(400)
+        .send(ResponseObject.error("Missing required parameters: id"));
+      return;
+    }
 
-  try {
     const response = await ServiceManagementService.deleteService(
       Number(serviceId),
-      user.id,
+      decodedToken.id,
     );
 
-    return res.json(ResponseObject.success(response));
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(500).json(ResponseObject.error(err.message));
-  }
-});
+    res.send(ResponseObject.success(response));
+  }),
+);
 
 export default router;

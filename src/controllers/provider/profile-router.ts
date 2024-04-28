@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
-import logger from "../../util/logger";
-import * as ProviderService from "../../services/provider-service";
-import { ResponseObject } from "../../util/response-object";
+import expressAsyncHandler from "express-async-handler";
 import multer from "multer";
+import * as ProviderService from "../../services/provider-service";
+import logger from "../../util/logger";
+import { ResponseObject } from "../../util/response-object";
 
 const router = express.Router();
 const multerStorage = multer.memoryStorage();
@@ -20,7 +21,7 @@ const upload = multer({
 router.put(
   "/update",
   upload.single("image"),
-  async (req: Request, res: Response) => {
+  expressAsyncHandler(async (req: Request, res: Response) => {
     logger.info("provider-controller => profile-router/update");
 
     if (
@@ -32,23 +33,19 @@ router.put(
       !req.body.state ||
       !req.body.zipCode
     ) {
-      return res
+      res
         .status(400)
-        .json(ResponseObject.error("Missing required body parameters"));
+        .send(ResponseObject.error("Missing required body parameters"));
+      return;
     }
 
-    try {
-      const providerDetails = await ProviderService.updateProviderProfileData(
-        req.body,
-        req.file,
-      );
+    const providerDetails = await ProviderService.updateProviderProfileData(
+      req.body,
+      req.file,
+    );
 
-      return res.json(ResponseObject.success(providerDetails));
-    } catch (err: any) {
-      logger.error(err);
-      return res.status(500).json(ResponseObject.error(err.message));
-    }
-  },
+    res.send(ResponseObject.success(providerDetails));
+  }),
 );
 
 export default router;

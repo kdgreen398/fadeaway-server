@@ -1,90 +1,85 @@
 import express, { Request, Response } from "express";
+import expressAsyncHandler from "express-async-handler";
 import { RoleEnum } from "../../enums/role-enum";
 import * as AppointmentService from "../../services/appointment-service";
-import { DecodedToken } from "../../util/jwt";
+import { AuthorizedRequest } from "../../types/authorized-request";
 import logger from "../../util/logger";
 import { ResponseObject } from "../../util/response-object";
 
 const router = express.Router();
 
-router.get("/view-all", async (req: Request, res: Response) => {
-  logger.info("client-controller => appointment-router/view-all");
+router.get(
+  "/view-all",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("client-controller => appointment-router/view-all");
 
-  try {
-    const user = (req as any).user as DecodedToken;
+    const { decodedToken } = req as AuthorizedRequest;
     const appointments = await AppointmentService.getAppointments(
-      user.id,
-      RoleEnum.client,
+      decodedToken.id,
+      RoleEnum.CLIENT,
     );
-    return res.json(ResponseObject.success(appointments));
-  } catch (error: any) {
-    logger.error(error);
-    return res.status(500).json(ResponseObject.error(error.message));
-  }
-});
+    res.send(ResponseObject.success(appointments));
+  }),
+);
 
-router.post("/create", async (req: Request, res: Response) => {
-  logger.info("client-controller => appointment-router/create");
+router.post(
+  "/create",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("client-controller => appointment-router/create");
 
-  const { providerEmail, startTime, services } = req.body;
+    const { providerEmail, startTime, services } = req.body;
 
-  if (!providerEmail || !startTime || !services) {
-    return res
-      .status(400)
-      .json(ResponseObject.error("Missing required fields"));
-  }
+    if (!providerEmail || !startTime || !services) {
+      res.status(400).send(ResponseObject.error("Missing required fields"));
+      return;
+    }
 
-  if (services.length === 0) {
-    return res
-      .status(400)
-      .json(ResponseObject.error("At least one service is required"));
-  }
+    if (services.length === 0) {
+      res
+        .status(400)
+        .send(ResponseObject.error("At least one service is required"));
+      return;
+    }
 
-  if (new Date(startTime) < new Date()) {
-    return res
-      .status(400)
-      .json(ResponseObject.error("Appointment time cannot be in the past"));
-  }
+    if (new Date(startTime) < new Date()) {
+      res
+        .status(400)
+        .send(ResponseObject.error("Appointment time cannot be in the past"));
+      return;
+    }
 
-  const user = (req as any).user as DecodedToken;
+    const { decodedToken } = req as AuthorizedRequest;
 
-  try {
     const appointment = await AppointmentService.createAppointment(
-      user.email,
+      decodedToken.email,
       providerEmail,
       new Date(startTime),
       services,
     );
-    return res.json(ResponseObject.success(appointment));
-  } catch (error: any) {
-    logger.error(error);
-    return res.status(500).json(ResponseObject.error(error.message));
-  }
-});
+    res.send(ResponseObject.success(appointment));
+  }),
+);
 
-router.put("/cancel", async (req: Request, res: Response) => {
-  logger.info("client-controller => appointment-router/cancel");
+router.put(
+  "/cancel",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("client-controller => appointment-router/cancel");
 
-  const { appointmentId } = req.query;
+    const { appointmentId } = req.query;
 
-  if (!appointmentId) {
-    return res
-      .status(400)
-      .json(ResponseObject.error("Missing required fields"));
-  }
+    if (!appointmentId) {
+      res.status(400).send(ResponseObject.error("Missing required fields"));
+      return;
+    }
 
-  const user = (req as any).user as DecodedToken;
+    const { decodedToken } = req as AuthorizedRequest;
 
-  try {
     const appointment = await AppointmentService.cancelAppointment(
-      user,
+      decodedToken,
       Number(appointmentId),
     );
-    return res.json(ResponseObject.success(appointment));
-  } catch (error: any) {
-    logger.error(error);
-    return res.status(500).json(ResponseObject.error(error.message));
-  }
-});
+    res.send(ResponseObject.success(appointment));
+  }),
+);
 
 export default router;

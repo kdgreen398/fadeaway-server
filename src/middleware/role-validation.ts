@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { RoleEnum } from "../enums/role-enum";
+import { AuthorizedRequest } from "../types/authorized-request";
 import { verifyToken } from "../util/jwt";
+import { ResponseObject } from "../util/response-object";
 
 export function verifyRole(role: RoleEnum) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -8,14 +10,14 @@ export function verifyRole(role: RoleEnum) {
     const token = req.cookies["auth-token"];
 
     try {
-      const user = verifyToken(token);
-      if (user.role !== role) {
+      const decodedToken = verifyToken(token);
+      if (decodedToken.role !== role) {
         throw new Error();
       }
-      (req as any).user = user;
+      (req as AuthorizedRequest).decodedToken = decodedToken;
       next();
     } catch {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).send(ResponseObject.error("Unauthorized"));
     }
   };
 }

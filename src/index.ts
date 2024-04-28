@@ -4,28 +4,26 @@ dotenv.config(); // Loads environment variables from .env file into process.env
 
 import express from "express";
 
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import ClientController from "./controllers/client";
 import CommonController from "./controllers/common";
 import ProviderController from "./controllers/provider";
 
 const app = express();
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const logger = require("./util/logger");
-const port = "3008";
 
-declare global {
-  namespace Express {
-    interface Request {
-      fileValidationError?: string;
-    }
+const port = process.env.PORT || 3000;
+
+declare module "express-serve-static-core" {
+  interface Request {
+    fileValidationError?: string;
   }
 }
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   }),
 );
@@ -37,5 +35,5 @@ app.use("/api/v1/provider", ProviderController);
 app.use("/api/v1/client", ClientController);
 
 app.listen(port, () => {
-  console.log("Server running on port ".concat(port), new Date());
+  console.log("Server running on port ".concat(port as string), new Date());
 });

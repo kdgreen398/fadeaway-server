@@ -9,6 +9,7 @@ import { AppointmentStatusEnum } from "../enums/appointment-status-enum";
 import { RoleEnum } from "../enums/role-enum";
 import { Client } from "./client";
 import { Provider } from "./provider";
+import { Service } from "./service";
 
 @Entity()
 export class Appointment extends BaseEntity {
@@ -28,7 +29,7 @@ export class Appointment extends BaseEntity {
   endTime!: Date;
 
   @Column("json")
-  services!: any;
+  services!: Service[];
 
   @Column()
   createdTime!: Date;

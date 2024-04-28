@@ -10,22 +10,8 @@ import logger from "../util/logger";
 export async function authenticateUser(email: string, password: string) {
   logger.info("authenticaton-service => authenticateUser");
 
-  let token;
-  let accountType = RoleEnum.client;
-
-  let user = await AppDataSource.manager.findOne(Client, {
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      password: true,
-    },
-    where: { email },
-  });
-
-  if (!user) {
-    user = await AppDataSource.manager.findOne(Provider, {
+  const user =
+    (await AppDataSource.manager.findOne(Client, {
       select: {
         id: true,
         firstName: true,
@@ -34,14 +20,21 @@ export async function authenticateUser(email: string, password: string) {
         password: true,
       },
       where: { email },
-    });
-    accountType = RoleEnum.provider;
-  }
+    })) ||
+    (await AppDataSource.manager.findOne(Provider, {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: true,
+      },
+      where: { email },
+    }));
 
   if (!user) {
     return null;
   }
-
   const isAuthenticated = await bcrypt.compare(password, user.password);
 
   if (!isAuthenticated) {
@@ -53,6 +46,6 @@ export async function authenticateUser(email: string, password: string) {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    role: accountType,
+    role: user instanceof Client ? RoleEnum.CLIENT : RoleEnum.PROVIDER,
   });
 }

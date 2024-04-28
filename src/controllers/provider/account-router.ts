@@ -1,26 +1,25 @@
 import express, { Request, Response } from "express";
-import logger from "../../util/logger";
+import expressAsyncHandler from "express-async-handler";
 import * as ProviderService from "../../services/provider-service";
+import { AuthorizedRequest } from "../../types/authorized-request";
+import logger from "../../util/logger";
 import { ResponseObject } from "../../util/response-object";
-import { DecodedToken } from "../../util/jwt";
 
 const router = express.Router();
 
-router.delete("/delete", async (req: Request, res: Response) => {
-  logger.info("provider-controller => account-router/delete");
+router.delete(
+  "/delete",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("provider-controller => account-router/delete");
 
-  const user = (req as any).user as DecodedToken;
+    const { decodedToken } = req as AuthorizedRequest;
 
-  try {
-    await ProviderService.deleteProviderAccount(user.id);
+    await ProviderService.deleteProviderAccount(decodedToken.id);
 
     res.clearCookie("auth-token");
 
-    return res.json(ResponseObject.success());
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(500).json(ResponseObject.error(err.message));
-  }
-});
+    res.send(ResponseObject.success());
+  }),
+);
 
 export default router;

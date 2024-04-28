@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
-
-import express from "express";
+import express, { Request, Response } from "express";
+import expressAsyncHandler from "express-async-handler";
 import * as GeolocationService from "../../services/geolocation-service";
 import * as LocationService from "../../services/location-service";
 import logger from "../../util/logger";
@@ -8,18 +7,20 @@ import { ResponseObject } from "../../util/response-object";
 
 const router = express.Router();
 
-router.get("/get-location-from-coords", async (req: Request, res: Response) => {
-  const lat = req.get("lat");
-  const lng = req.get("lng");
+router.get(
+  "/get-location-from-coords",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    const lat = req.get("lat");
+    const lng = req.get("lng");
 
-  logger.info("Entering Location Controller => get-location-from-coords");
+    logger.info("Entering Location Controller => get-location-from-coords");
 
-  if (lat === undefined || lng === undefined) {
-    logger.error("Missing lat/lng");
-    return res.status(400).json(ResponseObject.error("Missing lat/lng"));
-  }
+    if (lat === undefined || lng === undefined) {
+      logger.error("Missing lat/lng");
+      res.status(400).send(ResponseObject.error("Missing lat/lng"));
+      return;
+    }
 
-  try {
     const address = await GeolocationService.getAddressFromCoords(
       parseFloat(lat),
       parseFloat(lng),
@@ -28,27 +29,18 @@ router.get("/get-location-from-coords", async (req: Request, res: Response) => {
     const state = address.split(",")[2].split(" ")[1];
 
     logger.info("Exiting Location Controller => get-location-from-coords");
-    return res.json(ResponseObject.success({ city, state }));
-  } catch (err: any) {
-    logger.error(err);
-    return res
-      .status(500)
-      .json(ResponseObject.error("Error getting location from coordinates"));
-  }
-});
+    res.send(ResponseObject.success({ city, state }));
+  }),
+);
 
-router.get("/get-provider-city-states", async (req: Request, res: Response) => {
-  logger.info("Entering Location Controller => get-provider-city-states");
-  try {
+router.get(
+  "/get-provider-city-states",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("Entering Location Controller => get-provider-city-states");
     const providerCityStates = await LocationService.getProviderCityStates();
-    res.json(ResponseObject.success(providerCityStates));
+    res.send(ResponseObject.success(providerCityStates));
     logger.info("Exiting Location Controller => get-provider-city-states");
-  } catch (err: any) {
-    logger.error(err);
-    return res
-      .status(500)
-      .json(ResponseObject.error("Error getting provider city states"));
-  }
-});
+  }),
+);
 
 export default router;

@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import expressAsyncHandler from "express-async-handler";
 import * as GeolocationService from "../services/geolocation-service";
 import * as ProviderService from "../services/provider-service";
 import logger from "../util/logger";
@@ -8,7 +9,7 @@ const router = express.Router();
 
 router.get(
   "/recommendation/get-providers-by-location",
-  async (req: Request, res: Response) => {
+  expressAsyncHandler(async (req: Request, res: Response) => {
     logger.info(
       "Entering Recommendation Controller => get-providers-by-location",
     );
@@ -23,45 +24,39 @@ router.get(
 
     if (!hasCoords && !hasCityState) {
       logger.error("Missing location parameters (lat/lng or city/state)");
-      return res
+      res
         .status(400)
-        .json(
+        .send(
           ResponseObject.error(
             "Missing location parameters (lat/lng or city/state)",
           ),
         );
+      return;
     }
 
-    try {
-      if (!hasCityState) {
-        const address = await GeolocationService.getAddressFromCoords(
-          parseFloat(lat),
-          parseFloat(lng),
-        );
-        city = address.split(",")[1].trim();
-        state = address.split(",")[2].split(" ")[1];
-      }
-
-      const providers = await ProviderService.getProvidersByCityState(
-        city,
-        state,
+    if (!hasCityState) {
+      const address = await GeolocationService.getAddressFromCoords(
+        parseFloat(lat),
+        parseFloat(lng),
       );
-
-      logger.info(
-        "Exiting Recommendation Controller => get-providers-by-location",
-      );
-      return res.json(
-        ResponseObject.success(
-          providers.filter((provider) => provider.images.length > 0),
-        ),
-      );
-    } catch (err: any) {
-      logger.error(err);
-      return res
-        .status(500)
-        .json(ResponseObject.error("Error getting recommendations"));
+      city = address.split(",")[1].trim();
+      state = address.split(",")[2].split(" ")[1];
     }
-  },
+
+    const providers = await ProviderService.getProvidersByCityState(
+      city,
+      state,
+    );
+
+    logger.info(
+      "Exiting Recommendation Controller => get-providers-by-location",
+    );
+    res.send(
+      ResponseObject.success(
+        providers.filter((provider) => provider.images.length > 0),
+      ),
+    );
+  }),
 );
 
 export default router;

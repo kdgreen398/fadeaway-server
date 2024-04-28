@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import logger from "./logger";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -17,9 +18,9 @@ export const AppDataSource = new DataSource({
 
 AppDataSource.initialize()
   .then(() => {
-    console.log("Data Source has been initialized!");
+    logger.info("Data Source has been initialized!");
   })
-  .catch((err: any) => {
+  .catch((err: unknown) => {
     console.error("Error during Data Source initialization", err);
     throw err;
   });

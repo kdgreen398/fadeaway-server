@@ -1,37 +1,38 @@
 import express, { Request, Response } from "express";
-
+import expressAsyncHandler from "express-async-handler";
 import * as AuthenticationService from "../../services/authentication-service";
-
 import logger from "../../util/logger";
 import { ResponseObject } from "../../util/response-object";
+
 const router = express.Router();
 
 // const authExpiration = 900000; // 15 minutes
 const authExpiration = 3600000 * 24; // 24 hours
 
-router.post("/request", async (req: Request, res: Response) => {
-  logger.info("common-controller => authentication-router/request");
+router.post(
+  "/request",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("common-controller => authentication-router/request");
 
-  res.clearCookie("auth-token");
+    res.clearCookie("auth-token");
 
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res
-      .status(400)
-      .send(ResponseObject.error("Email and password are required"));
-  }
+    if (!email || !password) {
+      res
+        .status(400)
+        .send(ResponseObject.error("Email and password are required"));
+      return;
+    }
 
-  try {
     const authToken = await AuthenticationService.authenticateUser(
       email,
       password,
     );
 
     if (!authToken) {
-      return res
-        .status(401)
-        .send(ResponseObject.error("Invalid email or password"));
+      res.status(401).send(ResponseObject.error("Invalid email or password"));
+      return;
     }
 
     // set cookie for server-side authentication on client
@@ -42,19 +43,19 @@ router.post("/request", async (req: Request, res: Response) => {
       maxAge: authExpiration, // 1 hour
     });
 
-    return res.send(ResponseObject.success("Authenticated successfully"));
-  } catch (err: any) {
-    logger.error(err);
-    return res.status(500).send(ResponseObject.error(err.message));
-  }
-});
+    res.send(ResponseObject.success("Authenticated successfully"));
+  }),
+);
 
-router.post("/revoke", async (req: Request, res: Response) => {
-  logger.info("common-controller => authentication-router/revoke");
+router.post(
+  "/revoke",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("common-controller => authentication-router/revoke");
 
-  res.clearCookie("auth-token");
+    res.clearCookie("auth-token");
 
-  return res.send(ResponseObject.success("Authentication revoked"));
-});
+    res.send(ResponseObject.success("Authentication revoked"));
+  }),
+);
 
 export default router;

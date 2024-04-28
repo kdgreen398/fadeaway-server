@@ -11,7 +11,7 @@ import ServiceRouter from "./service-router";
 
 const router = express.Router();
 
-router.use(verifyRole(RoleEnum.provider));
+router.use(verifyRole(RoleEnum.PROVIDER));
 
 router.use("/account", AccountRouter);
 

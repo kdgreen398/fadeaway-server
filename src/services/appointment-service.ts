@@ -57,7 +57,7 @@ export async function getAppointments(
 
   // check if account exists
   const account = await AppDataSource.manager.findOne(
-    accountRole === RoleEnum.client ? Client : Provider,
+    accountRole === RoleEnum.CLIENT ? Client : Provider,
     {
       where: { id: accountId },
     },
@@ -67,7 +67,7 @@ export async function getAppointments(
     throw new Error("Account not found");
   }
 
-  let appointments = await AppDataSource.manager.find(Appointment, {
+  return await AppDataSource.manager.find(Appointment, {
     where: {
       [accountRole]: {
         id: accountId,
@@ -75,8 +75,6 @@ export async function getAppointments(
     },
     relations: { provider: true, client: true },
   });
-
-  return appointments;
 }
 
 export async function createAppointment(
@@ -173,7 +171,7 @@ export async function createAppointment(
       endTime,
       services,
       createdTime: new Date(),
-      updatedBy: RoleEnum.client,
+      updatedBy: RoleEnum.CLIENT,
       updatedTime: new Date(),
       provider,
       client,
@@ -190,7 +188,7 @@ export async function updateAppointmentStatus(
 ) {
   logger.info("appointment-service => updateAppointmentStatus");
   // check if user is client or provider
-  const isClient = updatedBy.role === RoleEnum.client;
+  const isClient = updatedBy.role === RoleEnum.CLIENT;
 
   // if client, update appointment status by appointment id and client id
   // if provider, update appointment status by appointment id and provider id
@@ -198,7 +196,7 @@ export async function updateAppointmentStatus(
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
       id: appointmentId,
-      [isClient ? RoleEnum.client : RoleEnum.provider]: {
+      [isClient ? RoleEnum.CLIENT : RoleEnum.PROVIDER]: {
         id: updatedBy.id,
       },
     },
@@ -213,7 +211,7 @@ export async function updateAppointmentStatus(
   }
 
   appointment.status = status;
-  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.provider;
+  appointment.updatedBy = isClient ? RoleEnum.CLIENT : RoleEnum.PROVIDER;
   appointment.updatedTime = new Date();
 
   return await AppDataSource.manager.save(Appointment, appointment);
@@ -226,7 +224,7 @@ export async function cancelAppointment(
   logger.info("appointment-service => cancelAppointment");
 
   // check if user is client or provider
-  const isClient = updatedBy.role === RoleEnum.client;
+  const isClient = updatedBy.role === RoleEnum.CLIENT;
 
   // if client, update appointment status by appointment id and client id
   // if provider, update appointment status by appointment id and provider id
@@ -234,7 +232,7 @@ export async function cancelAppointment(
   const appointment = await AppDataSource.manager.findOne(Appointment, {
     where: {
       id: appointmentId,
-      [isClient ? RoleEnum.client : RoleEnum.provider]: {
+      [isClient ? RoleEnum.CLIENT : RoleEnum.PROVIDER]: {
         id: updatedBy.id,
       },
     },
@@ -253,7 +251,7 @@ export async function cancelAppointment(
   }
 
   appointment.status = AppointmentStatusEnum.CANCELED;
-  appointment.updatedBy = isClient ? RoleEnum.client : RoleEnum.provider;
+  appointment.updatedBy = isClient ? RoleEnum.CLIENT : RoleEnum.PROVIDER;
   appointment.updatedTime = new Date();
 
   const updatedAppointment = await AppDataSource.manager.save(

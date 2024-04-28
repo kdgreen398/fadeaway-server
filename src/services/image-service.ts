@@ -60,7 +60,7 @@ export async function uploadImage(
       resolve(true);
     });
 
-    stream.on("error", (err) => {
+    stream.on("error", () => {
       reject(false);
     });
   });

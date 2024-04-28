@@ -17,7 +17,6 @@ export const AppDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
   entities: ["entities/*.js"],
   // logging: true,
-  // dropSchema: true,
 });
 
 AppDataSource.initialize()

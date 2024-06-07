@@ -7,6 +7,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import ClientController from "./controllers/client";
 import CommonController from "./controllers/common";
 import ProviderController from "./controllers/provider";
@@ -21,9 +23,28 @@ declare module "express-serve-static-core" {
   }
 }
 
+// Security middlewares
+app.use(helmet()); // Set various HTTP headers for security
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
+const allowedOrigins: string[] = ["http://localhost:8081"];
+
 app.use(
   cors({
-    origin: "*",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );

@@ -27,11 +27,12 @@ declare module "express-serve-static-core" {
 app.use(helmet()); // Set various HTTP headers for security
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
 
 const allowedOrigins: string[] = ["http://localhost:8081"];
 

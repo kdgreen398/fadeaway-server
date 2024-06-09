@@ -1,11 +1,10 @@
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import * as dotenv from "dotenv";
 dotenv.config(); // Loads environment variables from .env file into process.env
 
-import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+const client = new SecretManagerServiceClient();
 
 async function fetchSecret(secretName: string, envName: string) {
-  const client = new SecretManagerServiceClient();
-
   const [version] = await client.accessSecretVersion({
     name: secretName,
   });
@@ -36,6 +35,7 @@ async function main() {
       secret,
     ),
   );
+
   await Promise.all(promises);
 
   const endTime = Date.now();

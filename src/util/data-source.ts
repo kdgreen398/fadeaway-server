@@ -9,6 +9,9 @@ const socketPath =
     ? process.env.INSTANCE_UNIX_SOCKET
     : undefined;
 
+const isProduction = process.env.NODE_ENV === "production";
+console.log("isProduction", isProduction);
+
 export const AppDataSource = new DataSource({
   type: "mysql",
   host,
@@ -19,7 +22,7 @@ export const AppDataSource = new DataSource({
   database: "app-data",
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: ["entities/*.js"],
+  entities: isProduction ? ["dist/entities/*.js"] : ["src/entities/*.ts"],
   // logging: true,
 });
 

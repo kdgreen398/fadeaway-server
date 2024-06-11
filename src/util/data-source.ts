@@ -19,10 +19,15 @@ const getDataSourceOptions: () => DataSourceOptions = () => ({
   // logging: true,
 });
 
+export let AppDataSource = new DataSource(getDataSourceOptions());
+
 (async () => {
   if (isProduction) await fetchSecrets();
   try {
-    await new DataSource(getDataSourceOptions()).initialize();
+    const dataSource = new DataSource(getDataSourceOptions());
+    await dataSource.initialize();
+
+    AppDataSource = dataSource;
 
     logger.info("Data Source has been initialized!");
   } catch (err) {
@@ -30,5 +35,3 @@ const getDataSourceOptions: () => DataSourceOptions = () => ({
     throw err;
   }
 })();
-
-export const AppDataSource = new DataSource(getDataSourceOptions());

@@ -10,7 +10,6 @@ const socketPath =
     : undefined;
 
 const isProduction = process.env.NODE_ENV === "production";
-console.log("isProduction", isProduction);
 
 export const AppDataSource = new DataSource({
   type: "mysql",

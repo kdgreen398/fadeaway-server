@@ -1,23 +1,17 @@
-import { DataSource } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import logger from "./logger";
-
-const host =
-  process.env.NODE_ENV === "production" ? undefined : process.env.DB_HOST;
-const socketPath =
-  process.env.NODE_ENV === "production"
-    ? process.env.INSTANCE_UNIX_SOCKET
-    : undefined;
+import { fetchSecrets } from "./secret-manager";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-export const AppDataSource = new DataSource({
+const getDataSourceOptions: () => DataSourceOptions = () => ({
   type: "mysql",
-  host,
+  host: isProduction ? undefined : process.env.DB_HOST,
+  socketPath: isProduction ? process.env.INSTANCE_UNIX_SOCKET : undefined,
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  socketPath,
   database: "app-data",
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
@@ -25,11 +19,16 @@ export const AppDataSource = new DataSource({
   // logging: true,
 });
 
-AppDataSource.initialize()
-  .then(() => {
+(async () => {
+  if (isProduction) await fetchSecrets();
+  try {
+    await new DataSource(getDataSourceOptions()).initialize();
+
     logger.info("Data Source has been initialized!");
-  })
-  .catch((err: unknown) => {
+  } catch (err) {
     console.error("Error during Data Source initialization", err);
     throw err;
-  });
+  }
+})();
+
+export const AppDataSource = new DataSource(getDataSourceOptions());

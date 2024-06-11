@@ -8,7 +8,6 @@ import { AppDataSource } from "../util/data-source";
 import logger from "../util/logger";
 
 const storage = new Storage();
-const bucket = storage.bucket(process.env.CLOUD_IMAGE_STORAGE_BUCKET || "");
 
 async function processImage(imageBuffer: Buffer) {
   return sharp(imageBuffer)
@@ -44,6 +43,11 @@ export async function uploadImage(
   }
 
   const fileName = Date.now() + ".jpg";
+
+  const bucket = storage.bucket(
+    process.env.CLOUD_IMAGE_STORAGE_BUCKET as string,
+  );
+
   const stream = bucket.file(fileName).createWriteStream({
     metadata: {
       contentType: "image/jpeg",
@@ -98,6 +102,9 @@ export async function deleteImage(
     throw new Error("Image not found");
   }
 
+  const bucket = storage.bucket(
+    process.env.CLOUD_IMAGE_STORAGE_BUCKET as string,
+  );
   await bucket.file(image.fileName).delete();
 
   await AppDataSource.manager.delete(Image, image);

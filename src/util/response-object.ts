@@ -1,11 +1,11 @@
 export class ResponseObject<T = unknown> {
   success: boolean;
-  data?: T;
+  payload?: T;
   error?: string;
 
   constructor(success: boolean, data?: T, error?: string) {
     this.success = success;
-    this.data = data;
+    this.payload = data;
     this.error = error;
   }
 

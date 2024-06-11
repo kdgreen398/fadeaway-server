@@ -34,12 +34,12 @@ router.get(
 );
 
 router.get(
-  "/get-provider-city-states",
+  "/get-available-cities",
   expressAsyncHandler(async (req: Request, res: Response) => {
-    logger.info("Entering Location Controller => get-provider-city-states");
-    const providerCityStates = await LocationService.getProviderCityStates();
+    logger.info("Entering Location Controller => get-available-cities");
+    const providerCityStates = await LocationService.getAvailableCities();
     res.send(ResponseObject.success(providerCityStates));
-    logger.info("Exiting Location Controller => get-provider-city-states");
+    logger.info("Exiting Location Controller => get-available-cities");
   }),
 );
 

@@ -21,16 +21,12 @@ const getDataSourceOptions: () => DataSourceOptions = () => ({
 
 export let AppDataSource = new DataSource(getDataSourceOptions());
 
-(async () => {
+export const initializeDataSource = async () => {
   if (isProduction) await fetchSecrets();
-  try {
-    const dataSource = new DataSource(getDataSourceOptions());
-    await dataSource.initialize();
+  const dataSource = new DataSource(getDataSourceOptions());
+  await dataSource.initialize();
 
-    AppDataSource = dataSource;
+  AppDataSource = dataSource;
 
-    logger.info("Data Source has been initialized!");
-  } catch (err) {
-    console.error("Error during Data Source initialization", err);
-  }
-})();
+  logger.info("Data Source has been initialized!");
+};

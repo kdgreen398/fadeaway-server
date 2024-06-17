@@ -12,6 +12,7 @@ import helmet from "helmet";
 import ClientController from "./controllers/client";
 import CommonController from "./controllers/common";
 import ProviderController from "./controllers/provider";
+import { initializeDataSource } from "./util/data-source";
 
 const app = express();
 
@@ -56,6 +57,12 @@ app.use("/api/v1/common", CommonController);
 app.use("/api/v1/provider", ProviderController);
 app.use("/api/v1/client", ClientController);
 
-app.listen(port, () => {
-  console.log("Server running on port ".concat(port as string), new Date());
-});
+initializeDataSource()
+  .then(() => {
+    app.listen(port, () => {
+      console.log("Server running on port ".concat(port as string), new Date());
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize data source", err);
+  });

@@ -35,7 +35,10 @@ app.use(
   }),
 );
 
-const allowedOrigins: string[] = ["http://localhost:8081"];
+const allowedOrigins: string[] = [
+  "http://localhost:8081",
+  "https://react-native-barber-app-demo-dot-barber-booking-app-401120.uc.r.appspot.com",
+];
 
 app.use(
   cors({

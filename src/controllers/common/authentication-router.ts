@@ -9,6 +9,17 @@ const router = express.Router();
 // const authExpiration = 900000; // 15 minutes
 const authExpiration = 3600000 * 24; // 24 hours
 
+router.get(
+  "/account",
+  expressAsyncHandler(async (req: Request, res: Response) => {
+    logger.info("common-controller => authentication-router/account");
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    res.send(ResponseObject.success("Account details"));
+  }),
+);
+
 router.post(
   "/request",
   expressAsyncHandler(async (req: Request, res: Response) => {

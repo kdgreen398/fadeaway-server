@@ -8,15 +8,27 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import admin from "firebase-admin";
+import { initializeApp } from "firebase-admin/app";
 import helmet from "helmet";
 import ClientController from "./controllers/client";
 import CommonController from "./controllers/common";
 import ProviderController from "./controllers/provider";
-import { initializeDataSource } from "./util/data-source";
 
 const app = express();
 
 const port = process.env.PORT || 3000;
+
+const serviceAccount = process.env.FIREBASE_ADMIN_KEY;
+
+if (!serviceAccount) {
+  console.error("FIREBASE_ADMIN_KEY not found in environment variables");
+  process.exit(1);
+}
+
+const firebaseApp = initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -60,12 +72,16 @@ app.use("/api/v1/common", CommonController);
 app.use("/api/v1/provider", ProviderController);
 app.use("/api/v1/client", ClientController);
 
-initializeDataSource()
-  .then(() => {
-    app.listen(port, () => {
-      console.log("Server running on port ".concat(port as string), new Date());
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to initialize data source", err);
-  });
+app.listen(port, () => {
+  console.log("Server running on port ".concat(port as string), new Date());
+});
+
+// initializeDataSource()
+//   .then(() => {
+//     app.listen(port, () => {
+//       console.log("Server running on port ".concat(port as string), new Date());
+//     });
+//   })
+//   .catch((err) => {
+//     console.error("Failed to initialize data source", err);
+//   });

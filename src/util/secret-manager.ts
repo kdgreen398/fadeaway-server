@@ -8,6 +8,7 @@ const secrets = [
   "INSTANCE_UNIX_SOCKET",
   "CLOUD_IMAGE_STORAGE_BUCKET",
   "GOOGLE_MAPS_API_KEY",
+  "FIREBASE_ADMIN_KEY",
 ];
 
 export async function fetchSecrets() {
